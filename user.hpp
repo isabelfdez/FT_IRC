@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 15:58:15 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:07:11 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,9 @@ class User : public IUser
 		void						setUserName(std::string name);
 		void						setNick(std::string nick);
 		void						setmode(char mode, bool state);
+
+		// Overload
+		bool						operator==(User & obj);
 
 		// Other functions
 		void						init_modes();

@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:00:53 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:07:36 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,13 @@ void	User::setmode(char mode, bool state)
 		default:
 			break ;
 	} 
+}
+
+// Overloads
+
+bool	User::operator==(User & obj)
+{
+	
 }
 
 // Other functions
