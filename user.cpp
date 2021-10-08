@@ -100,3 +100,4 @@ void	User::init_modes()
 	this->_modes.big_o = 0;
 	this->_modes.s = 0;
 }
+
