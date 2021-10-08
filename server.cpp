@@ -12,7 +12,7 @@ Server::Server(int port)
 	memset((char *) &_server_address, 0, sizeof(_server_address));
 	_server_address.sin_family = AF_INET;
 	_server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-	_server_address.sin_port = port;
+	_server_address.sin_port = htons(port);
 }
 
 Server::~Server()
@@ -36,7 +36,7 @@ int					Server::getHighSock() const { return(_highSock); }
 
 struct sockaddr_in &Server::getStruct() { return(_server_address); }
 
-int &				Server::getList(int index) { return(_connectList[index]); }
+int &				Server::getfds(int index) { return(_connectList[index]); }
 
 // Setters
 

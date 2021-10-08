@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 16:46:19 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 18:41:18 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 19:25:06 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ void build_select_list(Server & serv)
     FD_SET(serv.getSock(),&serv.getSocks());
 	
     for (k = 0; k < 5; k++) {
-        if (serv.getList(k) != 0) {
-            FD_SET(serv.getList(k), &serv.getSocks());
-            if (serv.getList(k) > serv.getHighSock())
-                serv.setHighSock(serv.getList(k));
+        if (serv.getfds(k) != 0) {
+            FD_SET(serv.getfds(k), &serv.getSocks());
+            if (serv.getfds(k) > serv.getHighSock())
+                serv.setHighSock(serv.getfds(k));
         }
     }
 }
@@ -57,11 +57,12 @@ void handle_new_connection(Server & serv) {
     }
     setnonblocking(connection);
     for (i = 0; (i < 5) && (connection != -1); i ++)
-        if (serv.getList(i) == 0) {
+        if (serv.getfds(i) == 0) {
             printf("\nConnection accepted:   FD=%d; Slot=%d\n",
                 connection,i);
-            serv.getList(i) = connection;
+            serv.getfds(i) = connection;
             connection = -1;
+    		//listen(serv.getfds(i), 1);
         }
     if (connection != -1) {
         printf("\nNo room left for new client.\n");
@@ -72,26 +73,28 @@ void handle_new_connection(Server & serv) {
 void deal_with_data(int j, Server & serv)
 {
     char buffer[1024] = {0};
-    long valread = read( serv.getList(j) , buffer, 1024);
-    if (!valread)
-        return ;
+    //long valread = 
+	read( serv.getfds(j) , buffer, 1024);
+    //if (!valread)
+    //    return ;
     printf("|%s|\n", buffer);
     printf("j = %i\n", j);
     
     if (!strncmp(buffer, "close", 5))
     {
         printf("El buffer con el que ha entrado es |%s|\n", buffer);
-        close(serv.getList(j));
-        serv.getList(j) = 0;
+        close(serv.getfds(j));
+        serv.getfds(j) = 0;
     }
 }
 
 void read_socks(Server & serv) {
     int j;
+	printf("aqui entra\n");
     if (FD_ISSET(serv.getSock(),&serv.getSocks()))
         handle_new_connection(serv);
     for (j = 0; j < 5; j++) {
-        if (FD_ISSET(serv.getList(j),&serv.getSocks()))
+        if (FD_ISSET(serv.getfds(j),&serv.getSocks()))
             deal_with_data(j, serv);
     }
 }
@@ -106,7 +109,7 @@ int main()
 	serv.setSock(socket(AF_INET, SOCK_STREAM, 0));
 	setsockopt(serv.getSock(), SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
 	// SOL_SOCKET nos permite usar las opciones, y la opción SO_REUSEADDR permite tener dos socket en el mismo puerto
-    setnonblocking(serv.getSock());
+    //setnonblocking(serv.getSock());
 	if (bind(serv.getSock(), (struct sockaddr *) &serv.getStruct(),
       sizeof(serv.getStruct())) < 0 ) {
         perror("bind");
@@ -132,5 +135,4 @@ int main()
         } else
             read_socks(serv);
     }
-
 }

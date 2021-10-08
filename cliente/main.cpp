@@ -6,7 +6,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#define PORT 8080
+#define PORT 6667
 
 int main(int argc, char const *argv[])
 {
@@ -39,7 +39,10 @@ int main(int argc, char const *argv[])
     }
     send(sock , hello , strlen(hello) , 0 );
     printf("Hello message sent\n");
-    valread = read( sock , buffer, 1024);
+    //valread = read( sock , buffer, 1024);
     printf("%s\n",buffer );
+    usleep(10000000);
+    send(sock , "close" , 5 , 0 );
+
     return 0;
 }

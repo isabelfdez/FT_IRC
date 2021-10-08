@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 12:41:29 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 18:40:48 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 18:48:49 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Server
 		int	&				getSock();
 		int					getHighSock() const;
 		struct sockaddr_in &getStruct();
-		int	&				getList(int index);
+		int	&				getfds(int index);
 
 		// Setters
 		void				setSock(int a);
