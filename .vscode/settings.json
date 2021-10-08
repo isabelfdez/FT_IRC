@@ -60,6 +60,11 @@
         "unordered_map": "cpp",
         "utility": "cpp",
         "vector": "cpp",
+<<<<<<< HEAD
         "list": "cpp"
+=======
+        "list": "cpp",
+        "thread": "cpp"
+>>>>>>> 294f4f30900f61f75b2f4737f7aab800d7436aa8
     }
 }

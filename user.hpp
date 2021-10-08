@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:37:19 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:52:54 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,29 +57,29 @@ typedef struct	user_modes
 	bool	s;
 }				user_modes;
 
-class IUser
-{
-	public:
-		// Virtual destructor
-		virtual ~IUser() = 0;
-	
-		// Getters
-		virtual std::string			getUserName() const = 0;
-		virtual std::string			getNick() const = 0;
-		virtual bool				getmode(char mode) const = 0;		// Pasamos el caracter del que queremos obtener el mode
-		virtual int					getsockfd()	const = 0;
-		virtual struct sockaddr_in	getstruct()	const = 0;
+//class IUser
+//{
+//	public:
+//		// Virtual destructor
+//		virtual ~IUser() = 0;
+//	
+//		// Getters
+//		virtual std::string			getUserName() const = 0;
+//		virtual std::string			getNick() const = 0;
+//		virtual bool				getmode(char mode) const = 0;		// Pasamos el caracter del que queremos obtener el mode
+//		virtual int					getsockfd()	const = 0;
+//		virtual struct sockaddr_in	getstruct()	const = 0;
+//
+//		// Setters
+//		virtual void				setUserName(std::string name) = 0;
+//		virtual void				setNick(std::string nick) = 0;
+//		virtual void				setmode(char mode, bool state) = 0;		// Pasamos el caracter de mode que quieremos cambiar y el estado al que lo queremos cambiar
+//		
+//		// Other functions
+//		virtual void				init_modes();	
+//};
 
-		// Setters
-		virtual void				setUserName(std::string name) = 0;
-		virtual void				setNick(std::string nick) = 0;
-		virtual void				setmode(char mode, bool state) = 0;		// Pasamos el caracter de mode que quieremos cambiar y el estado al que lo queremos cambiar
-		
-		// Other functions
-		virtual void				init_modes();	
-};
-
-class User : public IUser
+class User
 {
 	private:
 		std::string					_username;
