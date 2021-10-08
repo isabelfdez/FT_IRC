@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:07:36 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:38:30 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,9 @@ void	User::setmode(char mode, bool state)
 
 bool	User::operator==(User & obj)
 {
-	
+	if (this->_nick != obj._nick)
+		return (0);
+	return (1);
 }
 
 // Other functions
@@ -100,3 +102,21 @@ void	User::init_modes()
 	this->_modes.big_o = 0;
 	this->_modes.s = 0;
 }
+
+void	User::deleteChannel(Channel & channel)
+{
+	for (std::list<Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
+    {
+		if (**it == channel) // Esto no se si esta bien
+		{
+			this->_channels.erase(it);
+			return ;	
+		}
+	}
+}
+
+void	User::addChannel(Channel * channel)
+{
+	this->_channels.push_back(channel);
+}
+

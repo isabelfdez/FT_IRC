@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:07:11 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:37:19 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string>
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include "channel.hpp"
 
 //Command: MODE
 //   Parameters: <nickname>
@@ -41,6 +42,9 @@
 
 // ESTOS SON LOS UNICOS MODOS QUE SALEN EN EL ULTIMO RFC Y POR TANTO NO HAY QUE
 // IMPLEMENTAR MAS
+
+class User;
+class Channel;
 
 typedef struct	user_modes
 {
@@ -82,6 +86,7 @@ class User : public IUser
 		std::string					_nick;
 		user_modes					_modes;
 		int							_sock_fd;
+		std::list<Channel *>		_channels;
 
 	public:
 		// Constructor && destructor
@@ -105,6 +110,8 @@ class User : public IUser
 
 		// Other functions
 		void						init_modes();
+		void						deleteChannel(Channel & channel);
+		void						addChannel(Channel * channel);
 };
 
 #endif

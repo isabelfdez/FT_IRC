@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 15:55:45 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:39:42 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,34 @@
 
 # define MAX_USERS 50
 
+class Channel;
+class User;
+
 class Channel
 {
 	private:
+		std::string			_name;
 		std::list<User *>	_users;
 		int					_maxusers;
 
 	public:
 		// Construtor && destructor
-		Channel();
+		Channel(std::string name);
 		~Channel();
 
 		// Getters
+		std::string			getName() const;
+		std::list<User *>	getUsers() const;
 
 		// Setters
+		void				setName(std::string name);
+		
+		// Overload
+		bool				operator==(Channel & obj);
 
 		// Other functions
-		void				deleteUser();
+		void				deleteUser(User & user);
+		void				addUser(User * user);
 	
 };
 
