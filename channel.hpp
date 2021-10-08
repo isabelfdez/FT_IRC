@@ -1,18 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/08 12:41:29 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 12:42:44 by isfernan         ###   ########.fr       */
+/*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
+/*   Updated: 2021/10/08 15:55:45 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef CHANNEL_HPP
+# define CHANNEL_HPP
 
-class Server
+# include <list>
+# include "user.hpp"
+
+# define MAX_USERS 50
+
+class Channel
+{
+	private:
+		std::list<User *>	_users;
+		int					_maxusers;
+
+	public:
+		// Construtor && destructor
+		Channel();
+		~Channel();
+
+		// Getters
+
+		// Setters
+
+		// Other functions
+		void				deleteUser();
+	
+};
 
 #endif
