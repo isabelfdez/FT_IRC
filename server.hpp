@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 12:41:29 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 17:01:44 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 18:40:48 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,30 @@
 
 class Server
 {
-    //private:
-    public:
-        fd_set              _socks;
-        int                 _sock;
-        int                 _highSock;
-        int                 _connectList[MAXFD];
-        struct sockaddr_in  _server_address;
-        std::list<User*>    _users;
-        std::list<Channel*> _channels;
+	private:
+		fd_set              _socks;
+		int                 _sock;
+		int                 _highSock;
+		int                 _connectList[MAXFD];
+		struct sockaddr_in  _server_address;
+		std::list<User*>    _users;
+		std::list<Channel*> _channels;
 
-        Server(int port);
-        ~Server();
-        
+	public:
+		// Constructor && destructor
+		Server(int port);
+		~Server();
 
+		// Getters
+		fd_set &			getSocks();
+		int	&				getSock();
+		int					getHighSock() const;
+		struct sockaddr_in &getStruct();
+		int	&				getList(int index);
+
+		// Setters
+		void				setSock(int a);
+		void				setHighSock(int a);
 
 
 };
