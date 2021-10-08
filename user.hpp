@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/07 20:49:31 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/08 15:58:15 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define USER_HPP
 
 # include <string>
+# include <sys/socket.h>
+# include <netinet/in.h>
 
 //Command: MODE
 //   Parameters: <nickname>
@@ -58,25 +60,28 @@ class IUser
 		virtual ~IUser() = 0;
 	
 		// Getters
-		virtual std::string	getUserName() const = 0;
-		virtual std::string	getNick() const = 0;
-		virtual bool		getmode(char mode) const = 0;		// Pasamos el caracter del que queremos obtener el mode
+		virtual std::string			getUserName() const = 0;
+		virtual std::string			getNick() const = 0;
+		virtual bool				getmode(char mode) const = 0;		// Pasamos el caracter del que queremos obtener el mode
+		virtual int					getsockfd()	const = 0;
+		virtual struct sockaddr_in	getstruct()	const = 0;
 
 		// Setters
-		virtual std::string	setUserName(std::string name) = 0;
-		virtual std::string	setNick(std::string nick) = 0;
-		virtual void		setmode(char mode, bool state) = 0;		// Pasamos el caracter de mode que quieremos cambiar y el estado al que lo queremos cambiar
+		virtual void				setUserName(std::string name) = 0;
+		virtual void				setNick(std::string nick) = 0;
+		virtual void				setmode(char mode, bool state) = 0;		// Pasamos el caracter de mode que quieremos cambiar y el estado al que lo queremos cambiar
 		
 		// Other functions
-		virtual void		init_modes();	
+		virtual void				init_modes();	
 };
 
 class User : public IUser
 {
 	private:
-		std::string			_username;
-		std::string			_nick;
-		user_modes			_modes;
+		std::string					_username;
+		std::string					_nick;
+		user_modes					_modes;
+		int							_sock_fd;
 
 	public:
 		// Constructor && destructor
@@ -84,17 +89,19 @@ class User : public IUser
 		~User();
 
 		// Getters
-		std::string			getUserName() const;
-		std::string			getNick() const;
-		bool				getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
+		std::string					getUserName() const;
+		std::string					getNick() const;
+		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
+		int							getsockfd()	const;
+		
 
 		// Setters
-		std::string			setUserName(std::string name);
-		std::string			setNick(std::string nick);
-		void				setmode(char mode, bool state);
+		void						setUserName(std::string name);
+		void						setNick(std::string nick);
+		void						setmode(char mode, bool state);
 
 		// Other functions
-		void				init_modes();
+		void						init_modes();
 };
 
 #endif

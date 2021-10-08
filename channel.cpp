@@ -1,18 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/08 12:41:29 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 12:42:44 by isfernan         ###   ########.fr       */
+/*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
+/*   Updated: 2021/10/08 16:04:12 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#include "channel.hpp"
 
-class Server
+// Constructor && destructor
 
-#endif
+Channel::Channel() { this->_maxusers = MAX_USERS; }
+
+Channel::~Channel() {  }
+
+void	Channel::deleteUser()
+{
+	
+}
