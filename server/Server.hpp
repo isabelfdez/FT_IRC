@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 14:23:18 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/11 19:09:23 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/11 19:17:32 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Server
 		void			build_select_list();
 		void			attendClients();
 		void			join_new_connection();
-		void			getCustomerRequest();
+		void			getCustomerRequest( int const & id_client );
 		
 		void			setNumReadSock(void );
 		int		const & getNumReadSock( void ) const ;

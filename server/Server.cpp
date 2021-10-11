@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 15:49:33 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/11 19:09:30 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/11 19:38:09 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void Server::build_select_list( void )
 			if (this->_list_connected_users.at(i) > this->_highsock )
 				this->_highsock = this->_list_connected_users.at(i);
 		}
+		
 	}
 }
 
@@ -89,6 +90,7 @@ void Server::setNumReadSock( void )
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
 	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_socks, (fd_set * ) 0, (fd_set *) 0 , NULL);
+
 }
 
 void Server::attendClients()
@@ -96,20 +98,21 @@ void Server::attendClients()
 	if( FD_ISSET(this->_listen_server_sock , &this->_socks) )
 		this->join_new_connection();
 	
-	for (size_t i = 0; i < this->_list_connected_users.size(); i++)
+	for (size_t i = 0; i < this->_list_connected_users.size() + 1; i++)
 	{
 		if ( FD_ISSET( this->_list_connected_users.at(i), &this->_socks) )
-			std::cout << i <<" client ask for answer " << std::endl;
+			this->getCustomerRequest( this->_list_connected_users.at(i) );
 	}
 	
 }
 
-void Server::getCustomerRequest()
+void Server::getCustomerRequest( int const & fd_client )
 {
-	std::string _request;
-	char *cur_char;
+	char buffer[80];
+	int byte=  read(fd_client, buffer, 80);
 
-	// if ( sock_gets() )
+	std::cout << "Request: " << static_cast<std::string >( buffer ) << std::endl;
+
 }
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }

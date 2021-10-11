@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 16:15:03 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/11 17:36:37 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/11 19:26:46 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main ()
 			if ( server.getNumReadSock() == 0)
 			{
 			  std::cout << ".";
-			  fflush(stdout);
+			//   fflush(stdout);
 			}
 			else
 				server.attendClients();
