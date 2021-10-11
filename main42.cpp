@@ -38,7 +38,7 @@ void build_select_list(Server & serv)
     
     FD_SET(serv.getSock(),&serv.getSocks());
 	
-    for (k = 0; k < 5; k++) {
+    for (k = 0; k < MAXFD; k++) {
         if (serv.getfds(k) != 0) {
             FD_SET(serv.getfds(k), &serv.getSocks());
             if (serv.getfds(k) > serv.getHighSock())
@@ -56,7 +56,7 @@ void handle_new_connection(Server & serv) {
         exit(EXIT_FAILURE);
     }
     setnonblocking(connection);
-    for (i = 0; (i < 5) && (connection != -1); i ++)
+    for (i = 0; (i < MAXFD) && (connection != -1); i ++)
         if (serv.getfds(i) == 0) {
             printf("\nConnection accepted:   FD=%d; Slot=%d\n",
                 connection,i);
@@ -68,6 +68,8 @@ void handle_new_connection(Server & serv) {
         printf("\nNo room left for new client.\n");
         close(connection);
     }
+    // Pedirle al usuario que se registre
+    send(connection, "hola", 5, 0);
 }
 
 void deal_with_data(int j, Server & serv)
@@ -79,6 +81,7 @@ void deal_with_data(int j, Server & serv)
     //    return ;
     printf("|%s|\n", buffer);
     printf("j = %i\n", j);
+    send(serv.getfds(j), "te escucho", 11, 0);
     
     if (!strncmp(buffer, "close", 5))
     {
@@ -93,7 +96,7 @@ void read_socks(Server & serv) {
 	printf("aqui entra\n");
     if (FD_ISSET(serv.getSock(),&serv.getSocks()))
         handle_new_connection(serv);
-    for (j = 0; j < 5; j++) {
+    for (j = 0; j < MAXFD; j++) {
         if (FD_ISSET(serv.getfds(j),&serv.getSocks()))
             deal_with_data(j, serv);
     }
