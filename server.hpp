@@ -14,6 +14,7 @@
 # include <unistd.h>
 # include "User.hpp"
 
+
 # define PORT 6667
 
 class Server
@@ -48,6 +49,7 @@ class Server
 		void			join_new_connection();
 		void			getCustomerRequest( int & id_client, int i);
 		void			replyCustomerRequest( int & id_client, int i);
+		void			parse_command(int fd, std::string buff);
 
 		
 		void			setNumReadSock(void );

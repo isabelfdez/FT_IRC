@@ -61,6 +61,7 @@ void Server::join_new_connection()
 		if(this->_list_connected_user[i] == 0)
 			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
 		this->_list_connected_user[i] = connection;
+		this->_fd_users[connection] =  new User(connection);
 		connection = -1;
 	}
 	if ( connection != -1)
@@ -98,18 +99,37 @@ void Server::attendClients()
 
 void Server::getCustomerRequest( int & fd_client, int i)
 {
-	char buffer[80];
+	char	buffer[10];
+	memset(buffer, 0, sizeof(buffer));
+	//char	*aux;
+	std::string	buff;
+	//arreglar!
+	int byte = recv(fd_client, buffer, 9, 0);
+	buff += buffer;
 
-	int byte=  read(fd_client, buffer, 80);
-	std::cout << "byte : " << byte << std::endl;
+	i++;
 	if ( !byte )
 	{
 		close( fd_client );
 		this->_list_connected_user[i] = 0;
 	}
-	else
-		std::cout << "Request: " << static_cast<std::string >( buffer ) << std::endl;
+	while (byte == 9)
+	{
 
+		std::cout << "byte = " << byte << std::endl;
+		byte = recv(fd_client, buffer, 9, 0);
+		buff += buffer;
+	}
+	std::cout << "byte = " << byte << std::endl;
+	std::cout << "se sale\n";
+	std::cout << "buffer: " <<  buffer << std::endl;
+	//if ( !byte )
+	//{
+	//	close( fd_client );
+	//	this->_list_connected_user[i] = 0;
+	//}
+	// else
+	// 	this->parse_command(fd_client, buffer);
 }
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
