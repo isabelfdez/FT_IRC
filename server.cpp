@@ -31,7 +31,6 @@ Server::~Server()
 void Server::build_select_list( void )
 {
 	FD_ZERO(&this->_reads);
-	FD_ZERO(&this->_writes);
 
 	
 	FD_SET( this->_listen_server_sock, &this->_reads );
@@ -41,7 +40,6 @@ void Server::build_select_list( void )
 		if( this->_list_connected_user[i] != 0)
 		{
 			FD_SET(this->_list_connected_user[i], &this->_reads);
-			FD_SET(this->_list_connected_user[i], &this->_writes);
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
@@ -83,7 +81,7 @@ void Server::setNumReadSock( void )
 {
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
-	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, (fd_set *) 0, (fd_set *) 0 , &this->_time_out);
 }
 
 void Server::attendClients()
@@ -94,8 +92,6 @@ void Server::attendClients()
 	{
 		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
 			this->getCustomerRequest( this->_list_connected_user[i], i);
-		if ( FD_ISSET( this->_list_connected_user[i], &this->_writes) )
-		 	this->replyCustomerRequest( this->_list_connected_user[i], i);
 	}
 	
 }
@@ -113,13 +109,6 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	}
 	else
 		std::cout << "Request: " << static_cast<std::string >( buffer ) << std::endl;
-
-}
-
-void Server::replyCustomerRequest( int & fd_client, int i)
-{
-	send(fd_client, "hola que tal", 13, 0);
-	i++;
 
 }
 

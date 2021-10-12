@@ -87,10 +87,11 @@ class User
 		user_modes					_modes;
 		int							_sock_fd;
 		std::list<Channel *>		_channels;
+		bool						_is_registered;
 
 	public:
 		// Constructor && destructor
-		User();
+		User(int & fd);
 		~User();
 
 		// Getters
@@ -98,12 +99,14 @@ class User
 		std::string					getNick() const;
 		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
 		int							getsockfd()	const;
+		bool						getRegistered() const;
 		
 
 		// Setters
 		void						setUserName(std::string name);
 		void						setNick(std::string nick);
 		void						setmode(char mode, bool state);
+		void						setRegistered(bool status);
 
 		// Overload
 		bool						operator==(User & obj);

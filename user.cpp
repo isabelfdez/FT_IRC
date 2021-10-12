@@ -14,9 +14,10 @@
 
 // Constructor && destructor
 
-User::User() 
+User::User(int & fd) : _sock_fd(fd) 
 {
 	init_modes();
+	this->_is_registered = false;
 }
 
 User::~User() { }
@@ -52,6 +53,9 @@ bool	User::getmode(char mode) const
 
 int		User::getsockfd()  const { return (this->_sock_fd); }
 
+bool	User::getRegistered() const { return (this->_is_registered); }
+
+
 // Setters
 
 void	User::setUserName(std::string name) { this->_username = name; }
@@ -80,6 +84,9 @@ void	User::setmode(char mode, bool state)
 			break ;
 	} 
 }
+
+void	User::setRegistered(bool status) { this->_is_registered = status; }
+
 
 // Overloads
 
