@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "channel.hpp"
+#include "Channel.hpp"
 
 // Constructor && destructor
 

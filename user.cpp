@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "User.hpp"
 
 // Constructor && destructor
 

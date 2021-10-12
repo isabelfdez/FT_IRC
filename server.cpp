@@ -1,45 +1,129 @@
-#include "server.hpp"
+#include "Server.hpp"
 
-// Constructor && destructor
-
-Server::Server(int port)
+Server::Server()
 {
-	FD_ZERO(&_socks);
-	this->_sock = 0;
-	this->_highSock = 0;
-	for (int i = 0; i < MAXFD; i++)
-		this->_connectList[i] = 0;
-	memset((char *) &_server_address, 0, sizeof(_server_address));
-	_server_address.sin_family = AF_INET;
-	_server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-	_server_address.sin_port = htons(port);
+	std::cout << "Creating Server..." << std::endl;
+	FD_ZERO(&this->_reads);
+	this->_listen_server_sock = 0;
+	this->_highsock = 0;
+	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
+	if ( this->_listen_server_sock == -1 )
+		throw Server::GlobalServerExecption();
+	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
+	memset( (char *) &this->_addr_server, 0 , sizeof(sockaddr_in) );
+	this->_addr_server.sin_port = htons(PORT);
+	this->_addr_server.sin_family = AF_INET;
+	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
+	if ( bind( this->_listen_server_sock, (struct sockaddr *) &this->_addr_server, sizeof (this->_addr_server) )  == -1)
+		throw Server::GlobalServerExecption();
+	if ( listen (this->_listen_server_sock, 5) == -1)
+		throw Server::GlobalServerExecption();
+	this->_highsock = this->_listen_server_sock;
+
 }
 
 Server::~Server()
 {
-	std::list<User*>::iterator it = _users.begin();
-	while (it != _users.end())
+	
+}
+
+
+void Server::build_select_list( void )
+{
+	FD_ZERO(&this->_reads);
+	FD_ZERO(&this->_writes);
+
+	
+	FD_SET( this->_listen_server_sock, &this->_reads );
+
+	for (size_t i = 0; i <FD_SETSIZE; i++)
 	{
-		close((*it)->getsockfd());
-		it++;
-		_users.pop_front();
+		if( this->_list_connected_user[i] != 0)
+		{
+			FD_SET(this->_list_connected_user[i], &this->_reads);
+			FD_SET(this->_list_connected_user[i], &this->_writes);
+			if (this->_list_connected_user[i] > this->_highsock )
+				this->_highsock = this->_list_connected_user[i];
+		}
+		
 	}
 }
 
-// Getters
+void Server::join_new_connection()
+{
+	int connection;
 
-fd_set &			Server::getSocks() { return (_socks); }
+	connection = accept(this->_listen_server_sock, NULL, NULL);
+	if (connection < 0)
+		throw Server::GlobalServerExecption();
+	// setnonblocking
 
-int &				Server::getSock() { return(_sock); }
+	for (size_t i = 0; i < 1 && (connection != -1); i++)
+	{
+		if(this->_list_connected_user[i] == 0)
+			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
+		this->_list_connected_user[i] = connection;
+		connection = -1;
+	}
+	if ( connection != -1)
+	{
+		std::cout << "No roon left for new clinte" << std::endl;
+		close ( connection );
+	}
+	
+}
 
-int					Server::getHighSock() const { return(_highSock); }
+const char* Server::GlobalServerExecption::what() const throw ()
+{
+	return "❌ GlobalServerExecption\n";
+}
 
-struct sockaddr_in &Server::getStruct() { return(_server_address); }
 
-int &				Server::getfds(int index) { return(_connectList[index]); }
+void Server::setNumReadSock( void )
+{
+	this->_time_out.tv_sec = 1;
+	this->_time_out.tv_usec = 0;
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
+}
 
-// Setters
+void Server::attendClients()
+{
+	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
+		this->join_new_connection();
+	for (size_t i = 0; i < FD_SETSIZE; i++)
+	{
+		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
+			this->getCustomerRequest( this->_list_connected_user[i], i);
+		if ( FD_ISSET( this->_list_connected_user[i], &this->_writes) )
+		 	this->replyCustomerRequest( this->_list_connected_user[i], i);
+	}
+	
+}
 
-void				Server::setSock(int a) { _sock = a; }
+void Server::getCustomerRequest( int & fd_client, int i)
+{
+	char buffer[80];
 
-void				Server::setHighSock(int a) { _highSock = a; }
+	int byte=  read(fd_client, buffer, 80);
+	std::cout << "byte : " << byte << std::endl;
+	if ( !byte )
+	{
+		close( fd_client );
+		this->_list_connected_user[i] = 0;
+	}
+	else
+		std::cout << "Request: " << static_cast<std::string >( buffer ) << std::endl;
+
+}
+
+void Server::replyCustomerRequest( int & fd_client, int i)
+{
+	send(fd_client, "hola que tal", 13, 0);
+	i++;
+
+}
+
+int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
+int		const &	Server::getListenSockServer( void ) const { return this->_listen_server_sock; }
+fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
+int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }

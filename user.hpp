@@ -16,7 +16,7 @@
 # include <string>
 # include <sys/socket.h>
 # include <netinet/in.h>
-# include "channel.hpp"
+# include "Channel.hpp"
 
 //Command: MODE
 //   Parameters: <nickname>

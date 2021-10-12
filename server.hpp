@@ -1,61 +1,55 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/08 12:41:29 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 18:48:49 by isfernan         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#ifndef __SERVER__HPP
+# define __SERVER__HPP
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
-
-#include <ctype.h>
-#include <sys/time.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
+#include <string>
+# include <ctype.h>
+# include <sys/time.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <fcntl.h>
+# include <map>
+# include <iostream>
+# include <exception>
 #include <unistd.h>
-#include <netinet/in.h>
-#include <string.h>
-#include "user.hpp"
-#include "channel.hpp"
 
-
-#define MAXFD 100
+#define PORT 6667
 
 class Server
 {
 	private:
-		fd_set              _socks;
-		int                 _sock;
-		int                 _highSock;
-		int                 _connectList[MAXFD];
-		struct sockaddr_in  _server_address;
-		std::list<User*>    _users;
-		std::list<Channel*> _channels;
+		// std::map< size_t , int >	_list_connected_users;
+		int							_list_connected_user[FD_SETSIZE];
+		struct sockaddr_in 			_addr_server;
+		struct timeval				_time_out;
+		fd_set						_reads;
+		fd_set						_writes;
+
+		int							_num_read_sock;
+		int							_listen_server_sock;
+		int							_highsock;
 
 	public:
-		// Constructor && destructor
-		Server(int port);
+		Server();
 		~Server();
+		
+		class GlobalServerExecption : public std::exception
+		{
+			public:
+				virtual const char* what() const throw ();
+		};
 
-		// Getters
-		fd_set &			getSocks();
-		int	&				getSock();
-		int					getHighSock() const;
-		struct sockaddr_in &getStruct();
-		int	&				getfds(int index);
+		void			build_select_list();
+		void			attendClients();
+		void			join_new_connection();
+		void			getCustomerRequest( int & id_client, int i);
+		void			replyCustomerRequest( int & id_client, int i);
 
-		// Setters
-		void				setSock(int a);
-		void				setHighSock(int a);
-
-
+		
+		void			setNumReadSock(void );
+		int		const & getNumReadSock( void ) const ;
+		int		const & getListenSockServer()	const;
+		int		const & getHigthSock ()			const;
+		fd_set	const & getSocks()				const;
 };
 
-#endif
+#endif 

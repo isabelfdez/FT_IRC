@@ -14,7 +14,7 @@
 # define CHANNEL_HPP
 
 # include <list>
-# include "user.hpp"
+# include "User.hpp"
 
 # define MAX_USERS 50
 
