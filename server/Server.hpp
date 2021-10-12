@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 14:23:18 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/11 19:17:32 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/12 15:00:35 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@
 class Server
 {
 	private:
-		std::map< size_t , int >	_list_connected_users;
+		// std::map< size_t , int >	_list_connected_users;
+		int							_list_connected_user[FD_SETSIZE];
 		struct sockaddr_in 			_addr_server;
 		struct timeval				_time_out;
 		fd_set						_socks;
@@ -50,7 +51,7 @@ class Server
 		void			build_select_list();
 		void			attendClients();
 		void			join_new_connection();
-		void			getCustomerRequest( int const & id_client );
+		void			getCustomerRequest( int & id_client );
 		
 		void			setNumReadSock(void );
 		int		const & getNumReadSock( void ) const ;

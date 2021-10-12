@@ -6,7 +6,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#define PORT 8080
+#define PORT 6667
 
 int main(int argc, char const *argv[])
 {
@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
         return -1;
     }
     
-    memset(&serv_addr, '0', sizeof(serv_addr));
+    memset(&serv_addr, 0, sizeof(serv_addr));
     
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
