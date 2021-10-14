@@ -19,6 +19,9 @@
 
 // Definiciones de errores
 
+# define ERR_NONICKNAMEGIVEN		"431"
+# define ERR_ERRONEUSNICKNAME		"432"
+# define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
 # define ERR_ALREADYREGISTRED		"462"
 
@@ -37,6 +40,7 @@ class Server
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, User*>	_nick_users;
 		std::list<std::string>			_commands;
+		std::list<std::string>			_nicks;
 
 	public:
 		Server();
