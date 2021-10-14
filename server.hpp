@@ -12,10 +12,15 @@
 # include <iostream>
 # include <exception>
 # include <unistd.h>
-# include "User.hpp"
+# include "user.hpp"
 
 
 # define PORT 6667
+
+// Definiciones de errores
+
+# define ERR_NOTREGISTERED			"451"
+# define ERR_ALREADYREGISTRED		"462"
 
 class Server
 {
@@ -49,7 +54,7 @@ class Server
 		void			join_new_connection();
 		void			getCustomerRequest( int & id_client, int i);
 		void			replyCustomerRequest( int & id_client, int i);
-		void			parse_command(int fd, std::string buff);
+		void			parse_command(int fd, std::string buff, char * str);
 
 		
 		void			setNumReadSock(void );
@@ -57,6 +62,11 @@ class Server
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
 		fd_set	const & getSocks()				const;
+
+
+		// Comandos
+		void			nick_command(std::string command, char * str, int fd);
+
 };
 
 #endif 

@@ -1,6 +1,6 @@
-#include "Server.hpp"
-#include "User.hpp"
-#include "Channel.hpp"
+#include "server.hpp"
+#include "user.hpp"
+#include "channel.hpp"
 
 int main ()
 {
@@ -12,20 +12,16 @@ int main ()
 		{
 			 server.build_select_list();
 			 server.setNumReadSock();
-			std::cout << " * " << server.getNumReadSock() << std::endl;
+			//std::cout << " * " << server.getNumReadSock() << std::endl;
 			//  if ( server.getNumReadSock() < 0 )
 			 	// throw Server::GlobalServerExecption();
 			if ( server.getNumReadSock() == 0)
 			{
-			  std::cout << ".";
+			  //std::cout << ".";
 			  fflush(stdout);
 			}
 			else
-			{
-					std::cout << " before "<< "\n";
-					server.attendClients();
-					std::cout << " affter "  << "\n";
-			}
+				server.attendClients();
 		}
 		
 	}

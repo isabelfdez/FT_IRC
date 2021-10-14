@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:52:54 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/14 16:48:17 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <string>
 # include <sys/socket.h>
 # include <netinet/in.h>
-# include "Channel.hpp"
+# include "channel.hpp"
 
 //Command: MODE
 //   Parameters: <nickname>

@@ -6,15 +6,15 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:45:38 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/14 16:50:28 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.hpp"
+#include "user.hpp"
 
 // Constructor && destructor
 
-User::User(int & fd) : _sock_fd(fd) 
+User::User(int & fd) : _sock_fd(fd)
 {
 	init_modes();
 	this->_is_registered = false;

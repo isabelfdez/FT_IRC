@@ -6,11 +6,11 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:39:34 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/14 16:47:42 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Channel.hpp"
+#include "channel.hpp"
 
 // Constructor && destructor
 

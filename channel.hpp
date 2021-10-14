@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/08 16:39:42 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/14 16:47:35 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define CHANNEL_HPP
 
 # include <list>
-# include "User.hpp"
+# include "user.hpp"
 
 # define MAX_USERS 50
 
