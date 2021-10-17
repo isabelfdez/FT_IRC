@@ -137,26 +137,26 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	std::cout << "El comando es " << command << std::endl;
 	if (!find_command(command, this->_commands))
 		return ; // Aquí tal vez haya que imprimir \r\n
-	if (!this->_fd_users[fd]->getRegistered())
-	{
-		// Si el usuario no está registrado, solo se puede llamar a los comandos
-		// USER o NICK, y no puede llamar a USER varias veces seguidas
-		if (command != "USER" && command != "NICK" &&
-			command != "user" && command != "nick")
-			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
-		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size())
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);		
-	}
-	else if (this->_fd_users[fd]->getRegistered())
-	{
-		if ((command == "USER" || command == "user"))
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-		//else if (command == "USER" || command == "user")
-		//	user_command();
-		else if (command == "NICK" || command == "nick")
-			this->nick_command(buff2, str, fd);
-		//else if (command == "JOIN" || command == "join")
-		//	join_command();
+	// if (!this->_fd_users[fd]->getRegistered())
+	// {
+	// 	// Si el usuario no está registrado, solo se puede llamar a los comandos
+	// 	// USER o NICK, y no puede llamar a USER varias veces seguidas
+	// 	if (command != "USER" && command != "NICK" &&
+	// 		command != "user" && command != "nick")
+	// 		send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
+	// 	else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size())
+	// 		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);		
+	// }
+	// else if (this->_fd_users[fd]->getRegistered())
+	// {
+	if ((command == "USER" || command == "user"))
+		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+	//else if (command == "USER" || command == "user")
+	//	user_command();
+	// else if (command == "NICK" || command == "nick")
+	// 	this->nick_command(buff2, str, fd);
+	else if (command == "JOIN" || command == "join")
+		join_command(buff2, str, fd);
 		//else if (command == "PRIVMSG" || command == "privmsg")
 		//	privmsg_command();
 		//else if (command == "NOTICE" || command == "notice")
@@ -165,7 +165,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		//	part_command();
 		//else if (command == "QUIT" || command == "quit")
 		//	quit_command();
-	}
+	//}
 }
 
 void Server::getCustomerRequest( int & fd_client, int i)

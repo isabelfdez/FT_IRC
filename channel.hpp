@@ -27,6 +27,7 @@ class Channel
 		std::string			_name;
 		std::list<User *>	_users;
 		int					_maxusers;
+		bool				_isfull;
 
 	public:
 		// Construtor && destructor
@@ -36,6 +37,7 @@ class Channel
 		// Getters
 		std::string			getName() const;
 		std::list<User *>	getUsers() const;
+		bool				getIsFull() const;
 
 		// Setters
 		void				setName(std::string name);

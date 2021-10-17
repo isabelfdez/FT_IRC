@@ -2,6 +2,7 @@
 # define __SERVER__HPP
 
 # include <string>
+# include <stdio.h>
 # include <ctype.h>
 # include <sys/time.h>
 # include <sys/socket.h>
@@ -13,6 +14,7 @@
 # include <exception>
 # include <unistd.h>
 # include "user.hpp"
+# include <algorithm>
 
 
 # define PORT 6667
@@ -23,7 +25,11 @@
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
+# define ERR_NEEDMOREPARAMS			"461"
 # define ERR_ALREADYREGISTRED		"462"
+# define ERR_BADCHANMASK			"476"
+# define ERR_TOOMANYCHANNELS		"405"
+# define ERR_CHANNELISFULL			"471"
 
 class Server
 {
@@ -39,6 +45,7 @@ class Server
 		int								_highsock;
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, User*>	_nick_users;
+		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
 		std::list<std::string>			_nicks;
 
@@ -69,7 +76,8 @@ class Server
 
 
 		// Comandos
-		void			nick_command(std::string command, char * str, int fd);
+		//void			nick_command(std::string command, char * str, int fd);
+		void			join_command(std::string command, char * str, int fd);
 
 };
 

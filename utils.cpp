@@ -91,14 +91,14 @@ char		**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	i = ft_countwords(s, c);
-	if (!(tab = malloc(sizeof(char **) * (i + 1))))
+	if (!(tab = (char**)malloc(sizeof(char **) * (i + 1))))
 		return (NULL);
 	tab[i] = NULL;
 	words = i;
 	i = 0;
 	while (i < words)
 	{
-		tab[i] = malloc(sizeof(char) * ft_size(s, c, j));
+		tab[i] = (char*)malloc(sizeof(char) * ft_size(s, c, j));
 		j = ft_cpyword(s, c, j, tab[i]);
 		i++;
 	}

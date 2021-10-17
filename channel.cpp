@@ -14,7 +14,11 @@
 
 // Constructor && destructor
 
-Channel::Channel(std::string name) : _name(name) { this->_maxusers = MAX_USERS; }
+Channel::Channel(std::string name) : _name(name) 
+{
+	this->_maxusers = MAX_USERS;
+	this->_isfull = false;
+}
 
 Channel::~Channel() {  }
 
@@ -26,6 +30,8 @@ std::list<User *>	Channel::getUsers() const
 {
 	return (this->_users);
 }
+
+bool	Channel::getIsFull() const { return(this->_isfull); }
 
 // Setters
 
@@ -57,4 +63,6 @@ void	Channel::deleteUser(User & user)
 void	Channel::addUser(User * user)
 {
 	this->_users.push_back(user);
+	if (_users.size() >= this->_maxusers)
+		this->_isfull = true;
 }

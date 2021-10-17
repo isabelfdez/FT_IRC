@@ -18,6 +18,8 @@
 # include <netinet/in.h>
 # include "channel.hpp"
 
+# define MAX_CHANNELS 10
+
 //Command: MODE
 //   Parameters: <nickname>
 //               *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )
@@ -88,6 +90,7 @@ class User
 		int							_sock_fd;
 		std::list<Channel *>		_channels;
 		bool						_is_registered;
+		bool						_max_channels;
 
 	public:
 		// Constructor && destructor
@@ -100,7 +103,7 @@ class User
 		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
 		int							getsockfd()	const;
 		bool						getRegistered() const;
-		
+		bool						getMaxChannels() const;
 
 		// Setters
 		void						setUserName(std::string name);
