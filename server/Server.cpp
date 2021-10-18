@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 15:49:33 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/12 15:08:35 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/12 20:04:29 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,21 @@ void Server::getCustomerRequest( int & fd_client )
 {
 	char buffer[80];
 
-	int byte=  read(fd_client, buffer, 80);
+	memset(buffer, 0 , sizeof(buffer));
+	int byte =  read(fd_client, buffer, 79);
 
+	std::cout << " **** \n";
 	if ( !byte )
+	{
+		for (size_t i = 0; i < FD_SETSIZE; i++)
+		{
+			if( this->_list_connected_user[i] == fd_client)
+				this->_list_connected_user[i] = 0;
+		}
 		close( fd_client );
+	}
 	else
-		std::cout << "Request: " << static_cast<std::string >( buffer ) << std::endl;
+		std::cout << "Request: " << buffer << std::endl;
 
 }
 
