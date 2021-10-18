@@ -90,9 +90,11 @@
 
 void	Server::join_channel(char * str, int fd)
 {
-			std::cout << "hola\n";
+
+	int j = 1;
 	std::string s;
 	std::string	str1(str);
+
 	if (str1[0] != '#')
 	{
 		s.assign(str1);
@@ -103,8 +105,18 @@ void	Server::join_channel(char * str, int fd)
 	{
 		s.assign("<");
 		s.append(str1);
-		s.append("> :Erroneous nickname");
+		s.append("> :No such channel");
 		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	while (str1[j])
+	{
+		if (!ft_isalnum(str1[j]) && !ft_isspecial(str1[j]) && str1[j] != '-')
+		{
+			s.append(str1);
+			s.append(" :No such channel");
+			return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+		}
+		j++;
 	}
 	if (this->_fd_users[fd]->getMaxChannels())
 	{
@@ -122,13 +134,14 @@ void	Server::join_channel(char * str, int fd)
 	{
 	 	// User join channel
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
+		send_reply("Channel", " :No topic is set", fd);
 	}
 	else
 	{
-		// Create channel
+		// Create and join channel
 		this->_name_channel[str1] = new Channel(str1);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
-
+		send_reply("Channel", " :No topic is set", fd);
 	}
 }
 
@@ -156,7 +169,6 @@ void	Server::join_command(std::string strin, char * str, int fd)
 		parse2 = ft_split(&parse[1][1], ',');
 	else
 		parse2 = ft_split(parse[1], ',');
-	std::cout << "hola1\n";
 	while (parse2[i] && i < 16)
 	{
 		Server::join_channel(parse2[i], fd);
