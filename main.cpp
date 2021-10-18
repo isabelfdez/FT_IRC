@@ -1,16 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/11 16:15:03 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/12 19:59:10 by krios-fu         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "./server/Server.hpp"
+#include "server.hpp"
+#include "user.hpp"
+#include "channel.hpp"
 
 int main ()
 {
@@ -22,11 +12,12 @@ int main ()
 		{
 			 server.build_select_list();
 			 server.setNumReadSock();
-			 if ( server.getNumReadSock() < 0 )
-			 	throw Server::GlobalServerExecption();
+			//std::cout << " * " << server.getNumReadSock() << std::endl;
+			//  if ( server.getNumReadSock() < 0 )
+			 	// throw Server::GlobalServerExecption();
 			if ( server.getNumReadSock() == 0)
 			{
-			  std::cout << ".";
+			  //std::cout << ".";
 			  fflush(stdout);
 			}
 			else
@@ -36,5 +27,5 @@ int main ()
 	}
 	catch ( ... ) { std::cout <<" herr \n"; }
 
-	return 0;
+	// close()
 }

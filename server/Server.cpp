@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/11 15:49:33 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/12 20:04:29 by krios-fu         ###   ########.fr       */
+/*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
+/*   Updated: 2021/10/14 19:40:47 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "server.hpp"
+#include "utils.hpp"
 
 Server::Server()
 {
 	std::cout << "Creating Server..." << std::endl;
-	FD_ZERO(&this->_socks);
+	FD_ZERO(&this->_reads);
 	this->_listen_server_sock = 0;
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
@@ -31,7 +32,20 @@ Server::Server()
 	if ( listen (this->_listen_server_sock, 5) == -1)
 		throw Server::GlobalServerExecption();
 	this->_highsock = this->_listen_server_sock;
-
+	this->_commands.push_back("USER");
+	this->_commands.push_back("NICK");
+	this->_commands.push_back("JOIN");
+	this->_commands.push_back("PRIVMSG");
+	this->_commands.push_back("NOTICE");
+	this->_commands.push_back("PART");
+	this->_commands.push_back("QUIT");
+	this->_commands.push_back("user");
+	this->_commands.push_back("nick");
+	this->_commands.push_back("join");
+	this->_commands.push_back("privmsg");
+	this->_commands.push_back("notice");
+	this->_commands.push_back("part");
+	this->_commands.push_back("quit");
 }
 
 Server::~Server()
@@ -42,15 +56,16 @@ Server::~Server()
 
 void Server::build_select_list( void )
 {
-	FD_ZERO(&this->_socks);
+	FD_ZERO(&this->_reads);
+
 	
-	FD_SET( this->_listen_server_sock, &this->_socks );
+	FD_SET( this->_listen_server_sock, &this->_reads );
 
 	for (size_t i = 0; i <FD_SETSIZE; i++)
 	{
 		if( this->_list_connected_user[i] != 0)
 		{
-			FD_SET(this->_list_connected_user[i], &this->_socks);
+			FD_SET(this->_list_connected_user[i], &this->_reads);
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
@@ -72,11 +87,12 @@ void Server::join_new_connection()
 		if(this->_list_connected_user[i] == 0)
 			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
 		this->_list_connected_user[i] = connection;
+		this->_fd_users[connection] =  new User(connection);
 		connection = -1;
 	}
 	if ( connection != -1)
 	{
-		std::cout << "No roon left for new clinte" << std::endl;
+		std::cout << "No roon left for new client" << std::endl;
 		close ( connection );
 	}
 	
@@ -92,44 +108,103 @@ void Server::setNumReadSock( void )
 {
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
-	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_socks, (fd_set * ) 0, (fd_set *) 0 , NULL);
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, (fd_set *) 0, (fd_set *) 0 , &this->_time_out);
 }
 
 void Server::attendClients()
 {
-	if( FD_ISSET(this->_listen_server_sock , &this->_socks) )
+	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
 	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
-		if ( FD_ISSET( this->_list_connected_user[i], &this->_socks) )
-			this->getCustomerRequest( this->_list_connected_user[i] );
+		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
+			this->getCustomerRequest( this->_list_connected_user[i], i);
 	}
 	
 }
 
-void Server::getCustomerRequest( int & fd_client )
+void Server::parse_command(int fd, std::string buff, char * str)
 {
-	char buffer[80];
+	std::cout << ":" << str << ":" << std::endl;
+	while (*str == ' ')
+	{
+		buff.erase(buff.begin());
+		str++;
+	}
+	std::string buff2 = buff.substr(0, buff.find('\r'));
+	std::cout << "El buff que queda es " << buff2 << std::endl;
+	std::string command = buff2.substr(0, buff2.find(' '));
+	std::cout << "El comando es " << command << std::endl;
+	if (!find_command(command, this->_commands))
+		return ; // Aquí tal vez haya que imprimir \r\n
+	if (!this->_fd_users[fd]->getRegistered())
+	{
+		// Si el usuario no está registrado, solo se puede llamar a los comandos
+		// USER o NICK, y no puede llamar a USER varias veces seguidas
+		if (command != "USER" && command != "NICK" &&
+			command != "user" && command != "nick")
+			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
+		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size())
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);		
+	}
+	else if (this->_fd_users[fd]->getRegistered())
+	{
+		if ((command == "USER" || command == "user"))
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		//else if (command == "USER" || command == "user")
+		//	user_command();
+		else if (command == "NICK" || command == "nick")
+			this->nick_command(buff2, str, fd);
+		//else if (command == "JOIN" || command == "join")
+		//	join_command();
+		//else if (command == "PRIVMSG" || command == "privmsg")
+		//	privmsg_command();
+		//else if (command == "NOTICE" || command == "notice")
+		//	notice_command();
+		//else if (command == "PART" || command == "part")
+		//	part_command();
+		//else if (command == "QUIT" || command == "quit")
+		//	quit_command();
+	}
+}
 
-	memset(buffer, 0 , sizeof(buffer));
-	int byte =  read(fd_client, buffer, 79);
-
-	std::cout << " **** \n";
+void Server::getCustomerRequest( int & fd_client, int i)
+{
+	char	buffer[512];
+	memset(buffer, 0, sizeof(buffer));
+	int byte = recv(fd_client, buffer, 512, 0);
+	//char	*aux;
+	//std::string	buff;
+	//arreglar!
+	//int byte = recv(fd_client, buffer, 9, 0);
+	//buff += buffer;
+//
+	//i++;
+	//if ( !byte )
+	//{
+	//	close( fd_client );
+	//	this->_list_connected_user[i] = 0;
+	//}
+	//while (byte == 9)
+	//{
+//
+	//	std::cout << "byte = " << byte << std::endl;
+	//	byte = recv(fd_client, buffer, 9, 0);
+	//	buff += buffer;
+	//}
+	//std::cout << "byte = " << byte << std::endl;
+	//std::cout << "se sale\n";
+	//std::cout << "buffer: " <<  buffer << std::endl;
 	if ( !byte )
 	{
-		for (size_t i = 0; i < FD_SETSIZE; i++)
-		{
-			if( this->_list_connected_user[i] == fd_client)
-				this->_list_connected_user[i] = 0;
-		}
 		close( fd_client );
+		this->_list_connected_user[i] = 0;
 	}
 	else
-		std::cout << "Request: " << buffer << std::endl;
-
+		this->parse_command(fd_client, buffer, buffer);
 }
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
 int		const &	Server::getListenSockServer( void ) const { return this->_listen_server_sock; }
-fd_set	const &	Server::getSocks( void ) const { return this->_socks; }
+fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
 int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }
