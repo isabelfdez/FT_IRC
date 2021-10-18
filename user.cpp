@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   user.cpp                                           :+:      :+:    :+:   */
+/*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 16:50:28 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 18:24:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "user.hpp"
+#include "User.hpp"
 
 // Constructor && destructor
 
@@ -53,11 +53,19 @@ bool	User::getmode(char mode) const
 
 int		User::getsockfd()  const { return (this->_sock_fd); }
 
+
+std::string const & User::getRealName() const { return this->_realName; }
+
 bool	User::getRegistered() const { return (this->_is_registered); }
 
 
 // Setters
 
+
+void User::setRealName(std::string const &  realName) 
+{
+	this->_realName = realName;
+}
 void	User::setUserName(std::string name) { this->_username = name; }
 
 void	User::setNick(std::string nick) { this->_nick = nick; }
@@ -121,6 +129,8 @@ void	User::deleteChannel(Channel & channel)
 		}
 	}
 }
+
+
 
 void	User::addChannel(Channel * channel)
 {

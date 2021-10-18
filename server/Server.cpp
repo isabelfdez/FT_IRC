@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 19:40:47 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 18:30:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
-#include "utils.hpp"
+#include "Server.hpp"
+#include "../utils.hpp"
 
 Server::Server()
 {
@@ -122,6 +122,13 @@ void Server::attendClients()
 	}
 	
 }
+
+
+ //  <user> <mode> <unused> <realname>  (int fd, std::string buff, char * str); error list add 
+
+
+
+
 
 void Server::parse_command(int fd, std::string buff, char * str)
 {

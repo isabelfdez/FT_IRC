@@ -1,5 +1,5 @@
-#include "server.hpp"
-#include "user.hpp"
+#include "./server/Server.hpp"
+#include "User.hpp"
 #include "channel.hpp"
 
 int main ()

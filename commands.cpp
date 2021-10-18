@@ -3,20 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 19:51:38 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:11:30 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "./server/Server.hpp"
 #include "utils.hpp"
 
 void	Server::nick_command(std::string command, char * str, int fd)
 {
 	char 		**parse;
 	std::string	s;
+
+	(void) command;
 
 	parse = ft_split(str, ' ');
 	if (!parse[1])
@@ -86,4 +88,63 @@ void	Server::nick_command(std::string command, char * str, int fd)
 	}
 	// CASO 2: El usuario se asigna un nick por primera vez
 	
+}
+
+
+
+/* 
+** Token User devuelve un puntero con los 4 token, y  en caso de que los numeros de token sea 
+** < a 4 devuelve un null.
+** @krios-fu
+**
+*/
+std::string * token_user(char *buffer)
+{
+	std::string tokens[4];
+	std::string  token, s_buffer = buffer;
+	size_t pos = 0, space = 0, i  = 0;
+
+	while ( (pos = s_buffer.find(" ")) != std::string::npos && i < 4)
+	{
+		token = s_buffer.substr(0, pos + space);
+		if ( token.length() > 0 )
+		{
+			tokens[i] = token;
+			i++;
+		}
+		std::string::iterator start = s_buffer.begin();
+		while ( *start == ' ' && start != s_buffer.end() )
+		{
+			space++;
+			start++;
+		}
+		s_buffer.erase(0, pos + space);
+		space = 0;
+		std::cout << token << token.length() <<std::endl;
+	}
+	if (i != 4)
+		return NULL;
+	return tokens;
+}
+
+void Server::user_command( int fd, char *buffer )
+{
+	std::string *token = token_user(buffer);
+
+	User * tmp = this->_fd_users.at(fd);
+	
+	if (!token)
+		return send_error(ERR_NEEDMOREPARAMS, "User :Not enough parameters", fd);
+	if ( tmp->getRegistered() )
+		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		
+	tmp->setUserName(token[0]);
+	tmp->setmode(token[1][0], true);
+	tmp->setRealName(token[3]);
+
+	if ( tmp->getNick().size() > 0 && !tmp->getRegistered() )
+	{
+		tmp->setRegistered(true);
+		this->_connected_users.push_back(tmp);
+	}
 }
