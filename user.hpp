@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 16:48:17 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:01:22 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ class User
 	private:
 		std::string					_username;
 		std::string					_nick;
+		std::string					_realName;
 		user_modes					_modes;
 		int							_sock_fd;
 		std::list<Channel *>		_channels;
@@ -100,6 +101,7 @@ class User
 		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
 		int							getsockfd()	const;
 		bool						getRegistered() const;
+		std::string const &         getRealName() const;
 		
 
 		// Setters
@@ -107,6 +109,7 @@ class User
 		void						setNick(std::string nick);
 		void						setmode(char mode, bool state);
 		void						setRegistered(bool status);
+		void                        setRealName(std::string const & realName);
 
 		// Overload
 		bool						operator==(User & obj);

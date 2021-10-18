@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 16:50:28 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:06:16 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int		User::getsockfd()  const { return (this->_sock_fd); }
 
 bool	User::getRegistered() const { return (this->_is_registered); }
 
+std::string const & User::getRealName() const { return this->_realName; }
+
 
 // Setters
 
@@ -87,6 +89,8 @@ void	User::setmode(char mode, bool state)
 
 void	User::setRegistered(bool status) { this->_is_registered = status; }
 
+void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
+
 
 // Overloads
 
@@ -117,7 +121,7 @@ void	User::deleteChannel(Channel & channel)
 		if (**it == channel) // Esto no se si esta bien
 		{
 			this->_channels.erase(it);
-			return ;	
+			return ;
 		}
 	}
 }
