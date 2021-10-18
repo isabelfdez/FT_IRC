@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 19:09:50 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 20:58:12 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,16 +125,13 @@ void Server::attendClients()
 
 void Server::parse_command(int fd, std::string buff, char * str)
 {
-	std::cout << ":" << str << ":" << std::endl;
 	while (*str == ' ')
 	{
 		buff.erase(buff.begin());
 		str++;
 	}
 	std::string buff2 = buff.substr(0, buff.find('\r'));
-	std::cout << "El buff que queda es " << buff2 << std::endl;
 	std::string command = buff2.substr(0, buff2.find(' '));
-	std::cout << "El comando es !" << command << "!" << std::endl;
 	if (!find_command(command, this->_commands))
 		return ; // Aquí tal vez haya que imprimir \r\n
 	if (!this->_fd_users[fd]->getRegistered())
@@ -147,7 +144,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
 		else if (command == "USER" || command == "user")
-			user_command(fd, str);
+			this->user_command(fd, str);
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
 	}
@@ -159,8 +156,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->nick_command(str, fd);
 		//else if (command == "JOIN" || command == "join")
 		//	join_command();
-		//else if (command == "PRIVMSG" || command == "privmsg")
-		//	this->privmsg_command(command, fd);
+		else if (command == "PRIVMSG" || command == "privmsg")
+			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")
 		//	notice_command();
 		//else if (command == "PART" || command == "part")
@@ -172,7 +169,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 
 void Server::getCustomerRequest( int & fd_client, int i)
 {
-	char	buffer[512];
+	char		buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 	int byte = recv(fd_client, buffer, 512, 0);
 	//char	*aux;
@@ -203,7 +200,10 @@ void Server::getCustomerRequest( int & fd_client, int i)
 		this->_list_connected_user[i] = 0;
 	}
 	else
-		this->parse_command(fd_client, buffer, buffer);
+	{
+		std::string buff2 (buffer);	
+		this->parse_command(fd_client, buff2, buffer);
+	}
 }
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
