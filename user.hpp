@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 18:24:41 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:29:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,18 +98,18 @@ class User
 		// Getters
 		std::string					getUserName() const;
 		std::string					getNick() const;
-		std::string const & 		getRealName() const;
 		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
 		int							getsockfd()	const;
 		bool						getRegistered() const;
+		std::string const &         getRealName() const;
 		
 
 		// Setters
-		void						setRealName(std::string const & realName);
 		void						setUserName(std::string name);
 		void						setNick(std::string nick);
 		void						setmode(char mode, bool state);
 		void						setRegistered(bool status);
+		void                        setRealName(std::string const & realName);
 
 		// Overload
 		bool						operator==(User & obj);

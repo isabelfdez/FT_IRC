@@ -12,7 +12,7 @@
 # include <iostream>
 # include <exception>
 # include <unistd.h>
-# include "../User.hpp"
+# include "../user.hpp"
 
 
 # define PORT 6667
@@ -23,8 +23,11 @@
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
+# define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
+
+
 
 class Server
 {
@@ -39,9 +42,9 @@ class Server
 		int								_listen_server_sock;
 		int								_highsock;
 		std::map<int, User*>			_fd_users;
-		std::list<User*>				_connected_users;
 		std::list<std::string>			_commands;
 		std::list<std::string>			_nicks;
+		std::list<User *>				_connected_users;
 
 	public:
 		Server();
@@ -60,7 +63,6 @@ class Server
 		void			getCustomerRequest( int & id_client, int i);
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
-		void			user_command(int fd, char *buffer);
 
 		
 		void			setNumReadSock(void );
@@ -71,7 +73,9 @@ class Server
 
 
 		// Comandos
-		void			nick_command(std::string command, char * str, int fd);
+		void			nick_command(char * str, int & fd);
+		void			privmsg_command(std::string & command, int & fd);
+		void			user_command( int fd, char *buffer );
 
 };
 

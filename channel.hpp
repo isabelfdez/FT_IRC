@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 14:28:42 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:22:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define CHANNEL_HPP
 
 # include <list>
-# include "User.hpp"
+# include "user.hpp"
 
 # define MAX_USERS 50
 

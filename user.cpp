@@ -6,11 +6,11 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 18:24:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:30:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.hpp"
+#include "user.hpp"
 
 // Constructor && destructor
 
@@ -59,13 +59,9 @@ std::string const & User::getRealName() const { return this->_realName; }
 bool	User::getRegistered() const { return (this->_is_registered); }
 
 
+
 // Setters
 
-
-void User::setRealName(std::string const &  realName) 
-{
-	this->_realName = realName;
-}
 void	User::setUserName(std::string name) { this->_username = name; }
 
 void	User::setNick(std::string nick) { this->_nick = nick; }
@@ -94,6 +90,8 @@ void	User::setmode(char mode, bool state)
 }
 
 void	User::setRegistered(bool status) { this->_is_registered = status; }
+
+void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
 
 
 // Overloads
@@ -125,7 +123,7 @@ void	User::deleteChannel(Channel & channel)
 		if (**it == channel) // Esto no se si esta bien
 		{
 			this->_channels.erase(it);
-			return ;	
+			return ;
 		}
 	}
 }

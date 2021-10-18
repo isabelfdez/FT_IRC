@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 18:30:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/18 19:28:55 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	std::string buff2 = buff.substr(0, buff.find('\r'));
 	std::cout << "El buff que queda es " << buff2 << std::endl;
 	std::string command = buff2.substr(0, buff2.find(' '));
-	std::cout << "El comando es " << command << std::endl;
+	std::cout << "El comando es !" << command << "!" << std::endl;
 	if (!find_command(command, this->_commands))
 		return ; // Aquí tal vez haya que imprimir \r\n
 	if (!this->_fd_users[fd]->getRegistered())
@@ -151,21 +151,23 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		if (command != "USER" && command != "NICK" &&
 			command != "user" && command != "nick")
 			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
-		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size())
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);		
+		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		else if (command == "USER" || command == "user")
+			user_command(fd, str);
+		else if (command == "NICK" || command == "nick")
+			this->nick_command(str, fd);
 	}
 	else if (this->_fd_users[fd]->getRegistered())
 	{
 		if ((command == "USER" || command == "user"))
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-		//else if (command == "USER" || command == "user")
-		//	user_command();
 		else if (command == "NICK" || command == "nick")
-			this->nick_command(buff2, str, fd);
+			this->nick_command(str, fd);
 		//else if (command == "JOIN" || command == "join")
 		//	join_command();
 		//else if (command == "PRIVMSG" || command == "privmsg")
-		//	privmsg_command();
+		//	this->privmsg_command(command, fd);
 		//else if (command == "NOTICE" || command == "notice")
 		//	notice_command();
 		//else if (command == "PART" || command == "part")
