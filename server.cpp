@@ -13,7 +13,7 @@
 #include "server.hpp"
 #include "utils.hpp"
 
-Server::Server()
+Server::Server(): _name_channel()
 {
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);

@@ -88,6 +88,50 @@
 	
 // }
 
+void	Server::join_channel(char * str, int fd)
+{
+			std::cout << "hola\n";
+	std::string s;
+	std::string	str1(str);
+	if (str1[0] != '#')
+	{
+		s.assign(str1);
+		s.append(" :No such channel");
+		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	if (str1.size() > 12)
+	{
+		s.assign("<");
+		s.append(str1);
+		s.append("> :Erroneous nickname");
+		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	if (this->_fd_users[fd]->getMaxChannels())
+	{
+		s.assign(this->_fd_users[fd]->getNick());
+		s.append(" :You have joined too many channels");
+		return (send_error(ERR_TOOMANYCHANNELS, s, fd));
+	}
+	if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
+	{
+		s.assign(str1);
+		s.append(" :Cannot join channel (+l)");
+		return (send_error(ERR_CHANNELISFULL, s, fd));
+	}
+	else if (this->_name_channel[str1])
+	{
+	 	// User join channel
+		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
+	}
+	else
+	{
+		// Create channel
+		this->_name_channel[str1] = new Channel(str1);
+		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
+
+	}
+}
+
 void	Server::join_command(std::string strin, char * str, int fd)
 {
 	char 		**parse;
@@ -112,31 +156,10 @@ void	Server::join_command(std::string strin, char * str, int fd)
 		parse2 = ft_split(&parse[1][1], ',');
 	else
 		parse2 = ft_split(parse[1], ',');
-	while (parse2[i])
+	std::cout << "hola1\n";
+	while (parse2[i] && i < 16)
 	{
-		if (parse2[i][0] != '#')
-		{
-			s.assign(parse2[1]);
-			s.append(" :No such channel");
-			return (send_error(ERR_BADCHANMASK, s, fd));
-		}
-		if (this->_fd_users[fd]->getMaxChannels())
-		{
-			s.assign(this->_fd_users[fd]->getNick());
-			s.append(" :You have joined too many channels");
-			return (send_error(ERR_TOOMANYCHANNELS, s, fd));
-		}
-		if (this->_name_channel[parse2[i]] && this->_name_channel[parse2[i]]->getIsFull())
-		{
-			s.assign(parse2[i]);
-			s.append(" :Cannot join channel (+l)");
-			return (send_error(ERR_CHANNELISFULL, s, fd));
-		}
-		else if (this->_name_channel[parse2[i]])
-		{
-			Channel *new_channel = new Channel(parse2[i]);
-			this->_name_channel.insert(new_channel);
-		}
+		Server::join_channel(parse2[i], fd);
 		i++;
 	}
 }

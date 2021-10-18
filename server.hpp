@@ -14,6 +14,7 @@
 # include <exception>
 # include <unistd.h>
 # include "user.hpp"
+# include "channel.hpp"
 # include <algorithm>
 
 
@@ -30,6 +31,7 @@
 # define ERR_BADCHANMASK			"476"
 # define ERR_TOOMANYCHANNELS		"405"
 # define ERR_CHANNELISFULL			"471"
+# define ERR_NOSUCHCHANNEL 			"403"
 
 class Server
 {
@@ -78,6 +80,8 @@ class Server
 		// Comandos
 		//void			nick_command(std::string command, char * str, int fd);
 		void			join_command(std::string command, char * str, int fd);
+		void			join_channel(char*	str, int fd);
+
 
 };
 

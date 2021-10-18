@@ -26,7 +26,7 @@ class Channel
 	private:
 		std::string			_name;
 		std::list<User *>	_users;
-		int					_maxusers;
+		unsigned			_maxusers;
 		bool				_isfull;
 
 	public:
