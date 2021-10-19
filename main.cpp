@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "./server/Server.hpp"
 #include "user.hpp"
 #include "channel.hpp"
 

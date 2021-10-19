@@ -13,25 +13,30 @@
 # include <iostream>
 # include <exception>
 # include <unistd.h>
-# include "user.hpp"
-# include "channel.hpp"
-# include <algorithm>
+# include "../user.hpp"
+# include "../channel.hpp"
 
 
 # define PORT 6667
 
 // Definiciones de errores
 
+# define ERR_CHANNELISFULL			"471"
+# define ERR_TOOMANYCHANNELS		"405"
+# define ERR_NOSUCHCHANNEL			"403"
+# define ERR_NOSUCHNICK				"401"
+# define ERR_TOOMANYTARGETS			"407"
+# define ERR_NORECIPIENT			"411"
+# define ERR_NOTEXTTOSEND			"412"
 # define ERR_NONICKNAMEGIVEN		"431"
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
-# define ERR_NEEDMOREPARAMS			"461"
+# define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
-# define ERR_BADCHANMASK			"476"
-# define ERR_TOOMANYCHANNELS		"405"
-# define ERR_CHANNELISFULL			"471"
-# define ERR_NOSUCHCHANNEL 			"403"
+# define ERR_NEEDMOREPARAMS			"461"
+
+
 
 class Server
 {
@@ -46,10 +51,12 @@ class Server
 		int								_listen_server_sock;
 		int								_highsock;
 		std::map<int, User*>			_fd_users;
-		std::map<std::string, User*>	_nick_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
+		std::list< Channel * >			_channel;
+
 		std::list<std::string>			_nicks;
+		std::list<User *>				_connected_users;
 
 	public:
 		Server();
@@ -78,10 +85,17 @@ class Server
 
 
 		// Comandos
-		//void			nick_command(std::string command, char * str, int fd);
-		void			join_command(std::string command, char * str, int fd);
-		void			join_channel(char*	str, int fd);
+		void			nick_command( char * str, int & fd );
+		void			privmsg_command(std::string & command, int & fd);
+		void			user_command( int fd, char *buffer );
+		void			quit_command(int fd, char *buffer);
+		void			join_command(std::string strin, char * str, int & fd);
+		void			join_channel(char * str, int & fd);
 
+
+		// send msg
+
+		void send_msg_chanell( Channel const & channel, std::string message );
 
 };
 

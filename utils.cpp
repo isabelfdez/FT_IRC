@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 19:35:50 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/18 18:17:46 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,14 +102,14 @@ char		**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	i = ft_countwords(s, c);
-	if (!(tab = (char**)malloc(sizeof(char **) * (i + 1))))
+	if (!(tab = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
 	tab[i] = NULL;
 	words = i;
 	i = 0;
 	while (i < words)
 	{
-		tab[i] = (char*)malloc(sizeof(char) * ft_size(s, c, j));
+		tab[i] = (char *)malloc(sizeof(char) * ft_size(s, c, j));
 		j = ft_cpyword(s, c, j, tab[i]);
 		i++;
 	}
@@ -155,4 +155,28 @@ bool	ft_isspecial(char c)
 		&& c != '^' && c != '{' && c !='|' && c != '}')
 		return (false);
 	return (true);
+}
+
+char	*ft_substr(char const *s, char c)
+{
+	size_t	i;
+	size_t	len;
+	char	*str;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	while (s[i] && s[i] != c)
+		i++;
+	len = i;
+	i = 0;
+	if (!(str = (char *)malloc(sizeof(char) * (len + 1))))
+		return (NULL);
+	while (i < len)
+	{
+		str[i] = s[i];
+		i++;
+	}
+	str[i] = 0;
+	return (str);
 }

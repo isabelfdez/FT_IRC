@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/14 19:40:47 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/19 13:59:54 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
-#include "utils.hpp"
+#include "Server.hpp"
+#include "../utils.hpp"
 
 Server::Server(): _fd_users(), _name_channel()
 {
@@ -46,6 +46,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("notice");
 	this->_commands.push_back("part");
 	this->_commands.push_back("quit");
+
+	this->_channel.push_back( new Channel("42") );
 }
 
 Server::~Server()
@@ -123,54 +125,60 @@ void Server::attendClients()
 	
 }
 
+
+ //  <user> <mode> <unused> <realname>  (int fd, std::string buff, char * str); error list add 
+
+
+
+
+
 void Server::parse_command(int fd, std::string buff, char * str)
 {
-	std::cout << ":" << str << ":" << std::endl;
 	while (*str == ' ')
 	{
 		buff.erase(buff.begin());
 		str++;
 	}
 	std::string buff2 = buff.substr(0, buff.find('\r'));
-	std::cout << "El buff que queda es " << buff2 << std::endl;
 	std::string command = buff2.substr(0, buff2.find(' '));
-	std::cout << "El comando es " << command << std::endl;
 	if (!find_command(command, this->_commands))
 		return ; // Aquí tal vez haya que imprimir \r\n
-	// if (!this->_fd_users[fd]->getRegistered())
-	// {
-	// 	// Si el usuario no está registrado, solo se puede llamar a los comandos
-	// 	// USER o NICK, y no puede llamar a USER varias veces seguidas
-	// 	if (command != "USER" && command != "NICK" &&
-	// 		command != "user" && command != "nick")
-	// 		send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
-	// 	else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size())
-	// 		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);		
-	// }
-	// else if (this->_fd_users[fd]->getRegistered())
-	// {
-	if ((command == "USER" || command == "user"))
-		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-	//else if (command == "USER" || command == "user")
-	//	user_command();
-	// else if (command == "NICK" || command == "nick")
-	// 	this->nick_command(buff2, str, fd);
-	else if (command == "JOIN" || command == "join")
-		join_command(buff2, str, fd);
-		//else if (command == "PRIVMSG" || command == "privmsg")
-		//	privmsg_command();
+	if (!this->_fd_users[fd]->getRegistered())
+	{
+		// Si el usuario no está registrado, solo se puede llamar a los comandos
+		// USER o NICK, y no puede llamar a USER varias veces seguidas
+		if (command != "USER" && command != "NICK" &&
+			command != "user" && command != "nick")
+			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
+		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		else if (command == "USER" || command == "user")
+			this->user_command(fd, str);
+		else if (command == "NICK" || command == "nick")
+			this->nick_command(str, fd);
+	}
+	else if (this->_fd_users[fd]->getRegistered())
+	{
+		if ((command == "USER" || command == "user"))
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		else if (command == "NICK" || command == "nick")
+			this->nick_command(str, fd);
+		//else if (command == "JOIN" || command == "join")
+		//	join_command();
+		else if (command == "PRIVMSG" || command == "privmsg")
+			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")
 		//	notice_command();
 		//else if (command == "PART" || command == "part")
 		//	part_command();
-		//else if (command == "QUIT" || command == "quit")
-		//	quit_command();
-	//}
+		else if (command == "QUIT" || command == "quit")
+			this->quit_command(fd, str);
+	}
 }
 
 void Server::getCustomerRequest( int & fd_client, int i)
 {
-	char	buffer[512];
+	char		buffer[512];
 	memset(buffer, 0, sizeof(buffer));
 	int byte = recv(fd_client, buffer, 512, 0);
 	//char	*aux;
@@ -201,7 +209,10 @@ void Server::getCustomerRequest( int & fd_client, int i)
 		this->_list_connected_user[i] = 0;
 	}
 	else
-		this->parse_command(fd_client, buffer, buffer);
+	{
+		std::string buff2 (buffer);	
+		this->parse_command(fd_client, buff2, buffer);
+	}
 }
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
