@@ -299,12 +299,14 @@ void	Server::join_channel(char * str, int & fd)
 	{
 	 	// User join channel
 		s.assign(this->_fd_users[fd]->getNick());
-		s.append(" joined the channel\r\n");
+		s.append(" joined ");
+		s.append(this->_name_channel[str1]->getName());
+		s.append("\r\n");
 		send_msg_chanell(*this->_name_channel[str1], s);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
 		s.assign(" JOIN: ");
-		s.assign(str1),
+		s.append(str1);
 		send_reply(RPL_NOTOPIC, s, fd);
 		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
 	}
