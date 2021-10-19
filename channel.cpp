@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 19:59:21 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/19 13:32:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Channel::~Channel() {  }
 
 std::string Channel::getName() const { return(this->_name); }
 
-std::list<User *>	Channel::getUsers() const
+std::list<User *> Channel::getUsers() const
 {
 	return (this->_users);
 }

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 19:29:18 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/19 13:33:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ class User
 		int							getsockfd()	const;
 		bool						getRegistered() const;
 		std::string const &         getRealName() const;
+		std::list< Channel *>		getChannels() const ;
 		
 
 		// Setters

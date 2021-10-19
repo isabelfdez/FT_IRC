@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 19:30:11 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/19 13:34:08 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ void	User::setmode(char mode, bool state)
 void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
+
+std::list< Channel *>	User::getChannels() const  { return this->_channels; }
 
 
 // Overloads

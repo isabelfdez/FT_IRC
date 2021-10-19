@@ -6,57 +6,99 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 11:18:31 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/19 14:19:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./server/Server.hpp"
 #include "utils.hpp"
 
-std::string * token_user(char *buffer)
+static std::string * token_user(char *buffer)
 {
-    std::string* tokens = new std::string[5];
-    std::string  token, s_buffer = buffer;
-    size_t pos = 0, space = 0, i  = 0;
-    while ( (pos = s_buffer.find(" ") ) != std::string::npos && i < 5)
-    {
-        token = s_buffer.substr(0, pos + space);
-        if ( token.length() > 0 )
+	std::string* tokens = new std::string[ 5 ];
+	std::string token, s_buffer = buffer;
+	size_t pos = 0, space = 0, i  = 0;
+	while ( (pos = s_buffer.find(" ") ) != std::string::npos || i < 5)
+	{
+		token = s_buffer.substr(0, pos + space);
+		if ( token.length() > 0 )
 		{
 			tokens[i] = token;
-			i++;	
+			i++;
 		}
-        std::string::iterator start = s_buffer.begin();
-        while ( *start == ' ' && start != s_buffer.end() )
-        {
-            space++;
-            start++;
-        }
-        s_buffer.erase(0, pos + space);
-        space = 0;
-    }
-    if (i != 5)
-        return NULL;
-    return tokens;
+		std::string::iterator start = s_buffer.begin();
+		while ( *start == ' ' && start != s_buffer.end() )
+		{
+			space++;
+			start++;
+		}
+		s_buffer.erase(0, pos + space);
+		space = 0;
+	}
+	if (i != 5)
+	{
+		delete [] tokens;
+		return NULL;
+	}
+	return tokens;
+}
+
+void Server::send_msg_chanell( Channel const & channel, std::string message )
+{
+	std::list<User *>::iterator __user = channel.getUsers().begin();
+	std::list<User *>::iterator end = channel.getUsers().end();
+
+	for ( ; __user  != end ; ++__user )
+		send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
+}
+
+// :Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
+void Server::quit_command(int fd, char *buffer)
+{
+	
+	User *tmp = this->_fd_users.at(fd);
+
+	std::string msg_quit = "ERROR :Closing link: (" + tmp->getNick()
+		+ "@" + inet_ntoa(this->_addr_server.sin_addr) + ") [Signed off]\n";
+	
+	std::string msg_quit_users = ": " +  tmp->getNick() + "! " + buffer;
+	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
+
+	std::list<Channel *>::iterator channel = tmp->getChannels().begin();
+	std::list<Channel *>::iterator end = tmp->getChannels().end();
+	
+	for (; channel != end ; ++channel )
+	{
+		std::cout << (*channel)->getName() << std::endl;
+		// send_msg_chanell( *(*channel), msg_quit_users );
+		std::cout << " [[[[[[ HERE SEGFAULT ]]]]] \n";
+		delete *channel;
+		// tmp->getChannels().erase( channel );
+		// eliminar lista de canales de la clase servidor 
+	}
+	close (fd);
 }
 
 void	Server::user_command( int fd, char *buffer )
 {
-    std::string *token = token_user(buffer);
-    User * tmp = this->_fd_users.at(fd);
-    if (!token)
-        return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
-    if ( tmp->getRegistered() )
-        return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-    tmp->setUserName(token[1]);
-    tmp->setmode(token[2][0], true);
-    tmp->setRealName(token[4]);
-    if ( tmp->getNick().size() > 0 && !tmp->getRegistered() )
-    {
-        tmp->setRegistered(true);
-        this->_connected_users.push_back(tmp);
-    }
-	std::cout << tmp->getUserName() << " " << tmp->getNick() << " " << tmp->getmode('a') << " " << tmp->getRealName() << std::endl;
+	std::string *token = token_user(buffer);
+	User * tmp = this->_fd_users.at(fd);
+	if (!token)
+		return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
+	if ( tmp->getRegistered() )
+		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+	tmp->setUserName(token[1]);
+	tmp->setmode(token[2][0], true);
+	tmp->setRealName(token[4]);
+	if ( tmp->getNick().size() > 0 && !tmp->getRegistered() )
+	{
+		tmp->setRegistered(true);
+		this->_connected_users.push_back(tmp);
+	}
+	Channel *tmp2 = *this->_channel.begin();
+	(*tmp2).addUser(tmp);
+	tmp->addChannel(tmp2);
+	delete [] token;
 }
 
 void	Server::nick_command(char * str, int & fd)

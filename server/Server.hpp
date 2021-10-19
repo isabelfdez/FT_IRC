@@ -13,6 +13,7 @@
 # include <exception>
 # include <unistd.h>
 # include "../user.hpp"
+# include "../channel.hpp"
 
 
 # define PORT 6667
@@ -47,6 +48,8 @@ class Server
 		int								_highsock;
 		std::map<int, User*>			_fd_users;
 		std::list<std::string>			_commands;
+		std::list< Channel * >			_channel;
+
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
 
@@ -77,9 +80,15 @@ class Server
 
 
 		// Comandos
-		void			nick_command(char * str, int & fd);
+		void			nick_command( char * str, int & fd );
 		void			privmsg_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
+		void			quit_command(int fd, char *buffer);
+
+
+		// send msg
+
+		void send_msg_chanell( Channel const & channel, std::string message );
 
 };
 
