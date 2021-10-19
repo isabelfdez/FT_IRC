@@ -103,10 +103,12 @@ void	Server::user_command( int fd, char *buffer )
 
 void	Server::nick_command(char * str, int & fd)
 {
+	char 		**parse;
 	std::string	s;
-	char 		*substr;
-	char		**parse;
 
+	char 		*substr;
+
+	std::cout << str << "\n";
 	substr = ft_substr(str, '\r');
 	parse = ft_split(substr, ' ');
 	int i = 0;
@@ -128,19 +130,20 @@ void	Server::nick_command(char * str, int & fd)
 		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
-	if (this->_fd_users[fd]->getMaxChannels())
+	else if (!ft_isalpha(parse[1][0]) && !ft_isspecial(parse[1][0]))
 	{
 		s.append(parse[1]);
 		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
-	if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
+	else if (ft_strlen(parse[1]) > 9)
 	{
 		s.append(parse[1]);
 		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
-	else if (this->_name_channel[str1])
+	int j = 1;
+	while (parse[1][j])
 	{
 		if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
 		{
@@ -150,7 +153,7 @@ void	Server::nick_command(char * str, int & fd)
 		}
 		j++;
 	}
-	else
+	for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
 	{
 		if (*it == parse[1])
 		{
@@ -159,7 +162,7 @@ void	Server::nick_command(char * str, int & fd)
 			return (send_error(ERR_NICKNAMEINUSE, s, fd));
 		}
 	}
-	// Si hemos llegado hasta aquí, el nock recibido es válido
+	// Si hemos llegado hasta aquí, el nick recibido es válido
 	// CASO 1: El usuario ya tenía nick y está solicitando un cambio
 	if (this->_fd_users[fd]->getNick().size())
 	{
@@ -295,15 +298,18 @@ void	Server::join_channel(char * str, int & fd)
 	else if (this->_name_channel[str1])
 	{
 	 	// User join channel
+		s.assign(this->_fd_users[fd]->getNick());
+		s.append(" joined the channel");
+		send_msg_chanell(*this->_name_channel[str1], s);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
-		send_reply("Channel", " :No topic is set", fd);
+		send_reply("Channel :No topic is set", fd);
 	}
 	else
 	{
 		// Create and join channel
 		this->_name_channel[str1] = new Channel(str1);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
-		send_reply("Channel", " :No topic is set", fd);
+		send_reply("Channel :No topic is set", fd);
 	}
 }
 
@@ -325,15 +331,18 @@ void	Server::join_command(std::string strin, char * str, int & fd)
 		std::transform(strin.begin(), strin.end(),strin.begin(), ::toupper);
 		s.assign(strin);
  		s.append(" :Not enough parameters");
+		free(parse);
 		return (send_error(ERR_NEEDMOREPARAMS, s, fd));
 	}
 	if (parse[1][0] == ':')
 		parse2 = ft_split(&parse[1][1], ',');
 	else
 		parse2 = ft_split(parse[1], ',');
+	free(parse);
 	while (parse2[i] && i < 16)
 	{
 		Server::join_channel(parse2[i], fd);
 		i++;
 	}
+	free(parse2);
 }

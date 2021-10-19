@@ -163,8 +163,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
-		//else if (command == "JOIN" || command == "join")
-		//	join_command();
+		else if (command == "JOIN" || command == "join")
+			join_command(buff2, str, fd);
 		else if (command == "PRIVMSG" || command == "privmsg")
 			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")

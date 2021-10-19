@@ -15,6 +15,7 @@
 # include <unistd.h>
 # include "../user.hpp"
 # include "../channel.hpp"
+# include "../utils.hpp"
 
 
 # define PORT 6667

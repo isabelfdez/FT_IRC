@@ -20,12 +20,11 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
-void	send_reply(std::string replay, std::string command, int fd)
+void	send_reply(std::string replay, int fd)
 {
 	std::string message;
 	message.assign(":ft_irc.com ");
-	message.append(command);
-	message.append(" * ");
+	message.append("* ");
 	message.append(replay);
 	message.append("\n");
     send(fd, message.c_str(), message.length(), 0);
