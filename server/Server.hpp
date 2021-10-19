@@ -94,7 +94,7 @@ class Server
 		void			nick_command( char * str, int & fd );
 		void			privmsg_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
-		void			quit_command(int fd, char *buffer);
+		//void			quit_command(int fd, char *buffer);
 		void			join_command(char * str, int & fd);
 		void			join_channel(char * str, int & fd);
 		void			part_command(char * str, int & fd);
@@ -102,7 +102,7 @@ class Server
 
 		// send msg
 
-		void send_msg_chanell( Channel const & channel, std::string message );
+		//void send_msg_chanell( Channel const & channel, std::string message );
 
 };
 

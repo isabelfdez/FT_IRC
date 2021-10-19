@@ -95,3 +95,10 @@ void	Channel::addUser(User * user)
 		this->_isfull = true;
 }
 
+void	Channel::sendMsgChannel(std::string & msg)
+{
+	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
+	}
+}

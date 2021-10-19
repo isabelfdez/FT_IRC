@@ -43,41 +43,41 @@ static std::string * token_user(char *buffer)
 	return tokens;
 }
 
-void Server::send_msg_chanell( Channel const & channel, std::string message )
-{
-	std::list<User *>::iterator __user = channel.getUsers().begin();
-	std::list<User *>::iterator end = channel.getUsers().end();
+// void Server::send_msg_chanell( Channel const & channel, std::string message )
+// {
+// 	std::list<User *>::iterator __user = channel.getUsers().begin();
+// 	std::list<User *>::iterator end = channel.getUsers().end();
 
-	for ( ; __user  != end ; ++__user )
-		send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
-}
+// 	for ( ; __user  != end ; ++__user )
+// 		send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
+// }
 
 // :Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
-void Server::quit_command(int fd, char *buffer)
-{
+// void Server::quit_command(int fd, char *buffer)
+// {
 	
-	User *tmp = this->_fd_users.at(fd);
+// 	User *tmp = this->_fd_users.at(fd);
 
-	std::string msg_quit = "ERROR :Closing link: (" + tmp->getNick()
-		+ "@" + inet_ntoa(this->_addr_server.sin_addr) + ") [Signed off]\n";
+// 	std::string msg_quit = "ERROR :Closing link: (" + tmp->getNick()
+// 		+ "@" + inet_ntoa(this->_addr_server.sin_addr) + ") [Signed off]\n";
 	
-	std::string msg_quit_users = ": " +  tmp->getNick() + "! " + buffer;
-	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
+// 	std::string msg_quit_users = ": " +  tmp->getNick() + "! " + buffer;
+// 	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
 
-	std::list<Channel *>::iterator channel = tmp->getChannels().begin();
-	std::list<Channel *>::iterator end = tmp->getChannels().end();
+// 	std::list<Channel *>::iterator channel = tmp->getChannels().begin();
+// 	std::list<Channel *>::iterator end = tmp->getChannels().end();
 	
-	for (; channel != end ; ++channel )
-	{
-		std::cout << (*channel)->getName() << std::endl;
-		// send_msg_chanell( *(*channel), msg_quit_users );
-		std::cout << " [[[[[[ HERE SEGFAULT ]]]]] \n";
-		delete *channel;
-		// tmp->getChannels().erase( channel );
-		// eliminar lista de canales de la clase servidor 
-	}
-	close (fd);
-}
+// 	for (; channel != end ; ++channel )
+// 	{
+// 		std::cout << (*channel)->getName() << std::endl;
+// 		// send_msg_chanell( *(*channel), msg_quit_users );
+// 		std::cout << " [[[[[[ HERE SEGFAULT ]]]]] \n";
+// 		delete *channel;
+// 		// tmp->getChannels().erase( channel );
+// 		// eliminar lista de canales de la clase servidor 
+// 	}
+// 	close (fd);
+// }
 
 void	Server::user_command( int fd, char *buffer )
 {
@@ -302,7 +302,7 @@ void	Server::join_channel(char * str, int & fd)
 		s.append(" joined ");
 		s.append(this->_name_channel[str1]->getName());
 		s.append("\r\n");
-		send_msg_chanell(*this->_name_channel[str1], s);
+		this->_name_channel[str1]->sendMsgChannel(s);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
 		s.assign(" JOIN: ");

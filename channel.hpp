@@ -52,6 +52,7 @@ class Channel
 		// Other functions
 		void				deleteUser(User & user);
 		void				addUser(User * user);
+		void				sendMsgChannel(std::string & msg);
 
 	
 };

@@ -171,8 +171,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		//	notice_command();
 		//else if (command == "PART" || command == "part")
 		//	part_command();
-		else if (command == "QUIT" || command == "quit")
-			this->quit_command(fd, str);
+		//else if (command == "QUIT" || command == "quit")
+		//	this->quit_command(fd, str);
 	}
 }
 
