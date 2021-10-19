@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 19:33:15 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/19 11:18:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 
 std::string * token_user(char *buffer)
 {
-    std::string* tokens = new std::string[4];
+    std::string* tokens = new std::string[5];
     std::string  token, s_buffer = buffer;
     size_t pos = 0, space = 0, i  = 0;
-    while ( (pos = s_buffer.find(" ")) != std::string::npos && i < 4)
+    while ( (pos = s_buffer.find(" ") ) != std::string::npos && i < 5)
     {
         token = s_buffer.substr(0, pos + space);
         if ( token.length() > 0 )
 		{
-            tokens[i] = token;
-			i++;
+			tokens[i] = token;
+			i++;	
 		}
         std::string::iterator start = s_buffer.begin();
         while ( *start == ' ' && start != s_buffer.end() )
@@ -34,9 +34,8 @@ std::string * token_user(char *buffer)
         }
         s_buffer.erase(0, pos + space);
         space = 0;
-        std::cout << token << token.length() <<std::endl;
     }
-    if (i != 4)
+    if (i != 5)
         return NULL;
     return tokens;
 }
@@ -46,17 +45,18 @@ void	Server::user_command( int fd, char *buffer )
     std::string *token = token_user(buffer);
     User * tmp = this->_fd_users.at(fd);
     if (!token)
-        return send_error(ERR_NEEDMOREPARAMS, "User :Not enough parameters", fd);
+        return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
     if ( tmp->getRegistered() )
         return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-    tmp->setUserName(token[0]);
-    tmp->setmode(token[1][0], true);
-    tmp->setRealName(token[3]);
+    tmp->setUserName(token[1]);
+    tmp->setmode(token[2][0], true);
+    tmp->setRealName(token[4]);
     if ( tmp->getNick().size() > 0 && !tmp->getRegistered() )
     {
         tmp->setRegistered(true);
         this->_connected_users.push_back(tmp);
     }
+	std::cout << tmp->getUserName() << " " << tmp->getNick() << " " << tmp->getmode('a') << " " << tmp->getRealName() << std::endl;
 }
 
 void	Server::nick_command(char * str, int & fd)
@@ -70,16 +70,12 @@ void	Server::nick_command(char * str, int & fd)
 	parse = ft_split(substr, ' ');
 	int i = 0;
 	while (parse[i])
-	{
-		std::cout << parse[i] << '\n';
 		i++;
-	}
 	if (!parse[1])
 		return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
 	// Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)
 	else if (parse[2])
 	{
-		s.assign("<");
 		int	i = 1;
 		while (parse[i])
 		{
@@ -88,21 +84,19 @@ void	Server::nick_command(char * str, int & fd)
 				s.append(" ");
 			i++;
 		}
-		s.append("> :Erroneous nickname");
+		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
 	else if (!ft_isalpha(parse[1][0]) && !ft_isspecial(parse[1][0]))
 	{
-		s.assign("<");
 		s.append(parse[1]);
-		s.append("> :Erroneous nickname");
+		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
 	else if (ft_strlen(parse[1]) > 9)
 	{
-		s.assign("<");
 		s.append(parse[1]);
-		s.append("> :Erroneous nickname");
+		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
 	int j = 1;
@@ -110,9 +104,8 @@ void	Server::nick_command(char * str, int & fd)
 	{
 		if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
 		{
-			s.assign("<");
 			s.append(parse[1]);
-			s.append("> :Erroneous nickname");
+			s.append(" :Erroneous nickname");
 			return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 		}
 		j++;
@@ -121,10 +114,9 @@ void	Server::nick_command(char * str, int & fd)
 	{
 		if (*it == parse[1])
 		{
-			s.assign("<");
 			s.append(parse[1]);
-			s.append("> :Erroneous nickname");
-			return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
+			s.append(" :Nickname is already in use");
+			return (send_error(ERR_NICKNAMEINUSE, s, fd));
 		}
 	}
 	// Si hemos llegado hasta aquí, el nock recibido es válido
@@ -158,27 +150,62 @@ void	Server::nick_command(char * str, int & fd)
 	}
 }
 
-//void	Server::privmsg_command(std::string & command, int & fd)
-//{
-//	std::string delimiter = " ";
-//	size_t		pos = 0;
-//	std::string token;
-//	int			i = 0;
-//
-//	// Quitamos el comando
-//	pos = command.find(delimiter);
-//	command.erase(0, pos + delimiter.length());
-//	// Lo que tenemos a continuación es el target del mensaje
-//	pos = command.find(delimiter);
-//	token = command.substr(0, pos);
-//	for (std::list<User *>::iterator it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
-//		if (*it == this->_fd_users[fd]->getNick())
-//			this->_nicks.erase(it);
-//	while (() != std::string::npos)
-//	{
-//		if ()
-//	    token = command.substr(0, pos);
-//	    command.erase(0, pos + delimiter.length());
-//		i++;
-//	}
-//}
+// Falta gestionar TOO MANY TARGETS. No sé si el error está bien.
+
+void	Server::privmsg_command(std::string & command, int & fd)
+{
+	std::string 				delimiter = " ";
+	size_t						pos = 0;
+	std::string 				token;
+	int							deliver_fd;
+	std::list<User *>::iterator it;
+	std::string					s;
+
+	// Quitamos el comando
+	pos = command.find(delimiter);
+	command.erase(0, pos + delimiter.length());
+	while (*(command.begin()) == ' ')
+		command.erase(0, 1);	
+	// Lo que tenemos a continuación es el target del mensaje
+	if ((pos = command.find(delimiter)) == std::string::npos)
+	{
+		s.assign(":No recipient given (PRIVMSG)");
+		return (send_error(ERR_NORECIPIENT, s, fd));
+	}
+	token = command.substr(0, pos);
+	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
+	{
+		if ((*it)->getNick() == token)
+		{
+			deliver_fd = (*it)->getsockfd();
+			break ;
+		}
+	}
+	// Mandamos un error si no hemos encontrado el nick
+	if (it == this->_connected_users.end())
+	{
+		s.assign(token);
+		s.assign(" :No such nick/channel");
+		return (send_error(ERR_NOSUCHNICK, s, fd));
+	}
+	// Si hemos encontrado el nick, mandamos el mensaje
+	else
+	{
+		command.erase(0, pos + delimiter.length());
+		while (command.begin() != command.end() && *(command.begin()) == ' ')
+			command.erase(0, 1);
+		if (command.begin() == command.end())
+			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+		if (!(*(command.begin()) == ':'))
+		{
+			s.assign(token);
+			s.assign(" : Too many recipients.");
+			return (send_error(ERR_TOOMANYTARGETS, s, fd));
+		}
+		else
+			command.erase(0, 1);
+		if (command.begin() == command.end())
+			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+		send(deliver_fd, command.c_str(), command.length(), 0);
+	}
+}
