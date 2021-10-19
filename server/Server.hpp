@@ -37,6 +37,11 @@
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
 
+// Definiciones de replys
+
+# define RPL_NOTOPIC				"332"
+# define RPL_USERS					"393"
+
 
 
 class Server
@@ -90,8 +95,9 @@ class Server
 		void			privmsg_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
 		void			quit_command(int fd, char *buffer);
-		void			join_command(std::string strin, char * str, int & fd);
+		void			join_command(char * str, int & fd);
 		void			join_channel(char * str, int & fd);
+		void			part_command(char * str, int & fd);
 
 
 		// send msg

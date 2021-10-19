@@ -47,7 +47,7 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("part");
 	this->_commands.push_back("quit");
 
-	this->_channel.push_back( new Channel("42") );
+	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
 Server::~Server()
@@ -164,7 +164,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
 		else if (command == "JOIN" || command == "join")
-			join_command(buff2, str, fd);
+			join_command(str, fd);
 		else if (command == "PRIVMSG" || command == "privmsg")
 			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")

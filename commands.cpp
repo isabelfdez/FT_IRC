@@ -86,7 +86,7 @@ void	Server::user_command( int fd, char *buffer )
 	if (!token)
 		return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
 	if ( tmp->getRegistered() )
-		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);	
 	tmp->setUserName(token[1]);
 	tmp->setmode(token[2][0], true);
 	tmp->setRealName(token[4]);
@@ -95,9 +95,9 @@ void	Server::user_command( int fd, char *buffer )
 		tmp->setRegistered(true);
 		this->_connected_users.push_back(tmp);
 	}
-	Channel *tmp2 = *this->_channel.begin();
-	(*tmp2).addUser(tmp);
-	tmp->addChannel(tmp2);
+	// Channel *tmp2 = *this->_channel.begin();
+	// (*tmp2).addUser(tmp);
+	// tmp->addChannel(tmp2);
 	delete [] token;
 }
 
@@ -299,24 +299,31 @@ void	Server::join_channel(char * str, int & fd)
 	{
 	 	// User join channel
 		s.assign(this->_fd_users[fd]->getNick());
-		s.append(" joined the channel");
+		s.append(" joined the channel\r\n");
 		send_msg_chanell(*this->_name_channel[str1], s);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
-		send_reply("Channel :No topic is set", fd);
+		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
+		s.assign(" JOIN: ");
+		s.assign(str1),
+		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
 	}
 	else
 	{
 		// Create and join channel
-		this->_name_channel[str1] = new Channel(str1);
+		this->_name_channel[str1] = new Channel(str1, this->_fd_users[fd]);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
-		send_reply("Channel :No topic is set", fd);
+		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
+		s.assign(" JOIN: ");
+		s.assign(str1);
+		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
 	}
 }
 
-void	Server::join_command(std::string strin, char * str, int & fd)
+void	Server::join_command(char * str, int & fd)
 {
 	char 		**parse;
-	char		**parse2;
 	std::string	s;
 
 	char	*tmp;
@@ -324,25 +331,28 @@ void	Server::join_command(std::string strin, char * str, int & fd)
 
 	tmp = strchr(str, '\r');
 	*tmp = 0;
-	parse = ft_split(str, ' ');
-	if (!parse[1])
+	str = str + 4;
+	while (*str == ' ')
+		str++;
+	if (*str == ':')
+		str++;
+	parse = ft_split(str, ',');
+	if (!parse[0])
 	{
-		strin.erase(std::remove(strin.begin(), strin.end(), ' '), strin.end());
-		std::transform(strin.begin(), strin.end(),strin.begin(), ::toupper);
-		s.assign(strin);
- 		s.append(" :Not enough parameters");
+ 		s.append("JOIN :Not enough parameters");
 		free(parse);
 		return (send_error(ERR_NEEDMOREPARAMS, s, fd));
 	}
-	if (parse[1][0] == ':')
-		parse2 = ft_split(&parse[1][1], ',');
-	else
-		parse2 = ft_split(parse[1], ',');
-	free(parse);
-	while (parse2[i] && i < 16)
+	while (parse[i] && i < 16)
 	{
-		Server::join_channel(parse2[i], fd);
+		Server::join_channel(parse[i], fd);
 		i++;
 	}
-	free(parse2);
+	free(parse);
+}
+
+void	Server::part_command(char * str, int & fd)
+{
+	(void) str;
+	(void) fd;
 }
