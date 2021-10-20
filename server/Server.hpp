@@ -98,6 +98,8 @@ class Server
 		void			join_command(char * str, int & fd);
 		void			join_channel(char * str, int & fd);
 		void			part_command(char * str, int & fd);
+		void			part_channel(char * str, int & fd);
+
 
 
 		// send msg

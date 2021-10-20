@@ -50,7 +50,7 @@ class Channel
 		bool				operator==(Channel & obj);
 
 		// Other functions
-		void				deleteUser(User & user);
+		void				deleteUser(User * user);
 		void				addUser(User * user);
 		void				sendMsgChannel(std::string & msg);
 

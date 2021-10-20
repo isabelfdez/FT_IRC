@@ -269,9 +269,8 @@ void	Server::join_channel(char * str, int & fd)
 	}
 	if (str1.size() > 12)
 	{
-		s.assign("<");
 		s.append(str1);
-		s.append("> :No such channel");
+		s.append(" :No such channel");
 		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
 	}
 	while (str1[j])
@@ -354,8 +353,57 @@ void	Server::join_command(char * str, int & fd)
 	free(parse);
 }
 
+void	Server::part_channel(char * str, int & fd)
+{
+	std::string s;
+	std::string	str1(str);
+
+	std::cout << "hola2\n";
+
+	//str1.erase(str1.begin());
+	std::cout << str1 << std::endl;
+	if (str[0] != '#')
+	{
+		s.assign(str1);
+		s.append(" :No such channel");
+		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	else if (this->_name_channel.count(str1))
+	{
+		std::cout << "hola3\n";
+
+		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
+		this->_name_channel.erase(this->_name_channel.find(str1));
+		std::cout << "hola4\n";
+
+	}
+}
+
 void	Server::part_command(char * str, int & fd)
 {
-	(void) str;
-	(void) fd;
+	char		**parse;
+	char		*tmp;
+	std::string	s;
+	int			i = 0;
+
+	std::cout << "hola1\n";
+	tmp = strchr(str, '\r');
+	*tmp = 0;
+	str = str + 4;
+		while (*str == ' ')
+		str++;
+	if (*str == ':')
+		str++;
+	parse = ft_split(str, ',');
+	if (!parse[0])
+	{
+ 		s.append("PART :Not enough parameters");
+		free(parse);
+		return (send_error(ERR_NEEDMOREPARAMS, s, fd));
+	}
+	while (parse[i] && i < 16)
+	{
+		Server::part_channel(parse[i], fd);
+		i++;
+	}
 }

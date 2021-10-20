@@ -14,7 +14,7 @@
 
 // Constructor && destructor
 
-Channel::Channel(std::string name, User *user): _name(name)
+Channel::Channel(std::string name, User *user): _name(name), _users(), _operators()
 {
 	this->_maxusers = MAX_USERS;
 	this->_isfull = false;
@@ -76,14 +76,22 @@ bool	Channel::operator==(Channel & obj)
 
 // Other functions
 
-void	Channel::deleteUser(User & user)
+void	Channel::deleteUser(User * user)
 {
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
-		if (**it == user) // Esto no se si esta bien
+		if (*it == user) // Esto no se si esta bien
 		{
+			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
+			{
+				if (*it2 == user)
+				{
+					this->_operators.erase(it2);
+					break ;
+				}
+			}
 			this->_users.erase(it);
-			return ;	
+			return ;
 		}
 	}
 }
