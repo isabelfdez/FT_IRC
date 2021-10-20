@@ -18,6 +18,7 @@ User::User(int & fd) : _sock_fd(fd)
 {
 	init_modes();
 	this->_is_registered = false;
+	this->_max_channels = false;
 }
 
 User::~User() { }
@@ -57,6 +58,8 @@ int		User::getsockfd()  const { return (this->_sock_fd); }
 std::string const & User::getRealName() const { return this->_realName; }
 
 bool	User::getRegistered() const { return (this->_is_registered); }
+
+bool	User::getMaxChannels() const { return (this->_max_channels); }
 
 
 
@@ -135,5 +138,7 @@ void	User::deleteChannel(Channel & channel)
 void	User::addChannel(Channel * const & channel)
 {
 	this->_channels.push_back(channel);
+	if (_channels.size() >= MAX_CHANNELS)
+		this->_max_channels = true;
 }
 

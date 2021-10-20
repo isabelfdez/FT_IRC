@@ -2,6 +2,7 @@
 # define __SERVER__HPP
 
 # include <string>
+# include <stdio.h>
 # include <ctype.h>
 # include <sys/time.h>
 # include <sys/socket.h>
@@ -14,12 +15,16 @@
 # include <unistd.h>
 # include "../user.hpp"
 # include "../channel.hpp"
+# include "../utils.hpp"
 
 
 # define PORT 6667
 
 // Definiciones de errores
 
+# define ERR_CHANNELISFULL			"471"
+# define ERR_TOOMANYCHANNELS		"405"
+# define ERR_NOSUCHCHANNEL			"403"
 # define ERR_NOSUCHNICK				"401"
 # define ERR_TOOMANYTARGETS			"407"
 # define ERR_NORECIPIENT			"411"
@@ -31,6 +36,11 @@
 # define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
+
+// Definiciones de replys
+
+# define RPL_NOTOPIC				"332"
+# define RPL_USERS					"393"
 
 
 
@@ -47,6 +57,7 @@ class Server
 		int								_listen_server_sock;
 		int								_highsock;
 		std::map<int, User*>			_fd_users;
+		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
 		std::list< Channel * >			_channel;
 
@@ -84,6 +95,9 @@ class Server
 		void			privmsg_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
 		void			quit_command(int fd, char *buffer);
+		void			join_command(char * str, int & fd);
+		void			join_channel(char * str, int & fd);
+		void			part_command(char * str, int & fd);
 
 
 		// send msg

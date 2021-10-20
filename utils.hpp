@@ -25,6 +25,7 @@
 
 bool	find_command(std::string command, std::list<std::string> commands);
 void	send_error(std::string error, std::string str, int fd);
+void	send_reply(std::string replay, std::string str, int fd);
 char	**ft_split(char const *s, char c);
 int		ft_isalpha(int c);
 int		ft_isalnum(int c);

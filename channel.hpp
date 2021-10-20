@@ -15,6 +15,7 @@
 
 # include <list>
 # include "user.hpp"
+# include <iostream>
 
 # define MAX_USERS 50
 
@@ -26,16 +27,21 @@ class Channel
 	private:
 		std::string			_name;
 		std::list<User *>	_users;
-		int					_maxusers;
+		std::list<User *>	_operators;
+		unsigned			_maxusers;
+		bool				_isfull;
 
 	public:
 		// Construtor && destructor
-		Channel(std::string name);
+		Channel(std::string name, User *user);
 		~Channel();
 
 		// Getters
 		std::string			getName() const;
 		std::list<User *>	getUsers() const;
+		bool				getIsFull() const;
+		bool				isOp(User * user);
+		std::string			userList();
 
 		// Setters
 		void				setName(std::string name);
@@ -46,6 +52,8 @@ class Channel
 		// Other functions
 		void				deleteUser(User & user);
 		void				addUser(User * user);
+		void				sendMsgChannel(std::string & msg);
+
 	
 };
 

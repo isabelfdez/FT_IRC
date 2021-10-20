@@ -6,14 +6,14 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/20 15:59:02 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 16:08:14 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "../utils.hpp"
 
-Server::Server()
+Server::Server(): _fd_users(), _name_channel()
 {
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
@@ -47,7 +47,7 @@ Server::Server()
 	this->_commands.push_back("part");
 	this->_commands.push_back("quit");
 
-	this->_channel.push_back( new Channel("42") );
+	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
 Server::~Server()
@@ -83,14 +83,16 @@ void Server::join_new_connection()
 	if (connection < 0)
 		throw Server::GlobalServerExecption();
 	// setnonblocking
-
-	for (size_t i = 0; i < 1 && (connection != -1); i++)
+	std::cout << connection << "\n";
+	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
+		{
 			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
-		this->_list_connected_user[i] = connection;
-		this->_fd_users[connection] =  new User(connection);
-		// connection = -1;
+			this->_list_connected_user[i] = connection;
+			this->_fd_users[connection] =  new User(connection);
+			connection = -1;
+		}
 	}
 	if ( connection != -1)
 	{
@@ -163,16 +165,16 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
-		//else if (command == "JOIN" || command == "join")
-		//	join_command();
+		else if (command == "JOIN" || command == "join")
+			join_command(str, fd);
 		else if (command == "PRIVMSG" || command == "privmsg")
 			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")
 		//	notice_command();
 		//else if (command == "PART" || command == "part")
 		//	part_command();
-		else if (command == "QUIT" || command == "quit")
-			this->quit_command(fd, str);
+		//else if (command == "QUIT" || command == "quit")
+		//	this->quit_command(fd, str);
 	}
 }
 
@@ -211,6 +213,8 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	else
 	{
 		std::string buff2 (buffer);	
+		std::cout << buffer << std::endl;
+		std::cout << "HG\n";
 		this->parse_command(fd_client, buff2, buffer);
 	}
 }

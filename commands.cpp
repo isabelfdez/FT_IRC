@@ -6,12 +6,13 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/20 15:34:55 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 16:16:35 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./server/Server.hpp"
 #include "utils.hpp"
+
 
 static std::string * token_user(char *buffer)
 {
@@ -56,7 +57,7 @@ void Server::send_msg_chanell( Channel * channel, std::string message )
 		// send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
 }
 
-// :Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
+//:Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
 void Server::quit_command(int fd, char *buffer)
 {
 	
@@ -74,12 +75,12 @@ void Server::quit_command(int fd, char *buffer)
 	/*for (; channel != end ; ++channel )
 	{
 		std::cout << " [[[[[[ HERE SEGFAULT ]]]]] \n";
-		// delete *channel;
-		// tmp->getChannels().erase( channel );
-		// eliminar lista de canales de la clase servidor 
+		delete *channel;
+		tmp->getChannels().erase( channel );
+		eliminar lista de canales de la clase servidor 
 	}*/
 		
-		// std::cout << (*(*channel)->getUsers().begin())->getNick() << std::endl;
+		std::cout << (*(*channel)->getUsers().begin())->getNick() << std::endl;
 		 send_msg_chanell( *channel, msg_quit_users );
 	close (fd);
 }
@@ -91,7 +92,7 @@ void	Server::user_command( int fd, char *buffer )
 	if (!token)
 		return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
 	if ( tmp->getRegistered() )
-		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);	
 	tmp->setUserName(token[1]);
 	tmp->setmode(token[2][0], true);
 	tmp->setRealName(token[4]);
@@ -100,9 +101,9 @@ void	Server::user_command( int fd, char *buffer )
 		tmp->setRegistered(true);
 		this->_connected_users.push_back(tmp);
 	}
-
-	(*this->_channel.begin())->addUser(tmp);
-	
+	// Channel *tmp2 = *this->_channel.begin();
+	// (*tmp2).addUser(tmp);
+	// tmp->addChannel(tmp2);
 	delete [] token;
 }
 
@@ -113,6 +114,7 @@ void	Server::nick_command(char * str, int & fd)
 
 	char 		*substr;
 
+	std::cout << str << "\n";
 	substr = ft_substr(str, '\r');
 	parse = ft_split(substr, ' ');
 	int i = 0;
@@ -166,7 +168,7 @@ void	Server::nick_command(char * str, int & fd)
 			return (send_error(ERR_NICKNAMEINUSE, s, fd));
 		}
 	}
-	// Si hemos llegado hasta aquí, el nock recibido es válido
+	// Si hemos llegado hasta aquí, el nick recibido es válido
 	// CASO 1: El usuario ya tenía nick y está solicitando un cambio
 	if (this->_fd_users[fd]->getNick().size())
 	{
@@ -255,4 +257,110 @@ void	Server::privmsg_command(std::string & command, int & fd)
 			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
 		send(deliver_fd, command.c_str(), command.length(), 0);
 	}
+}
+
+void	Server::join_channel(char * str, int & fd)
+{
+
+	int j = 1;
+	std::string s;
+	std::string	str1(str);
+
+	if (str1[0] != '#')
+	{
+		s.assign(str1);
+		s.append(" :No such channel");
+		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	if (str1.size() > 12)
+	{
+		s.assign("<");
+		s.append(str1);
+		s.append("> :No such channel");
+		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+	}
+	while (str1[j])
+	{
+		if (!ft_isalnum(str1[j]) && !ft_isspecial(str1[j]) && str1[j] != '-')
+		{
+			s.append(str1);
+			s.append(" :No such channel");
+			return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+		}
+		j++;
+	}
+	if (this->_fd_users[fd]->getMaxChannels())
+	{
+		s.assign(this->_fd_users[fd]->getNick());
+		s.append(" :You have joined too many channels");
+		return (send_error(ERR_TOOMANYCHANNELS, s, fd));
+	}
+	if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
+	{
+		s.assign(str1);
+		s.append(" :Cannot join channel (+l)");
+		return (send_error(ERR_CHANNELISFULL, s, fd));
+	}
+	else if (this->_name_channel[str1])
+	{
+	 	// User join channel
+		s.assign(this->_fd_users[fd]->getNick());
+		s.append(" joined ");
+		s.append(this->_name_channel[str1]->getName());
+		s.append("\r\n");
+		this->_name_channel[str1]->sendMsgChannel(s);
+		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
+		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
+		s.assign(" JOIN: ");
+		s.append(str1);
+		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
+	}
+	else
+	{
+		// Create and join channel
+		this->_name_channel[str1] = new Channel(str1, this->_fd_users[fd]);
+		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
+		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
+		s.assign(" JOIN: ");
+		s.assign(str1);
+		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
+	}
+}
+
+void	Server::join_command(char * str, int & fd)
+{
+	char 		**parse;
+	std::string	s;
+
+	char	*tmp;
+	int		i = 0;
+
+	tmp = strchr(str, '\r');
+	*tmp = 0;
+	str = str + 4;
+	while (*str == ' ')
+		str++;
+	if (*str == ':')
+		str++;
+	parse = ft_split(str, ',');
+	if (!parse[0])
+	{
+ 		s.append("JOIN :Not enough parameters");
+		free(parse);
+		return (send_error(ERR_NEEDMOREPARAMS, s, fd));
+	}
+	while (parse[i] && i < 16)
+	{
+		Server::join_channel(parse[i], fd);
+		i++;
+	}
+	free(parse);
+}
+
+void	Server::part_command(char * str, int & fd)
+{
+	(void) str;
+	(void) fd;
 }
