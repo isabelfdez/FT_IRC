@@ -20,6 +20,8 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
+
+
 void	send_reply(std::string replay, std::string str, int fd)
 {
 	std::string message;

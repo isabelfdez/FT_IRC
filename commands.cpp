@@ -13,6 +13,7 @@
 #include "./server/Server.hpp"
 #include "utils.hpp"
 
+
 static std::string * token_user(char *buffer)
 {
 	std::string* tokens = new std::string[ 5 ];

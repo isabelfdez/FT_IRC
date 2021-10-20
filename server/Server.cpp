@@ -83,14 +83,16 @@ void Server::join_new_connection()
 	if (connection < 0)
 		throw Server::GlobalServerExecption();
 	// setnonblocking
-
-	for (size_t i = 0; i < 1 && (connection != -1); i++)
+	std::cout << connection << "\n";
+	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
+		{
 			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
-		this->_list_connected_user[i] = connection;
-		this->_fd_users[connection] =  new User(connection);
-		connection = -1;
+			this->_list_connected_user[i] = connection;
+			this->_fd_users[connection] =  new User(connection);
+			connection = -1;
+		}
 	}
 	if ( connection != -1)
 	{
@@ -211,6 +213,8 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	else
 	{
 		std::string buff2 (buffer);	
+		std::cout << buffer << std::endl;
+		std::cout << "HG\n";
 		this->parse_command(fd_client, buff2, buffer);
 	}
 }
