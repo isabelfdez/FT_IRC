@@ -88,7 +88,7 @@ class Server
 
 		// send msg
 
-		void send_msg_chanell( Channel const & channel, std::string message );
+		void send_msg_chanell( Channel * channel, std::string message );
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:34:08 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 14:59:22 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	User::deleteChannel(Channel & channel)
 
 
 
-void	User::addChannel(Channel * channel)
+void	User::addChannel(Channel * const & channel)
 {
 	this->_channels.push_back(channel);
 }

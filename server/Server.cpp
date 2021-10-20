@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:59:54 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:59:02 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void Server::join_new_connection()
 			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
 		this->_list_connected_user[i] = connection;
 		this->_fd_users[connection] =  new User(connection);
-		connection = -1;
+		// connection = -1;
 	}
 	if ( connection != -1)
 	{

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 14:19:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:34:55 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static std::string * token_user(char *buffer)
 	std::string* tokens = new std::string[ 5 ];
 	std::string token, s_buffer = buffer;
 	size_t pos = 0, space = 0, i  = 0;
-	while ( (pos = s_buffer.find(" ") ) != std::string::npos || i < 5)
+	while ( (pos = s_buffer.find(" ") ) != std::string::npos ||  i < 5)
 	{
 		token = s_buffer.substr(0, pos + space);
 		if ( token.length() > 0 )
@@ -27,15 +27,17 @@ static std::string * token_user(char *buffer)
 			i++;
 		}
 		std::string::iterator start = s_buffer.begin();
-		while ( *start == ' ' && start != s_buffer.end() )
+		while ( *start++ == ' ' && start != s_buffer.end() )
 		{
 			space++;
 			start++;
 		}
 		s_buffer.erase(0, pos + space);
 		space = 0;
+		if ( pos == std::string::npos )
+			break ;
 	}
-	if (i != 5)
+	if ( i != 5 )
 	{
 		delete [] tokens;
 		return NULL;
@@ -43,13 +45,15 @@ static std::string * token_user(char *buffer)
 	return tokens;
 }
 
-void Server::send_msg_chanell( Channel const & channel, std::string message )
+void Server::send_msg_chanell( Channel * channel, std::string message )
 {
-	std::list<User *>::iterator __user = channel.getUsers().begin();
-	std::list<User *>::iterator end = channel.getUsers().end();
+	(void) channel;
+	std::list<User *>::iterator __user = channel->getUsers().begin();
+	// std::list<User *>::iterator end = channel->getUsers().end();
 
-	for ( ; __user  != end ; ++__user )
-		send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
+	std::cout << (*__user )->getsockfd() << " " << message << std::endl ; 
+	// for ( ; __user  != end ; ++__user )
+		// send( (*__user )->getsockfd(), message.c_str(),  message.length(), 0);
 }
 
 // :Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
@@ -64,18 +68,19 @@ void Server::quit_command(int fd, char *buffer)
 	std::string msg_quit_users = ": " +  tmp->getNick() + "! " + buffer;
 	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
 
-	std::list<Channel *>::iterator channel = tmp->getChannels().begin();
-	std::list<Channel *>::iterator end = tmp->getChannels().end();
+	std::list<Channel *>::iterator channel = this->_channel.begin();
+	// std::list<Channel *>::iterator end = tmp->getChannels().end();
 	
-	for (; channel != end ; ++channel )
+	/*for (; channel != end ; ++channel )
 	{
-		std::cout << (*channel)->getName() << std::endl;
-		// send_msg_chanell( *(*channel), msg_quit_users );
 		std::cout << " [[[[[[ HERE SEGFAULT ]]]]] \n";
-		delete *channel;
+		// delete *channel;
 		// tmp->getChannels().erase( channel );
 		// eliminar lista de canales de la clase servidor 
-	}
+	}*/
+		
+		// std::cout << (*(*channel)->getUsers().begin())->getNick() << std::endl;
+		 send_msg_chanell( *channel, msg_quit_users );
 	close (fd);
 }
 
@@ -95,9 +100,9 @@ void	Server::user_command( int fd, char *buffer )
 		tmp->setRegistered(true);
 		this->_connected_users.push_back(tmp);
 	}
-	Channel *tmp2 = *this->_channel.begin();
-	(*tmp2).addUser(tmp);
-	tmp->addChannel(tmp2);
+
+	(*this->_channel.begin())->addUser(tmp);
+	
 	delete [] token;
 }
 

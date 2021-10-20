@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:33:16 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:00:25 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ class User
 		// Other functions
 		void						init_modes();
 		void						deleteChannel(Channel & channel);
-		void						addChannel(Channel * channel);
+		void						addChannel(Channel * const  & channel);
 };
 
 #endif
