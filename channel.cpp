@@ -83,17 +83,18 @@ void	Channel::deleteUser(User * user)
     {
 		if (*it == user) // Esto no se si esta bien
 		{
+			this->_users.erase(it);
 			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
 			{
 				if (*it2 == user)
 				{
 					this->_operators.erase(it2);
+					if (!this->_operators.size())
+						this->_operators.push_back(*(this->_users.begin()));
 					break ;
 				}
 			}
-			this->_users.erase(it);
-			//s.assign(user->getNick());
-			s += user->getNick() + " has left the channel: " + this->_name + "\r\n";
+			s += user->getNick() + " has left the channel " + this->_name + "\r\n";
 			sendMsgChannel(s);
 			return ;
 		}

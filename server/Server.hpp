@@ -89,6 +89,7 @@ class Server
 		int		const & getHigthSock ()			const;
 		fd_set	const & getSocks()				const;
 
+		void			deleteChannel(std::string);
 
 		// Comandos
 		void			nick_command( char * str, int & fd );

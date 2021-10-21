@@ -22,6 +22,7 @@
 # include <netinet/in.h>
 # include <string.h>
 # include <arpa/inet.h>
+# include "user.hpp"
 
 bool	find_command(std::string command, std::list<std::string> commands);
 void	send_error(std::string error, std::string str, int fd);
@@ -32,6 +33,8 @@ int		ft_isalnum(int c);
 size_t	ft_strlen(const char *s);
 bool	ft_isspecial(char c);
 char	*ft_substr(char const *s, char c);
+void    send_message(std::string & message, int & fd, User * usr);
+void    send_message_channel(std::string & message, User * usr, Channel * chnl);
 
 
 

@@ -196,62 +196,84 @@ void	Server::nick_command(char * str, int & fd)
 
 // Falta gestionar TOO MANY TARGETS. No sé si el error está bien.
 
-void	Server::privmsg_command(std::string & command, int & fd)
+void    Server::privmsg_command(std::string & command, int & fd)
 {
-	std::string 				delimiter = " ";
-	size_t						pos = 0;
-	std::string 				token;
-	int							deliver_fd;
-	std::list<User *>::iterator it;
-	std::string					s;
+    std::string                 delimiter = " ";
+    size_t                      pos = 0;
+    std::string                 token;
+    int                         deliver_fd;
+    std::list<User *>::iterator it;
+    std::string                 s;
+    std::string                 aux(command);
 
-	// Quitamos el comando
-	pos = command.find(delimiter);
-	command.erase(0, pos + delimiter.length());
-	while (*(command.begin()) == ' ')
-		command.erase(0, 1);	
-	// Lo que tenemos a continuación es el target del mensaje
-	if ((pos = command.find(delimiter)) == std::string::npos)
-	{
-		s.assign(":No recipient given (PRIVMSG)");
-		return (send_error(ERR_NORECIPIENT, s, fd));
-	}
-	token = command.substr(0, pos);
-	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
-	{
-		if ((*it)->getNick() == token)
-		{
-			deliver_fd = (*it)->getsockfd();
-			break ;
-		}
-	}
-	// Mandamos un error si no hemos encontrado el nick
-	if (it == this->_connected_users.end())
-	{
-		s.assign(token);
-		s.assign(" :No such nick/channel");
-		return (send_error(ERR_NOSUCHNICK, s, fd));
-	}
-	// Si hemos encontrado el nick, mandamos el mensaje
-	else
-	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		if (!(*(command.begin()) == ':'))
-		{
-			s.assign(token);
-			s.assign(" : Too many recipients.");
-			return (send_error(ERR_TOOMANYTARGETS, s, fd));
-		}
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		send(deliver_fd, command.c_str(), command.length(), 0);
-	}
+    // Quitamos el comando
+    pos = command.find(delimiter);
+    command.erase(0, pos + delimiter.length());
+    while (*(command.begin()) == ' ')
+        command.erase(0, 1);    
+    // Lo que tenemos a continuación es el target del mensaje
+    if ((pos = command.find(delimiter)) == std::string::npos)
+    {
+        s.assign(":No recipient given (PRIVMSG)");
+        return (send_error(ERR_NORECIPIENT, s, fd));
+    }
+    token = command.substr(0, pos);
+    for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
+    {
+        if ((*it)->getNick() == token)
+        {
+            deliver_fd = (*it)->getsockfd();
+            break ;
+        }
+    }
+    // Si hemos encontrado el nick, mandamos el mensaje
+    if (it != this->_connected_users.end())
+    {
+        command.erase(0, pos + delimiter.length());
+        while (command.begin() != command.end() && *(command.begin()) == ' ')
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        if (!(*(command.begin()) == ':'))
+        {
+            s.assign(token);
+            s.assign(" : Too many recipients.");
+            return (send_error(ERR_TOOMANYTARGETS, s, fd));
+        }
+        else
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        return (send_message(aux, deliver_fd, this->_fd_users[fd]));
+    }
+    // Ahora vamos al caso de mandar un mensaje a un todo un canal
+    // Mandamos un error si no hemos encontrado el token ni en los nicks ni en los channels
+    if (this->_name_channel.find(token) == this->_name_channel.end())
+    {
+        s.assign(token);
+        s.assign(" :No such nick/channel");
+        return (send_error(ERR_NOSUCHNICK, s, fd));
+
+    }
+    else
+    {
+        command.erase(0, pos + delimiter.length());
+        while (command.begin() != command.end() && *(command.begin()) == ' ')
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        if (!(*(command.begin()) == ':'))
+        {
+            s.assign(token);
+            s.assign(" : Too many recipients.");
+            return (send_error(ERR_TOOMANYTARGETS, s, fd));
+        }
+        else
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        return (send_message_channel(aux, this->_fd_users[fd], this->_name_channel[token]));
+    }
 }
 
 void	Server::join_channel(char * str, int & fd)
@@ -374,6 +396,8 @@ void	Server::part_channel(char * str, int & fd)
 
 		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->deleteChannel(this->_name_channel[str1]);
+		if (!this->_name_channel[str1]->getUsers().size())
+			deleteChannel(str1);
 		std::cout << "hola4\n";
 
 	}
@@ -405,5 +429,18 @@ void	Server::part_command(char * str, int & fd)
 	{
 		Server::part_channel(parse[i], fd);
 		i++;
+	}
+}
+
+void			Server::deleteChannel(std::string channel)
+{
+	std::map<std::string, Channel*>::iterator it;
+
+	it = this->_name_channel.find(channel);
+	if (it != this->_name_channel.end())
+	{
+		std::cout << "paso por aqui\n";
+		delete this->_name_channel[channel];
+		this->_name_channel.erase(it);
 	}
 }
