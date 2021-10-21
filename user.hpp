@@ -121,7 +121,7 @@ class User
 
 		// Other functions
 		void						init_modes();
-		void						deleteChannel(Channel & channel);
+		void						deleteChannel(Channel * channel);
 		void						addChannel(Channel * channel);
 };
 

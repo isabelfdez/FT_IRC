@@ -373,7 +373,7 @@ void	Server::part_channel(char * str, int & fd)
 		std::cout << "hola3\n";
 
 		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
-		this->_name_channel.erase(this->_name_channel.find(str1));
+		this->_fd_users[fd]->deleteChannel(this->_name_channel[str1]);
 		std::cout << "hola4\n";
 
 	}
