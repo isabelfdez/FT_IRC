@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 18:18:42 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/21 18:47:35 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,17 @@
 # include <netinet/in.h>
 # include <string.h>
 # include <arpa/inet.h>
+# include "./server/Server.hpp"
 
 bool	find_command(std::string command, std::list<std::string> commands);
+
 void	send_error(std::string error, std::string str, int fd);
 void	send_reply(std::string replay, std::string str, int fd);
+void	send_message(std::string & message, int & fd, User * usr);
+void	send_message_channel(std::string & message, User * usr, Channel * chnl);
+
+void    complete_registration(User * usr);
+
 char	**ft_split(char const *s, char c);
 int		ft_isalpha(int c);
 int		ft_isalnum(int c);

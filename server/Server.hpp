@@ -39,6 +39,7 @@
 
 // Definiciones de replys
 
+# define RPL_WELCOME				"001"
 # define RPL_NOTOPIC				"332"
 # define RPL_USERS					"393"
 

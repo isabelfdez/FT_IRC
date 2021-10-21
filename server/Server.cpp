@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:59:54 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/21 19:27:18 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void Server::join_new_connection()
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User(connection);
 			connection = -1;
+			std::cout << "segfault\n";
 		}
 	}
 	if ( connection != -1)

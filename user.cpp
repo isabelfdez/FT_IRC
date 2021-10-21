@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   User.cpp                                           :+:      :+:    :+:   */
+/*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:34:08 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/21 17:26:02 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,9 @@ bool	User::getMaxChannels() const { return (this->_max_channels); }
 
 std::list< Channel *>	User::getChannels() const  { return this->_channels; }
 
+std::string const & User::getMask() const { return this->_mask; }
+
+
 
 // Setters
 
@@ -97,6 +100,8 @@ void	User::setmode(char mode, bool state)
 void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
+
+void	User::setMask(std::string const & mask) { this->_mask = mask; }
 
 
 

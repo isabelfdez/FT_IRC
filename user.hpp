@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   User.hpp                                           :+:      :+:    :+:   */
+/*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:33:16 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/21 17:28:12 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ class User
 		std::list<Channel *>		_channels;
 		bool						_is_registered;
 		bool						_max_channels;
+		std::string					_mask;
 
 	public:
 		// Constructor && destructor
@@ -106,7 +107,8 @@ class User
 		bool						getRegistered() const;
 		bool						getMaxChannels() const;
 		std::string const &         getRealName() const;
-		std::list< Channel *>		getChannels() const ;
+		std::list< Channel *>		getChannels() const;
+		std::string	const &			getMask() const;		
 		
 
 		// Setters
@@ -115,6 +117,7 @@ class User
 		void						setmode(char mode, bool state);
 		void						setRegistered(bool status);
 		void                        setRealName(std::string const & realName);
+		void						setMask(std::string const & mask);
 
 		// Overload
 		bool						operator==(User & obj);
