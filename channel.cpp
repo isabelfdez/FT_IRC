@@ -78,6 +78,7 @@ bool	Channel::operator==(Channel & obj)
 
 void	Channel::deleteUser(User * user)
 {
+	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
 		if (*it == user) // Esto no se si esta bien
@@ -91,6 +92,9 @@ void	Channel::deleteUser(User * user)
 				}
 			}
 			this->_users.erase(it);
+			//s.assign(user->getNick());
+			s += user->getNick() + " has left the channel: " + this->_name + "\r\n";
+			sendMsgChannel(s);
 			return ;
 		}
 	}
