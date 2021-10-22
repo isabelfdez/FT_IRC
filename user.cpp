@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/20 14:59:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/22 19:30:33 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool	User::getRegistered() const { return (this->_is_registered); }
 
 bool	User::getMaxChannels() const { return (this->_max_channels); }
 
-std::list< Channel *>	User::getChannels() const  { return this->_channels; }
+std::list< Channel *> & User::getChannels() { return this->_channels; }
 
 std::string				User::getChannelsString()
 {
@@ -149,7 +149,7 @@ void	User::deleteChannel(Channel * channel)
 
 
 
-void	User::addChannel(Channel * const & channel)
+void	User::addChannel(Channel *  channel)
 {
 	this->_channels.push_back(channel);
 	if (_channels.size() >= MAX_CHANNELS)

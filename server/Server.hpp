@@ -102,12 +102,6 @@ class Server
 		void			part_command(char * str, int & fd);
 		void			part_channel(std::string str, int & fd);
 
-
-
-		// send msg
-
-		void send_msg_chanell( Channel * channel, std::string message );
-
 };
 
 #endif 

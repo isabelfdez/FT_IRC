@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/20 16:08:14 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/22 19:13:15 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,8 +173,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		//	notice_command();
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
-		//else if (command == "QUIT" || command == "quit")
-		//	this->quit_command(fd, str);
+		else if (command == "QUIT" || command == "quit")
+			this->quit_command(fd, str);
 	}
 }
 

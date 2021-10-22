@@ -6,14 +6,14 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/22 17:52:18 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/22 19:53:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 
 template<class T>
-typename std::string::iterator delimiterAdvance(T begin, T end, char c)
+static typename std::string::iterator delimiterAdvance(T begin, T end, char c)
 {
 	for( ; *begin == c && begin != end; begin++ );
 	return ( begin );
@@ -30,7 +30,7 @@ std::vector<std::string> split(char * buff, char c)
 	std::string::iterator begin = buffer.begin();
 	std::string::iterator end = buffer.end();
 	buffer = &( *delimiterAdvance<std::string::iterator>( begin, end, c ) );
-	while ( (pos = buffer.find(c) ) != std::string::npos || buffer.length() > 0 )
+	while ( ( pos = buffer.find(c) ) != std::string::npos || buffer.length() > 0 )
 	{
 		tmp = buffer.substr(0, pos);
 		if ( tmp.length() > 0)

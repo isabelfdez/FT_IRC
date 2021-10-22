@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/22 17:52:27 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/22 19:30:40 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ class User
 		bool						getRegistered() const;
 		bool						getMaxChannels() const;
 		std::string const &         getRealName() const;
-		std::list< Channel *>		getChannels() const ;
+		std::list< Channel *> &		getChannels() ;
 		std::string					getChannelsString();
 		
 
