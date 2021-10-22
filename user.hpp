@@ -107,6 +107,7 @@ class User
 		bool						getMaxChannels() const;
 		std::string const &         getRealName() const;
 		std::list< Channel *>		getChannels() const ;
+		std::string					getChannelsString();
 		
 
 		// Setters

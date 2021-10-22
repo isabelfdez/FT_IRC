@@ -13,6 +13,7 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+# include <vector>
 # include <list>
 # include <string>
 # include <iostream>
@@ -35,6 +36,7 @@ bool	ft_isspecial(char c);
 char	*ft_substr(char const *s, char c);
 void    send_message(std::string & message, int & fd, User * usr);
 void    send_message_channel(std::string & message, User * usr, Channel * chnl);
+std::vector<std::string>    split(char * buff, char c);
 
 
 

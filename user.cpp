@@ -64,6 +64,19 @@ bool	User::getMaxChannels() const { return (this->_max_channels); }
 
 std::list< Channel *>	User::getChannels() const  { return this->_channels; }
 
+std::string				User::getChannelsString()
+{
+	std::string s;
+
+		std::cout << "hola3\n";
+
+	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		s += (*it)->getName() + ",";
+	}
+		std::cout << s << "\n";
+	return (s);
+}
 
 // Setters
 

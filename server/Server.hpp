@@ -22,6 +22,7 @@
 
 // Definiciones de errores
 
+# define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
 # define ERR_NOSUCHCHANNEL			"403"
@@ -97,9 +98,9 @@ class Server
 		void			user_command( int fd, char *buffer );
 		//void			quit_command(int fd, char *buffer);
 		void			join_command(char * str, int & fd);
-		void			join_channel(char * str, int & fd);
+		void			join_channel(std::string str, int & fd);
 		void			part_command(char * str, int & fd);
-		void			part_channel(char * str, int & fd);
+		void			part_channel(std::string str, int & fd);
 
 
 
