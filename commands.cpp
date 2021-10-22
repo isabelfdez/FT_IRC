@@ -138,14 +138,14 @@ void	Server::nick_command(char * str, int & fd)
 	}
 	else if (!ft_isalpha(parse[1][0]) && !ft_isspecial(parse[1][0]))
 	{
-		s.append(parse[1]);
-		s.append(" :Erroneous nickname");
+		s.assign(parse[1]);
+		s.assign(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
 	else if (ft_strlen(parse[1]) > 9)
 	{
-		s.append(parse[1]);
-		s.append(" :Erroneous nickname");
+		s.assign(parse[1]);
+		s.assign(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
 	int j = 1;
@@ -153,8 +153,8 @@ void	Server::nick_command(char * str, int & fd)
 	{
 		if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
 		{
-			s.append(parse[1]);
-			s.append(" :Erroneous nickname");
+			s.assign(parse[1]);
+			s.assign(" :Erroneous nickname");
 			return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 		}
 		j++;
@@ -201,119 +201,102 @@ void	Server::nick_command(char * str, int & fd)
 
 // Falta gestionar TOO MANY TARGETS. No sé si el error está bien.
 
-void	Server::privmsg_command(std::string & command, int & fd)
+void    Server::privmsg_command(std::string & command, int & fd)
 {
-	std::string 				delimiter = " ";
-	size_t						pos = 0;
-	std::string 				token;
-	int							deliver_fd;
-	std::list<User *>::iterator it;
-	std::string					s;
+    std::string                 delimiter = " ";
+    size_t                      pos = 0;
+    std::string                 token;
+    int                         deliver_fd;
+    std::list<User *>::iterator it;
+    std::string                 aux(command);
 
-	// Quitamos el comando
-	pos = command.find(delimiter);
-	command.erase(0, pos + delimiter.length());
-	while (*(command.begin()) == ' ')
-		command.erase(0, 1);	
-	// Lo que tenemos a continuación es el target del mensaje
-	if ((pos = command.find(delimiter)) == std::string::npos)
-	{
-		s.assign(":No recipient given (PRIVMSG)");
-		return (send_error(ERR_NORECIPIENT, s, fd));
-	}
-	token = command.substr(0, pos);
-	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
-	{
-		if ((*it)->getNick() == token)
-		{
-			deliver_fd = (*it)->getsockfd();
-			break ;
-		}
-	}
-	// Mandamos un error si no hemos encontrado el nick
-	if (it == this->_connected_users.end())
-	{
-		s.assign(token);
-		s.assign(" :No such nick/channel");
-		return (send_error(ERR_NOSUCHNICK, s, fd));
-	}
-	// Si hemos encontrado el nick, mandamos el mensaje
-	else
-	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		if (!(*(command.begin()) == ':'))
-		{
-			s.assign(token);
-			s.assign(" : Too many recipients.");
-			return (send_error(ERR_TOOMANYTARGETS, s, fd));
-		}
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		send(deliver_fd, command.c_str(), command.length(), 0);
-	}
+    // Quitamos el comando
+    pos = command.find(delimiter);
+    command.erase(0, pos + delimiter.length());
+    while (*(command.begin()) == ' ')
+        command.erase(0, 1);    
+    // Lo que tenemos a continuación es el target del mensaje
+    if ((pos = command.find(delimiter)) == std::string::npos)
+        return (send_error(ERR_NORECIPIENT, ":No recipient given (PRIVMSG)", fd));
+    token = command.substr(0, pos);
+    for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
+    {
+        if ((*it)->getNick() == token)
+        {
+            deliver_fd = (*it)->getsockfd();
+            break ;
+        }
+    }
+    // Si hemos encontrado el nick, mandamos el mensaje
+    if (it != this->_connected_users.end())
+    {
+        command.erase(0, pos + delimiter.length());
+        while (command.begin() != command.end() && *(command.begin()) == ' ')
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        if (!(*(command.begin()) == ':'))
+            return (send_error(ERR_TOOMANYTARGETS, token + " : Too many recipients.", fd));
+        else
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        return (send_message(aux, deliver_fd, this->_fd_users[fd]));
+    }
+    // Ahora vamos al caso de mandar un mensaje a un todo un canal
+    // Mandamos un error si no hemos encontrado el token ni en los nicks ni en los channels
+    if (this->_name_channel.find(token) == this->_name_channel.end())
+        return (send_error(ERR_NOSUCHNICK, token + " :No such nick/channel", fd));
+    else
+    {
+        command.erase(0, pos + delimiter.length());
+        while (command.begin() != command.end() && *(command.begin()) == ' ')
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        if (!(*(command.begin()) == ':'))
+            return (send_error(ERR_TOOMANYTARGETS, token + " : Too many recipients.", fd));
+        else
+            command.erase(0, 1);
+        if (command.begin() == command.end())
+            return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+        return (send_message_channel(aux, this->_fd_users[fd], this->_name_channel[token]));
+    }
 }
 
-void	Server::join_channel(char * str, int & fd)
+void	Server::join_channel(std::string str1, int & fd)
 {
 
 	int j = 1;
-	std::string s;
-	std::string	str1(str);
 
-	if (str1[0] != '#')
+	if (str1 == "0")
 	{
-		s.assign(str1);
-		s.append(" :No such channel");
-		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
+		str1 = "part " +  this->_fd_users[fd]->getChannelsString();
+		std::cout << str1 << "\n";
+		return (part_command(&*str1.begin(), fd));
 	}
+	else if (str1[0] != '#')
+		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
 	if (str1.size() > 12)
-	{
-		s.assign("<");
-		s.append(str1);
-		s.append("> :No such channel");
-		return (send_error(ERR_NOSUCHCHANNEL, s, fd));
-	}
+		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
 	while (str1[j])
 	{
 		if (!ft_isalnum(str1[j]) && !ft_isspecial(str1[j]) && str1[j] != '-')
-		{
-			s.append(str1);
-			s.append(" :No such channel");
-			return (send_error(ERR_NOSUCHCHANNEL, s, fd));
-		}
+			return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
 		j++;
 	}
 	if (this->_fd_users[fd]->getMaxChannels())
-	{
-		s.assign(this->_fd_users[fd]->getNick());
-		s.append(" :You have joined too many channels");
-		return (send_error(ERR_TOOMANYCHANNELS, s, fd));
-	}
+
+		return (send_error(ERR_TOOMANYCHANNELS, this->_fd_users[fd]->getNick() + " :You have joined too many channels", fd));
 	if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
-	{
-		s.assign(str1);
-		s.append(" :Cannot join channel (+l)");
-		return (send_error(ERR_CHANNELISFULL, s, fd));
-	}
+		return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", fd));
 	else if (this->_name_channel[str1])
 	{
 	 	// User join channel
-		s.assign(this->_fd_users[fd]->getNick());
-		s.append(" joined ");
-		s.append(this->_name_channel[str1]->getName());
-		s.append("\r\n");
-		this->_name_channel[str1]->sendMsgChannel(s);
+		this->_name_channel[str1]->sendMsgChannel(this->_fd_users[fd]->getNick() + " joined " + this->_name_channel[str1]->getName() + "\r\n");
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-		s.assign(" JOIN: ");
-		s.append(str1);
-		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_NOTOPIC, " JOIN: " + str1, fd);
 		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
 	}
 	else
@@ -322,20 +305,15 @@ void	Server::join_channel(char * str, int & fd)
 		this->_name_channel[str1] = new Channel(str1, this->_fd_users[fd]);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-		s.assign(" JOIN: ");
-		s.assign(str1);
-		send_reply(RPL_NOTOPIC, s, fd);
+		send_reply(RPL_NOTOPIC, " JOIN: " + str1, fd);
 		send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
 	}
 }
 
 void	Server::join_command(char * str, int & fd)
 {
-	char 		**parse;
-	std::string	s;
-
+	std::vector<std::string> parse;
 	char	*tmp;
-	int		i = 0;
 
 	tmp = strchr(str, '\r');
 	*tmp = 0;
@@ -344,23 +322,69 @@ void	Server::join_command(char * str, int & fd)
 		str++;
 	if (*str == ':')
 		str++;
-	parse = ft_split(str, ',');
-	if (!parse[0])
+	parse = split(str, ',');
+	if (!parse[0].size())
+		return (send_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters", fd));
+	for (std::vector<std::string>::iterator it = parse.begin(); it != parse.end(); it++)
+		Server::join_channel(*it, fd);
+}
+
+void	Server::part_channel(std::string str1, int & fd)
+{
+	int j = 1;
+
+	std::cout << str1 << std::endl;
+
+	if (str1[0] != '#')
+		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
+	while (str1[j])
 	{
- 		s.append("JOIN :Not enough parameters");
-		free(parse);
-		return (send_error(ERR_NEEDMOREPARAMS, s, fd));
+		if (!ft_isalnum(str1[j]) && !ft_isspecial(str1[j]) && str1[j] != '-')
+			return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
+		j++;
 	}
-	while (parse[i] && i < 16)
+	if (str1.size() > 12)
+		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
+	else if (this->_name_channel.count(str1))
 	{
-		Server::join_channel(parse[i], fd);
-		i++;
+		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
+		this->_fd_users[fd]->deleteChannel(this->_name_channel[str1]);
+		if (!this->_name_channel[str1]->getUsers().size())
+			deleteChannel(str1);
 	}
-	free(parse);
+	else
+		return (send_error(ERR_NOTONCHANNEL,  ":You're not on that channel", fd));
 }
 
 void	Server::part_command(char * str, int & fd)
 {
-	(void) str;
-	(void) fd;
+	std::vector<std::string>	parse;
+	char		*tmp;
+
+	if ((tmp = strchr(str, '\r')))
+		*tmp = 0;
+	str = str + 4;
+		while (*str == ' ')
+		str++;
+	if (*str == ':')
+		str++;
+	parse = split(str, ',');
+	if (!parse[0].size())
+	{
+		return (send_error(ERR_NEEDMOREPARAMS, "PART :Not enough parameters", fd));
+	}
+	for (std::vector<std::string>::iterator it = parse.begin(); it != parse.end(); it++)
+		Server::part_channel(*it, fd);
+}
+
+void			Server::deleteChannel(std::string channel)
+{
+	std::map<std::string, Channel*>::iterator it;
+
+	it = this->_name_channel.find(channel);
+	if (it != this->_name_channel.end())
+	{
+		delete this->_name_channel[channel];
+		this->_name_channel.erase(it);
+	}
 }

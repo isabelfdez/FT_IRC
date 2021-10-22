@@ -20,7 +20,36 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
+void    send_message(std::string & message, int & fd, User * usr)
+{
+    std::string mask;
 
+    mask.append(":");
+    mask.append(usr->getNick());
+    mask.append("!");
+    mask.append(usr->getUserName());
+    mask.append("@ft_irc.com");
+    mask.append(" ");
+    mask.append(message);
+    mask.append("\n");
+    send(fd, mask.c_str(), mask.length(), 0);
+}
+
+void    send_message_channel(std::string & message, User * usr, Channel * chnl)
+{
+    std::string mask;
+
+    //str.append(usr->getMask());
+    mask.append(":");
+    mask.append(usr->getNick());
+    mask.append("!");
+    mask.append(usr->getUserName());
+    mask.append("@ft_irc.com");
+    mask.append(" ");
+    mask.append(message);
+    mask.append("\n");
+    chnl->sendMsgChannel(mask);
+}
 
 void	send_reply(std::string replay, std::string str, int fd)
 {

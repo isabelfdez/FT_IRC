@@ -52,6 +52,7 @@ bool	User::getmode(char mode) const
 	}
 }
 
+
 int		User::getsockfd()  const { return (this->_sock_fd); }
 
 
@@ -61,7 +62,21 @@ bool	User::getRegistered() const { return (this->_is_registered); }
 
 bool	User::getMaxChannels() const { return (this->_max_channels); }
 
+std::list< Channel *>	User::getChannels() const  { return this->_channels; }
 
+std::string				User::getChannelsString()
+{
+	std::string s;
+
+		std::cout << "hola3\n";
+
+	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		s += (*it)->getName() + ",";
+	}
+		std::cout << s << "\n";
+	return (s);
+}
 
 // Setters
 
@@ -96,7 +111,6 @@ void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
 
-std::list< Channel *>	User::getChannels() const  { return this->_channels; }
 
 
 // Overloads
@@ -121,11 +135,11 @@ void	User::init_modes()
 	this->_modes.s = 0;
 }
 
-void	User::deleteChannel(Channel & channel)
+void	User::deleteChannel(Channel * channel)
 {
 	for (std::list<Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
     {
-		if (**it == channel) // Esto no se si esta bien
+		if (*it == channel) // Esto no se si esta bien
 		{
 			this->_channels.erase(it);
 			return ;

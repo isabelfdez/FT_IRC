@@ -14,7 +14,7 @@
 
 // Constructor && destructor
 
-Channel::Channel(std::string name, User *user): _name(name)
+Channel::Channel(std::string name, User *user): _name(name), _users(), _operators()
 {
 	this->_maxusers = MAX_USERS;
 	this->_isfull = false;
@@ -76,14 +76,27 @@ bool	Channel::operator==(Channel & obj)
 
 // Other functions
 
-void	Channel::deleteUser(User & user)
+void	Channel::deleteUser(User * user)
 {
+	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
-		if (**it == user) // Esto no se si esta bien
+		if (*it == user) // Esto no se si esta bien
 		{
 			this->_users.erase(it);
-			return ;	
+			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
+			{
+				if (*it2 == user)
+				{
+					this->_operators.erase(it2);
+					if (!this->_operators.size())
+						this->_operators.push_back(*(this->_users.begin()));
+					break ;
+				}
+			}
+			s += user->getNick() + " has left the channel " + this->_name + "\r\n";
+			sendMsgChannel(s);
+			return ;
 		}
 	}
 }
@@ -95,7 +108,7 @@ void	Channel::addUser(User * user)
 		this->_isfull = true;
 }
 
-void	Channel::sendMsgChannel(std::string & msg)
+void	Channel::sendMsgChannel(std::string msg)
 {
 	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
 	{

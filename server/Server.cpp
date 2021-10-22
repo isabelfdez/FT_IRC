@@ -171,8 +171,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->privmsg_command(buff2, fd);
 		//else if (command == "NOTICE" || command == "notice")
 		//	notice_command();
-		//else if (command == "PART" || command == "part")
-		//	part_command();
+		else if (command == "PART" || command == "part")
+			part_command(str, fd);
 		//else if (command == "QUIT" || command == "quit")
 		//	this->quit_command(fd, str);
 	}

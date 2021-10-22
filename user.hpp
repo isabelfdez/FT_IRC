@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/20 15:00:25 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/22 17:52:27 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ class User
 		bool						getMaxChannels() const;
 		std::string const &         getRealName() const;
 		std::list< Channel *>		getChannels() const ;
+		std::string					getChannelsString();
 		
 
 		// Setters
@@ -121,8 +122,8 @@ class User
 
 		// Other functions
 		void						init_modes();
-		void						deleteChannel(Channel & channel);
-		void						addChannel(Channel * const  & channel);
+		void						deleteChannel(Channel * channel);
+		void						addChannel(Channel * channel);
 };
 
 #endif

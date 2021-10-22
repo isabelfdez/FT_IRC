@@ -1,4 +1,4 @@
-SRCS 		= main.cpp	channel.cpp	./server/Server.cpp	user.cpp commands.cpp utils.cpp
+SRCS 		= main.cpp channel.cpp	./server/Server.cpp	user.cpp commands.cpp utils.cpp split.cpp
 
 OBJS 		= $(SRCS:.cpp=.o)
 
