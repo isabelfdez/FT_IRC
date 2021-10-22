@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/18 18:18:42 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/22 17:42:06 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <netinet/in.h>
 # include <string.h>
 # include <arpa/inet.h>
+# include <vector>
 
 bool	find_command(std::string command, std::list<std::string> commands);
 void	send_error(std::string error, std::string str, int fd);
