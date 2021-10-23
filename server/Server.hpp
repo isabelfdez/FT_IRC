@@ -85,12 +85,14 @@ class Server
 
 		
 		void			setNumReadSock(void );
-		int		const & getNumReadSock( void ) const ;
+		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
 		fd_set	const & getSocks()				const;
 
-		void			deleteChannel(std::string);
+		void			deleteChannel( std::string );
+		void			close_fd( int fd );
+		void			close_all_fd();
 
 		// Comandos
 		void			nick_command( char * str, int & fd );
@@ -101,6 +103,8 @@ class Server
 		void			join_channel(std::string str, int & fd);
 		void			part_command(char * str, int & fd);
 		void			part_channel(std::string str, int & fd);
+
+
 
 };
 

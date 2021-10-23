@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/22 19:42:36 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/23 15:52:10 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,16 @@ void	Channel::addUser(User * user)
 	this->_users.push_back(user);
 	if (_users.size() >= this->_maxusers)
 		this->_isfull = true;
+}
+
+// krios-fu
+void	Channel::sendMsgChannel( std::string msg , int fd)
+{
+	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if ( (*it)->getsockfd() != fd )
+			send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
+	}
 }
 
 void	Channel::sendMsgChannel(std::string msg)

@@ -6,12 +6,29 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/22 19:13:15 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/23 21:27:37 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "../utils.hpp"
+
+static void setnonblocking(int sock)
+{
+	int opts;
+
+	opts = fcntl(sock,F_GETFL);
+	if (opts < 0) {
+		perror("fcntl(F_GETFL)");
+		exit(EXIT_FAILURE);
+	}
+	opts = (opts | O_NONBLOCK);
+	if (fcntl(sock,F_SETFL,opts) < 0) {
+		perror("fcntl(F_SETFL)");
+		exit(EXIT_FAILURE);
+	}
+	return;
+}
 
 Server::Server(): _fd_users(), _name_channel()
 {
@@ -21,16 +38,28 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
 	if ( this->_listen_server_sock == -1 )
+	{
+		std::cout << "SOCKET " << std::endl;
 		throw Server::GlobalServerExecption();
+	}
+	setnonblocking( this->_listen_server_sock );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
-	memset( (char *) &this->_addr_server, 0 , sizeof(sockaddr_in) );
+	memset( (char *) &this->_addr_server, 0 , sizeof(this->_addr_server) );
 	this->_addr_server.sin_port = htons(PORT);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
-	if ( bind( this->_listen_server_sock, (struct sockaddr *) &this->_addr_server, sizeof (this->_addr_server) )  == -1)
+	if ( bind( this->_listen_server_sock, ( struct sockaddr * ) &this->_addr_server, sizeof( this->_addr_server ) )  == -1 )
+	{
+		std::cout << "BIND " << std::endl;
+	
+		perror("Bind");
 		throw Server::GlobalServerExecption();
+	}
 	if ( listen (this->_listen_server_sock, 5) == -1)
+	{
+		std::cout << "LISTEN" << std::endl;
 		throw Server::GlobalServerExecption();
+	}
 	this->_highsock = this->_listen_server_sock;
 	this->_commands.push_back("USER");
 	this->_commands.push_back("NICK");
@@ -50,9 +79,17 @@ Server::Server(): _fd_users(), _name_channel()
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
+
+
+
 Server::~Server()
 {
-	
+	close( this->_listen_server_sock );
+	close_all_fd();
+	FD_ZERO( &this->_reads );
+	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user ) );
+	memset( (char *) &this->_addr_server, 0 , sizeof( this->_addr_server ) );
+	std::cout << "Destructor Server\n";
 }
 
 
@@ -60,10 +97,9 @@ void Server::build_select_list( void )
 {
 	FD_ZERO(&this->_reads);
 
-	
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
-	for (size_t i = 0; i <FD_SETSIZE; i++)
+	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
 		if( this->_list_connected_user[i] != 0)
 		{
@@ -71,9 +107,10 @@ void Server::build_select_list( void )
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
-		
 	}
 }
+
+
 
 void Server::join_new_connection()
 {
@@ -84,6 +121,7 @@ void Server::join_new_connection()
 		throw Server::GlobalServerExecption();
 	// setnonblocking
 	std::cout << connection << "\n";
+	setnonblocking( connection );
 	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
@@ -101,6 +139,8 @@ void Server::join_new_connection()
 	}
 	
 }
+
+
 
 const char* Server::GlobalServerExecption::what() const throw ()
 {
@@ -122,7 +162,7 @@ void Server::attendClients()
 	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
 		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
-			this->getCustomerRequest( this->_list_connected_user[i], i);
+			this->getCustomerRequest( this->_list_connected_user[i], i );
 	}
 	
 }
@@ -159,7 +199,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
 	}
-	else if (this->_fd_users[fd]->getRegistered())
+	else if ( this->_fd_users[fd]->getRegistered() )
 	{
 		if ((command == "USER" || command == "user"))
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
@@ -174,7 +214,10 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
 		else if (command == "QUIT" || command == "quit")
+		{
 			this->quit_command(fd, str);
+
+		}
 	}
 }
 
@@ -223,3 +266,26 @@ int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock;
 int		const &	Server::getListenSockServer( void ) const { return this->_listen_server_sock; }
 fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
 int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }
+
+
+void Server::close_fd(int fd)
+{
+	for ( size_t i = 0; i <FD_SETSIZE; i++ )
+		if( this->_list_connected_user[i] == fd)
+			this->_list_connected_user[i] = 0;
+	close (fd);
+	
+}
+
+void Server::close_all_fd()
+{
+	std::map<int, User *>::iterator start = this->_fd_users.begin();
+	std::map<int, User *>::iterator end = this->_fd_users.end();
+
+	for (; start != end; ++start )
+	{
+		std::cout << "Cerrando fd: " << start->first << std::endl;
+		close( start->first );
+		FD_CLR( start->first, &this->_reads );
+	}
+}

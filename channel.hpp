@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:40:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/23 15:50:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ class Channel
 		void				deleteUser(User * user);
 		void				addUser(User * user);
 		void				sendMsgChannel(std::string msg);
+		//overload para no enviar el mensaje al emisor :) by krios-fu
+		void				sendMsgChannel( std::string msg , int fd) ;
 
 	
 };

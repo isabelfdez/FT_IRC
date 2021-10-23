@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/22 19:52:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/23 15:50:54 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,14 @@ void Server::quit_command(int fd, char *buffer)
 
 	for (; channel != end ; ++channel )
 	{
-		(*channel)->sendMsgChannel( msg_quit_users );
+		(*channel)->sendMsgChannel( msg_quit_users, fd );
 		(*channel)->deleteUser( tmp );
 	}
-
-	close (fd);
+	this->close_fd( fd );
 }
+
+
+
 
 void	Server::user_command( int fd, char *buffer )
 {
