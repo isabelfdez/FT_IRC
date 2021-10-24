@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 18:35:56 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 20:59:47 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	User::setPingStatus( bool const &  status ) { this->_ping_status = status; 
 
 void	User::setLastTime ( uint64_t const & time ) { this->_lastTime = time; }
 
-void	User::setTimePing ( uint64_t const & time ) { this->_lastTime = time; }
+void	User::setTimePing ( uint64_t const & time ) { this->_time_ping = time; }
 
 
 void	User::setNick(std::string nick) { this->_nick = nick; }

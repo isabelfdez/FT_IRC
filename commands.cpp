@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 18:39:18 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 23:05:46 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,34 @@ static std::string generatePing()
 void	Server::sendPing()
 {
 	typedef std::map<int , User *>::iterator iterator;
-	std::string ping = "ping : ";
+	std::string ping = "PING : ";
 	
 	iterator start = this->_fd_users.begin();
 	iterator end = this->_fd_users.end();
 	
 	for ( ;  start != end; ++start )
 	{
-		if ( ( getTime() - start->second->getLastTime() ) > start->second->getTimePing() ) // cada dos minutos 
+		if ( ( getTime() - start->second->getLastTime() ) > start->second->getTimePing() ) 
 		{
 			if ( this->_fd_users[ start->first ]->getPingStatus()
-				&& getTime() - start->second->getLastTime() > ( start->second->getTimePing()  + 30000) ) // si a los 30 segundo ha devuelto el pong 
+				&& (getTime() - start->second->getLastTime()) > ( start->second->getTimePing() + 30000) ) // si a los 30 segundo ha devuelto el pong 
 			{
 					this->close_fd( start->first );
 					this->_connected_users.remove( start->second );
 					this->_fd_users.erase( start->first);
+					std::cout << std::endl;
 					return ;
 			}
-			else if ( this->_fd_users[ start->first ]->getPingStatus() == false && this->_fd_users[ start->first ]->getRegistered() )
+			else if ( this->_fd_users[ start->first ]->getPingStatus() == false
+				&& this->_fd_users[ start->first ]->getRegistered() )
 			{
 				this->_fd_users[ start->first ]->setPing( generatePing() );
 				ping += this->_fd_users[ start->first ]->getPing() + "\n";
 				this->_fd_users[ start->first ]->setPingStatus( true );
 				send( start->first, ping.c_str(), ping.length(), 0);
+				std::cout << std::endl;
+				displayTimestamp();
+				std::cout << " : Ping send,           IP: " << this->getIpUser() << " Socket: " << start->first << std::endl;;
 			}
 		}
 	}
@@ -85,6 +90,21 @@ void Server::quit_command(int fd, char *buffer)
 	delete tmp;
 }
 
+void	Server::pong_command( int fd, char *buffer)
+{
+	std::vector<std::string> token = split( buffer, ' ' );
+	
+	if ( token[1] == this->_fd_users[fd]->getPing() )
+		{
+			this->_fd_users[fd]->setPingStatus( false );
+			this->_fd_users[fd]->setTimePing( 120000 );
+			std::cout << std::endl;
+			displayTimestamp();
+			std::cout << " : Ping received,       IP: " << this->getIpUser() << " Socket: " << fd;
+		}
+
+}
+
 void	Server::user_command( int fd, char *buffer )
 {
 	std::vector<std::string> token = split(buffer, ' ');
@@ -92,7 +112,7 @@ void	Server::user_command( int fd, char *buffer )
 	if ( token.size() < 5 )
 		return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
 	if ( tmp->getRegistered() )
-		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);	
+		return send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
 	tmp->setUserName(token[1]);
 	tmp->setmode(token[2][0], true);
 	tmp->setRealName(token[4]);
@@ -100,6 +120,8 @@ void	Server::user_command( int fd, char *buffer )
 	{
 		
 		tmp->setRegistered(true);
+		tmp->setTimePing(0);
+		// tmp->setLastTime( getTime() );
 		this->_connected_users.push_back(tmp);
 		std::cout << std::endl;
 		displayTimestamp();
@@ -115,8 +137,7 @@ void	Server::nick_command(char * str, int & fd)
 
 	char 		*substr;
 
-	// std::cout << str << "\n";
-	substr = ft_substr(str, '\r');
+	substr = ft_substr(str, '\r'); 
 	parse = ft_split(substr, ' ');
 	int i = 0;
 	while (parse[i])
@@ -318,17 +339,18 @@ void	Server::join_channel(std::string str1, int & fd)
 void	Server::join_command(char * str, int & fd)
 {
 	std::vector<std::string> parse;
-	char	*tmp;
+	// char	*tmp;
 
-	tmp = strchr(str, '\r');
-	*tmp = 0;
+	// tmp = strchr(str, '\r');
+	// *tmp = 0;
+	// std::cout << " ****** " << str << std::endl ;
 	str = str + 4;
 	while (*str == ' ')
 		str++;
 	if (*str == ':')
 		str++;
 	parse = split(str, ',');
-	if (!parse[0].size())
+	if (!parse.size())
 		return (send_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters", fd));
 	for (std::vector<std::string>::iterator it = parse.begin(); it != parse.end(); it++)
 		Server::join_channel(*it, fd);

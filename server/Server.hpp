@@ -107,6 +107,7 @@ class Server
 		void			join_channel(std::string str, int & fd);
 		void			part_command(char * str, int & fd);
 		void			part_channel(std::string str, int & fd);
+		void			pong_command( int fd, char *buffer );
 
 		void			sendPing(  );
 

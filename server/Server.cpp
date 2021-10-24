@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 17:02:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 20:16:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,9 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("notice");
 	this->_commands.push_back("part");
 	this->_commands.push_back("quit");
+	this->_commands.push_back("PONG");
+	this->_commands.push_back("pong");
+
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -220,10 +223,9 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
 		else if (command == "QUIT" || command == "quit")
-		{
 			this->quit_command(fd, str);
-
-		}
+		else if ( command == "PONG" || command == "pong")
+			this->pong_command(fd, str);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/22 19:53:44 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 22:54:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,15 @@ std::vector<std::string> split(char * buff, char c)
 	if ( buff == 0 )
 		return matrix;
 	std::string buffer( buff );
+
+	// pos = tmp.find('\n');
+	// if ( pos != std::string::npos )
+		// buffer = tmp.substr(0, pos);
+	// else 
+	// {
+		// buffer = tmp;
+		buffer[ buffer.length() - 2 ] = '\0';
+	// }
 	std::string::iterator begin = buffer.begin();
 	std::string::iterator end = buffer.end();
 	buffer = &( *delimiterAdvance<std::string::iterator>( begin, end, c ) );
