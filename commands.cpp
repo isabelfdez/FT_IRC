@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/23 15:50:54 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 04:52:53 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Server::quit_command(int fd, char *buffer)
 
 	std::string msg_quit = "ERROR :Closing link: (" + tmp->getNick()
 		+ "@" + inet_ntoa(this->_addr_server.sin_addr) + ") [Signed off]\n";
-	
+
 	std::string msg_quit_users = ": " + tmp->getNick() + "! " + buffer;
 	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
 
@@ -32,9 +32,13 @@ void Server::quit_command(int fd, char *buffer)
 	for (; channel != end ; ++channel )
 	{
 		(*channel)->sendMsgChannel( msg_quit_users, fd );
-		(*channel)->deleteUser( tmp );
+		// (*channel)->deleteUser( tmp );
+		(*channel)->getUsers().remove(tmp);
 	}
 	this->close_fd( fd );
+	this->_connected_users.remove(tmp);
+	this->_fd_users.erase( fd );
+	delete tmp;
 }
 
 
@@ -55,7 +59,11 @@ void	Server::user_command( int fd, char *buffer )
 	{
 		tmp->setRegistered(true);
 		this->_connected_users.push_back(tmp);
+		std::cout << std::endl;
+		displayTimestamp();
+		std::cout << " : User created,        IP: " << this->getIpUser() << " Socket: " << fd;
 	}
+
 }
 
 void	Server::nick_command(char * str, int & fd)
@@ -65,7 +73,7 @@ void	Server::nick_command(char * str, int & fd)
 
 	char 		*substr;
 
-	std::cout << str << "\n";
+	// std::cout << str << "\n";
 	substr = ft_substr(str, '\r');
 	parse = ft_split(substr, ' ');
 	int i = 0;
@@ -147,6 +155,10 @@ void	Server::nick_command(char * str, int & fd)
 		this->_fd_users[fd]->setRegistered(true);
 		// Añadimos el usuario a la lista de usuarios
 		this->_connected_users.push_back(this->_fd_users[fd]);
+		std::cout << std::endl;
+		displayTimestamp();
+		std::cout << " : User created,        IP: " << this->getIpUser() << " Socket: " << fd;
+
 	}
 }
 

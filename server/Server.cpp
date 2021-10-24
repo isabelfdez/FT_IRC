@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/23 21:27:37 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 04:01:50 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
 	if ( this->_listen_server_sock == -1 )
 	{
-		std::cout << "SOCKET " << std::endl;
+		perror("Socket");
 		throw Server::GlobalServerExecption();
 	}
 	setnonblocking( this->_listen_server_sock );
@@ -49,15 +49,13 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
 	if ( bind( this->_listen_server_sock, ( struct sockaddr * ) &this->_addr_server, sizeof( this->_addr_server ) )  == -1 )
-	{
-		std::cout << "BIND " << std::endl;
-	
+	{	
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
 	if ( listen (this->_listen_server_sock, 5) == -1)
 	{
-		std::cout << "LISTEN" << std::endl;
+		perror("Listen");
 		throw Server::GlobalServerExecption();
 	}
 	this->_highsock = this->_listen_server_sock;
@@ -120,13 +118,14 @@ void Server::join_new_connection()
 	if (connection < 0)
 		throw Server::GlobalServerExecption();
 	// setnonblocking
-	std::cout << connection << "\n";
 	setnonblocking( connection );
 	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
 		{
-			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
+			std::cout << std::endl;
+			displayTimestamp();
+			std::cout << " : Connection accepted, IP: " << this->getIpUser() << " Socket: " << connection;
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User(connection);
 			connection = -1;
@@ -134,10 +133,9 @@ void Server::join_new_connection()
 	}
 	if ( connection != -1)
 	{
-		std::cout << "No roon left for new client" << std::endl;
-		close ( connection );
+		std::cout << "No roon left for new client";
+		close_fd ( connection );
 	}
-	
 }
 
 
@@ -162,9 +160,14 @@ void Server::attendClients()
 	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
 		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
+		{
+			std::cout << std::endl;
+			displayTimestamp();
+			std::cout << " : Attend client,       IP: " << this->getIpUser()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
 			this->getCustomerRequest( this->_list_connected_user[i], i );
+		}
 	}
-	
+	std::cout << std::endl;
 }
 
 
@@ -183,6 +186,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	}
 	std::string buff2 = buff.substr(0, buff.find('\r'));
 	std::string command = buff2.substr(0, buff2.find(' '));
+	std::cout << command; // no deleted krios-fu
 	if (!find_command(command, this->_commands))
 		return ; // Aquí tal vez haya que imprimir \r\n
 	if (!this->_fd_users[fd]->getRegistered())
@@ -256,8 +260,6 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	else
 	{
 		std::string buff2 (buffer);	
-		std::cout << buffer << std::endl;
-		std::cout << "HG\n";
 		this->parse_command(fd_client, buff2, buffer);
 	}
 }
@@ -268,13 +270,23 @@ fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
 int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }
 
 
+size_t			Server::getNumChannel( void ) 	const{ return this->_name_channel.size(); }
+size_t			Server::getNumConnections( void )		const{ return this->_fd_users.size(); }
+size_t			Server::getNumUser( void )		const{ return this->_connected_users.size(); }
+
+
+
+
+
 void Server::close_fd(int fd)
 {
 	for ( size_t i = 0; i <FD_SETSIZE; i++ )
 		if( this->_list_connected_user[i] == fd)
 			this->_list_connected_user[i] = 0;
 	close (fd);
-	
+	std::cout << std::endl;
+	displayTimestamp();
+	std::cout << " : Connection close,    IP: " << this->getIpUser() << " Socket: " << fd;
 }
 
 void Server::close_all_fd()
@@ -288,4 +300,14 @@ void Server::close_all_fd()
 		close( start->first );
 		FD_CLR( start->first, &this->_reads );
 	}
+
+}
+
+
+std::string Server::getIpUser( void ) const 
+{
+	struct in_addr clientIP;
+	clientIP = this->_addr_server.sin_addr;
+	char ipStr[INET_ADDRSTRLEN];
+	return inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN);
 }

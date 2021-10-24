@@ -3,16 +3,15 @@
 #include "channel.hpp"
 #include <signal.h>
 
-
 Server *svr;
 
 void signal_kill ( int number )
 {
 	if ( number == SIGINT)
 	{
-		std::cout << "[[[SIGNAL]]] \n";
+		std::cout << "\n[[[ forced closure ]]] \n";
 		svr->~Server();
-		// kill (getpid(), 9);
+		kill (getpid(), 9);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -31,7 +30,12 @@ int main ()
 			 	throw Server::GlobalServerExecption();
 			if ( server.getNumReadSock() == 0)
 			{
-				std::cout << ".";
+				std::cout << "\r";
+				displayTimestamp();
+				std::cout
+					<< " : Connections : " << server.getNumConnections()
+					<< " Users: " << server.getNumUser()
+					<< " Channel: " << server.getNumChannel();
 				fflush(stdout);
 			}
 			else
@@ -39,6 +43,7 @@ int main ()
 		}
 		
 	}
-	catch ( ... ) { std::cout <<" herr \n"; }
+	catch ( ... ) {  }
 
+	return 0;
 }

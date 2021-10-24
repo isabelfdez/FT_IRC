@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/23 15:47:31 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 03:31:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,4 +214,24 @@ char	*ft_substr(char const *s, char c)
 	return (str);
 }
 
+uint64_t	get_time(void)
+{
+	static struct timeval	end;
 
+	gettimeofday(&end, NULL);
+	return ((end.tv_sec * (uint64_t)1000) + (end.tv_usec / 1000));
+}
+
+
+void displayTimestamp( void )
+{
+	time_t now = time(0);
+
+	tm ltm = *localtime(&now);
+	std::cout << std::setfill('0') << "[" << (ltm.tm_year + 1900)
+			  << std::setw(2) << ltm.tm_mon + 1
+			  << std::setw(2) << ltm.tm_mday << "_"
+			  << std::setw(2) << ltm.tm_hour
+			  << std::setw(2) << ltm.tm_min
+			  << std::setw(2) << ltm.tm_sec << "] ";
+}
