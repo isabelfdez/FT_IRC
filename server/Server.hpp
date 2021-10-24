@@ -108,6 +108,7 @@ class Server
 		void			part_command(char * str, int & fd);
 		void			part_channel(std::string str, int & fd);
 
+		void			sendPing(  );
 
 
 };

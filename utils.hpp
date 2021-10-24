@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 02:25:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 16:54:12 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	*ft_substr(char const *s, char c);
 void    send_message(std::string & message, int & fd, User * usr);
 void    send_message_channel(std::string & message, User * usr, Channel * chnl);
 std::vector<std::string>    split(char * buff, char c);
-uint64_t	get_time(void);
+uint64_t	getTime(void);
 void displayTimestamp( void );
 
 #endif

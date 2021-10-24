@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 04:01:50 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 17:02:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ void Server::join_new_connection()
 			std::cout << " : Connection accepted, IP: " << this->getIpUser() << " Socket: " << connection;
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User(connection);
+			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			connection = -1;
 		}
 	}
@@ -164,6 +165,7 @@ void Server::attendClients()
 			std::cout << std::endl;
 			displayTimestamp();
 			std::cout << " : Attend client,       IP: " << this->getIpUser()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
+			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			this->getCustomerRequest( this->_list_connected_user[i], i );
 		}
 	}

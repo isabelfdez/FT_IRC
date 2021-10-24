@@ -6,12 +6,56 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 04:52:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 18:39:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./server/Server.hpp"
 #include "utils.hpp"
+
+
+static std::string generatePing()
+{
+	char ping[13];
+    srand( time( NULL ) );
+    for( size_t i = 0; i <= 11; i++ )
+        ping[ i ] = 33 + rand() % ( 126 - 33 );
+	ping[ 12 ] = '\0';
+	return static_cast<std::string>( ping );
+}
+
+
+void	Server::sendPing()
+{
+	typedef std::map<int , User *>::iterator iterator;
+	std::string ping = "ping : ";
+	
+	iterator start = this->_fd_users.begin();
+	iterator end = this->_fd_users.end();
+	
+	for ( ;  start != end; ++start )
+	{
+		if ( ( getTime() - start->second->getLastTime() ) > start->second->getTimePing() ) // cada dos minutos 
+		{
+			if ( this->_fd_users[ start->first ]->getPingStatus()
+				&& getTime() - start->second->getLastTime() > ( start->second->getTimePing()  + 30000) ) // si a los 30 segundo ha devuelto el pong 
+			{
+					this->close_fd( start->first );
+					this->_connected_users.remove( start->second );
+					this->_fd_users.erase( start->first);
+					return ;
+			}
+			else if ( this->_fd_users[ start->first ]->getPingStatus() == false && this->_fd_users[ start->first ]->getRegistered() )
+			{
+				this->_fd_users[ start->first ]->setPing( generatePing() );
+				ping += this->_fd_users[ start->first ]->getPing() + "\n";
+				this->_fd_users[ start->first ]->setPingStatus( true );
+				send( start->first, ping.c_str(), ping.length(), 0);
+			}
+		}
+	}
+}
+
 
 
 //:Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
@@ -26,8 +70,8 @@ void Server::quit_command(int fd, char *buffer)
 	std::string msg_quit_users = ": " + tmp->getNick() + "! " + buffer;
 	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
 
-	 std::list<Channel *>::iterator channel = tmp->getChannels().begin();
-	 std::list<Channel *>::iterator end = tmp->getChannels().end();
+	std::list<Channel *>::iterator channel = tmp->getChannels().begin();
+	std::list<Channel *>::iterator end = tmp->getChannels().end();
 
 	for (; channel != end ; ++channel )
 	{
@@ -40,9 +84,6 @@ void Server::quit_command(int fd, char *buffer)
 	this->_fd_users.erase( fd );
 	delete tmp;
 }
-
-
-
 
 void	Server::user_command( int fd, char *buffer )
 {
@@ -57,6 +98,7 @@ void	Server::user_command( int fd, char *buffer )
 	tmp->setRealName(token[4]);
 	if ( tmp->getNick().size() > 0 && !tmp->getRegistered() )
 	{
+		
 		tmp->setRegistered(true);
 		this->_connected_users.push_back(tmp);
 		std::cout << std::endl;

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/22 19:30:33 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 18:35:56 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ User::User(int & fd) : _sock_fd(fd)
 	init_modes();
 	this->_is_registered = false;
 	this->_max_channels = false;
+	this->_ping_status = false;
+	this->_time_ping = 30000;
 }
 
 User::~User() { }
@@ -62,6 +64,8 @@ bool	User::getRegistered() const { return (this->_is_registered); }
 
 bool	User::getMaxChannels() const { return (this->_max_channels); }
 
+bool const & User::getPingStatus() const { return this->_ping_status ; }
+
 std::list< Channel *> & User::getChannels() { return this->_channels; }
 
 std::string				User::getChannelsString()
@@ -78,9 +82,22 @@ std::string				User::getChannelsString()
 	return (s);
 }
 
+std::string const & User::getPing() const { return this->_ping; }
+uint64_t const & User::getLastTime() const { return this->_lastTime; }
+uint64_t const & User::getTimePing() const { return this->_time_ping; }
+
+
 // Setters
 
 void	User::setUserName(std::string name) { this->_username = name; }
+
+void 	User::setPing( std::string const & ping ) { this->_ping = ping; }
+void	User::setPingStatus( bool const &  status ) { this->_ping_status = status; }
+
+void	User::setLastTime ( uint64_t const & time ) { this->_lastTime = time; }
+
+void	User::setTimePing ( uint64_t const & time ) { this->_lastTime = time; }
+
 
 void	User::setNick(std::string nick) { this->_nick = nick; }
 

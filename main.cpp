@@ -26,6 +26,7 @@ int main ()
 			signal( SIGINT, signal_kill );
 			server.build_select_list();
 			server.setNumReadSock();
+			server.sendPing( );
 			 if ( server.getNumReadSock() < 0 )
 			 	throw Server::GlobalServerExecption();
 			if ( server.getNumReadSock() == 0)

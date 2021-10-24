@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 03:31:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 16:54:03 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ char	*ft_substr(char const *s, char c)
 	return (str);
 }
 
-uint64_t	get_time(void)
+uint64_t	getTime(void)
 {
 	static struct timeval	end;
 
