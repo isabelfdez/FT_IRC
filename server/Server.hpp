@@ -60,7 +60,7 @@ class Server
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
-		std::list< Channel * >			_channel;
+		// std::list< Channel * >			_channel;
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
