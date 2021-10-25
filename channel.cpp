@@ -83,13 +83,13 @@ void	Channel::deleteUser(User * user)
     {
 		if ((*it)->getNick() == user->getNick()) // Esto no se si esta bien
 		{
-			delete (*it);
+			// delete (*it);
 			this->_users.erase(it);
 			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
 			{
 				if ((*it2)->getNick() == user->getNick())
 				{
-					delete (*it2);
+					// delete (*it2);
 					this->_operators.erase(it2);
 					if (!this->_operators.size())
 						this->_operators.push_back(*(this->_users.begin()));

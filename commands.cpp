@@ -133,6 +133,7 @@ void	Server::user_command( int fd, char *buffer )
 void	Server::nick_command(char * str, int & fd)
 {
 	char 		**parse;
+	
 	std::string	s;
 
 	char 		*substr;
@@ -387,7 +388,7 @@ void	Server::part_command(char * str, int & fd)
 
 	std::cout << str << std::endl;
 	// if ((tmp = strchr(str, '\r')))
-	// 	*tmp = 0;
+	 	// *tmp = 0;
 	str = str + 4;
 		while (*str == ' ')
 		str++;
