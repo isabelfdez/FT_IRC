@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 16:54:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 17:53:43 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl)
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
-    chnl->sendMsgChannel(mask);
+    chnl->sendMsgChannel(mask, usr->getsockfd());
 }
 
 void	send_reply(std::string replay, std::string str, int fd)

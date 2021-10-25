@@ -11,6 +11,10 @@ void    Server::privmsg_command(std::string & command, int & fd)
     std::list<User *>::iterator it;
     std::string                 aux(command);
 
+
+
+    if (((pos = command.find('\r')) || (pos = command.find('\r'))) && pos != std::string::npos )
+        command[pos] = 0;
     // Quitamos el comando
     pos = command.find(delimiter);
     command.erase(0, pos + delimiter.length());
