@@ -23,10 +23,10 @@ std::vector<std::string> split(char * buff, char c)
 {
 	size_t						pos;
 	std::string					tmp;
-	std::vector<std::string>  matrix;
+	std::vector<std::string>	matrix;
+	char *						tmp2;
 	if ( buff == 0 )
 		return matrix;
-	std::string buffer( buff );
 
 	// pos = tmp.find('\n');
 	// if ( pos != std::string::npos )
@@ -34,8 +34,11 @@ std::vector<std::string> split(char * buff, char c)
 	// else 
 	// {
 		// buffer = tmp;
-		buffer[ buffer.length() - 2 ] = '\0';
+		// buffer[ buffer.length() - 2 ] = '\0';
 	// }
+	if ( (tmp2 = strchr(buff, '\r')) || (tmp2 = strchr(buff, '\n')))
+	 	*tmp2 = 0;
+	std::string buffer( buff );
 	std::string::iterator begin = buffer.begin();
 	std::string::iterator end = buffer.end();
 	buffer = &( *delimiterAdvance<std::string::iterator>( begin, end, c ) );
