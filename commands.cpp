@@ -304,6 +304,7 @@ void	Server::join_channel(std::string str1, int & fd)
 {
 
 	int j = 1;
+	std::string s;
 
 	if (str1 == "0")
 	{
@@ -329,7 +330,8 @@ void	Server::join_channel(std::string str1, int & fd)
 	else if (this->_name_channel[str1])
 	{
 	 	// User join channel
-		this->_name_channel[str1]->sendMsgChannel(this->_fd_users[fd]->getNick() + " joined " + this->_name_channel[str1]->getName() + "\r\n");
+		s = this->_fd_users[fd]->getNick() + " joined " + this->_name_channel[str1]->getName();
+		send_message_channel(s, this->_fd_users[fd], this->_name_channel[str1]);
 		this->_name_channel[str1]->addUser(this->_fd_users[fd]);
 		this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
 		send_reply(RPL_NOTOPIC, " JOIN: " + str1, fd);
