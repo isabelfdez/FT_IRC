@@ -86,6 +86,7 @@ void Server::quit_command(int fd, char *buffer)
 	this->close_fd( fd );
 	this->_connected_users.remove(tmp);
 	this->_fd_users.erase( fd );
+	this->_nicks.remove(tmp->getNick());
 	delete tmp;
 }
 
@@ -340,9 +341,7 @@ void	Server::join_command(char * str, int & fd)
 	std::vector<std::string> parse;
 	// char	*tmp;
 
-	// tmp = strchr(str, '\r');
-	// *tmp = 0;
-	// std::cout << " ****** " << str << std::endl ;
+
 	str = str + 4;
 	while (*str == ' ')
 		str++;
@@ -385,17 +384,18 @@ void	Server::part_channel(std::string str1, int & fd)
 void	Server::part_command(char * str, int & fd)
 {
 	std::vector<std::string>	parse;
-	char		*tmp;
 
-	if ((tmp = strchr(str, '\r')))
-		*tmp = 0;
+	std::cout << str << std::endl;
+	// if ((tmp = strchr(str, '\r')))
+	// 	*tmp = 0;
 	str = str + 4;
 		while (*str == ' ')
 		str++;
 	if (*str == ':')
 		str++;
 	parse = split(str, ',');
-	if (!parse[0].size())
+	std::cout << parse[0] << std::endl;
+	if (!parse.size())
 	{
 		return (send_error(ERR_NEEDMOREPARAMS, "PART :Not enough parameters", fd));
 	}
