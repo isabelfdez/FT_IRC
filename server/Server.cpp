@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 23:20:46 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 17:11:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,9 +279,6 @@ size_t			Server::getNumConnections( void )		const{ return this->_fd_users.size()
 size_t			Server::getNumUser( void )		const{ return this->_connected_users.size(); }
 
 
-
-
-
 void Server::close_fd(int fd)
 {
 	for ( size_t i = 0; i <FD_SETSIZE; i++ )
@@ -307,11 +304,22 @@ void Server::close_all_fd()
 
 }
 
-
 std::string Server::getIpUser( void ) const 
 {
 	struct in_addr clientIP;
 	clientIP = this->_addr_server.sin_addr;
 	char ipStr[INET_ADDRSTRLEN];
 	return inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN);
+}
+
+void			Server::deleteChannel( std::string channel )
+{
+	std::map<std::string, Channel*>::iterator it;
+
+	it = this->_name_channel.find(channel);
+	if (it != this->_name_channel.end())
+	{
+		delete this->_name_channel[channel];
+		this->_name_channel.erase(it);
+	}
 }

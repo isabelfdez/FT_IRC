@@ -1,4 +1,6 @@
-SRCS 		= main.cpp channel.cpp	./server/Server.cpp	user.cpp commands.cpp utils.cpp split.cpp
+SRCS 		= main.cpp channel.cpp	./server/Server.cpp	user.cpp utils.cpp split.cpp \
+				./command/pingPong.cpp ./command/quit.cpp ./command/userCmd.cpp ./command/part.cpp \
+				./command/privmsg.cpp ./command/nick.cpp ./command/join.cpp
 
 OBJS 		= $(SRCS:.cpp=.o)
 
