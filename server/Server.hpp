@@ -89,7 +89,6 @@ class Server
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
 		fd_set	const & getSocks()				const;//krios-fu
-		std::string 	getIpUser( void )		const;//krios-fu
 		size_t			getNumChannel( void ) 	const;//krios-fu
 		size_t			getNumConnections ()	const;
 		size_t			getNumUser( void )		const;//krios-fu

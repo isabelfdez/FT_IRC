@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/25 17:01:57 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 22:11:55 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,10 @@ void	Server::sendPing()
 	{
 		if ( ( getTime() - start->second->getLastTime() ) > start->second->getTimePing() ) 
 		{
-			if ( this->_fd_users[ start->first ]->getPingStatus()
+			if ( (this->_fd_users[ start->first ]->getPingStatus() || !this->_fd_users[start->first]->getRegistered() )
 				&& ( getTime() - start->second->getLastTime() ) > ( start->second->getTimePing() + 30000 ) ) // si a los 30 segundo ha devuelto el pong 
 			{
-					this->close_fd( start->first );
-					this->_connected_users.remove( start->second );
-					this->_fd_users.erase( start->first);
+					this->deleteUser( start->first );
 					std::cout << std::endl;
 					return ;
 			}
@@ -54,7 +52,7 @@ void	Server::sendPing()
 				send( start->first, ping.c_str(), ping.length(), 0);
 				std::cout << std::endl;
 				displayTimestamp();
-				std::cout << " : Ping send,           IP: " << this->getIpUser() << " Socket: " << start->first << std::endl;;
+				std::cout << " : Ping send,           IP: " << this->_fd_users[ start->first ]->getIp() << " Socket: " << start->first << std::endl;;
 			}
 		}
 	}
@@ -62,15 +60,18 @@ void	Server::sendPing()
 
 void	Server::pong_command( int fd, char *buffer)
 {
+	buffer  = buffer  + 4;
+	while (*buffer  == ' ')
+		buffer ++;
+	if (*buffer == ':')
+		buffer++;
 	std::vector<std::string> token = split( buffer, ' ' );
-	
-	if ( token[1] == this->_fd_users[fd]->getPing() )
+	if ( token[0] == this->_fd_users[fd]->getPing() )
 		{
 			this->_fd_users[fd]->setPingStatus( false );
 			this->_fd_users[fd]->setTimePing( 120000 );
 			std::cout << std::endl;
 			displayTimestamp();
-			std::cout << " : Ping received,       IP: " << this->getIpUser() << " Socket: " << fd;
+			std::cout << " : Ping received,       IP: " << this->_fd_users[fd]->getIp() << " Socket: " << fd;
 		}
-
 }

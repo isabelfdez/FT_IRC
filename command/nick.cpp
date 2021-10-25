@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/25 17:53:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 21:52:37 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@ void    Server::nick_command(char * str, int & fd)
     std::string s;
 
     str = str + 4;
+    while (*str == ' ')
+		str++;
+	if (*str== ':')
+		str++;
     parse = split(str, ' ');
     size_t i = 0;
-    std::cout << parse[0] << std::endl;
     while (i < parse.size() && parse[i].size() )
         i++;
     if (!parse[0].size())
@@ -54,7 +57,6 @@ void    Server::nick_command(char * str, int & fd)
         s.assign(" :Erroneous nickname");
         return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
     }
-    std::cout << "hola3\n";
     int j = 1;
     while (parse[0][j])
     {
@@ -107,10 +109,10 @@ void    Server::nick_command(char * str, int & fd)
         this->_fd_users[fd]->setRegistered(true);
         // Añadimos el usuario a la lista de usuarios
         this->_connected_users.push_back(this->_fd_users[fd]);
+        this->_fd_users[fd]->setTimePing(0);
         std::cout << std::endl;
         displayTimestamp();
-        std::cout << " : User created,        IP: " << this->getIpUser() << " Socket: " << fd;
-
+        std::cout << " : User created,        IP: " << this->_fd_users[fd]->getIp() << " Socket: " << fd;
     }
 }
 // Falta gestionar TOO MANY TARGETS. No sé si el error está bien.

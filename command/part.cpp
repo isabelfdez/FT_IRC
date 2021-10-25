@@ -33,7 +33,6 @@ void	Server::part_command(char * str, int & fd)
 {
 	std::vector<std::string>	parse;
 
-	std::cout << str << std::endl;
 	str = str + 4;
 		while (*str == ' ')
 		str++;
