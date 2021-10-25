@@ -132,51 +132,52 @@ void	Server::user_command( int fd, char *buffer )
 
 void	Server::nick_command(char * str, int & fd)
 {
-	char 		**parse;
-	
+	std::vector<std::string> parse;
+
 	std::string	s;
 
-	char 		*substr;
-
-	substr = ft_substr(str, '\r'); 
-	parse = ft_split(substr, ' ');
-	int i = 0;
-	while (parse[i])
+	str = str + 4;
+	parse = split(str, ' ');
+	size_t i = 0;
+	std::cout << parse[0] << std::endl;
+	while (i < parse.size() && parse[i].size() )
 		i++;
-	if (!parse[1])
+	if (!parse[0].size())
 		return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
-	// Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)
-	else if (parse[2])
+	// Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)		
+	else if (i > 1 && parse[1].size())
 	{
-		int	i = 1;
-		while (parse[i])
+		i = 0;
+
+		while (parse[i].size())
 		{
 			s.append(parse[i]);
-			if (parse [i + 1])
+			if (parse[i + 1].size())
 				s.append(" ");
 			i++;
 		}
 		s.append(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
-	else if (!ft_isalpha(parse[1][0]) && !ft_isspecial(parse[1][0]))
+	else if (!ft_isalpha(parse[0][0]) && !ft_isspecial(parse[0][0]))
 	{
-		s.assign(parse[1]);
+		s.assign(parse[0]);
 		s.assign(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
-	else if (ft_strlen(parse[1]) > 9)
+	else if (parse[0].size() > 9)
 	{
-		s.assign(parse[1]);
+		s.assign(parse[0]);
 		s.assign(" :Erroneous nickname");
 		return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 	}
+	std::cout << "hola3\n";
 	int j = 1;
-	while (parse[1][j])
+	while (parse[0][j])
 	{
-		if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
+		if (!ft_isalnum(parse[0][j]) && !ft_isspecial(parse[0][j]) && parse[0][j] != '-')
 		{
-			s.assign(parse[1]);
+			s.assign(parse[0]);
 			s.assign(" :Erroneous nickname");
 			return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
 		}
@@ -184,9 +185,9 @@ void	Server::nick_command(char * str, int & fd)
 	}
 	for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
 	{
-		if (*it == parse[1])
+		if (*it == parse[0])
 		{
-			s.append(parse[1]);
+			s.append(parse[0]);
 			s.append(" :Nickname is already in use");
 			return (send_error(ERR_NICKNAMEINUSE, s, fd));
 		}
@@ -197,20 +198,24 @@ void	Server::nick_command(char * str, int & fd)
 	{
 		// PASO 1: Borrar su antiguo nick de la lista de nicks
 		for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
+		{
 			if (*it == this->_fd_users[fd]->getNick())
-				this->_nicks.erase(it);
+				it = this->_nicks.erase(it);
+		}			
 		// PASO 2: Añadir el nuevo nick a la lista de nicks
-		this->_nicks.push_back(parse[1]);
+		this->_nicks.push_back(parse[0]);
+
 		// PASO 3: Cambiar el nick del usuario		
-		this->_fd_users[fd]->setNick(parse[1]);
+		this->_fd_users[fd]->setNick(parse[0]);
+
 	}
 	// CASO 2: El usuario se asigna un nick por primera vez
 	else if (!this->_fd_users[fd]->getNick().size())
 	{
 		// PASO 1: Añadir el nuevo nick a la lista de nicks
-		this->_nicks.push_back(parse[1]);
+		this->_nicks.push_back(parse[0]);
 		// PASO 2: Cambiar el nick del usuario		
-		this->_fd_users[fd]->setNick(parse[1]);
+		this->_fd_users[fd]->setNick(parse[0]);
 	}
 	// Por último, miramos si esta llamada a NICK ha hecho que el usuario complete su proceso de registro
 	if (this->_fd_users[fd]->getUserName().size() > 0 && !this->_fd_users[fd]->getRegistered())
@@ -237,6 +242,10 @@ void    Server::privmsg_command(std::string & command, int & fd)
     std::list<User *>::iterator it;
     std::string                 aux(command);
 
+
+
+	if (((pos = command.find('\r')) || (pos = command.find('\r'))) && pos != std::string::npos )
+		command[pos] = 0;
     // Quitamos el comando
     pos = command.find(delimiter);
     command.erase(0, pos + delimiter.length());

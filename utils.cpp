@@ -48,7 +48,8 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl)
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
-    chnl->sendMsgChannel(mask);
+    chnl->sendMsgChannel(mask, usr->getsockfd());
+
 }
 
 void	send_reply(std::string replay, std::string str, int fd)
