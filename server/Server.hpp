@@ -95,6 +95,7 @@ class Server
 		size_t			getNumUser( void )		const;//krios-fu
 
 		void			deleteChannel( std::string );
+		void			deleteUser( int const & fd );
 		void			close_fd( int fd );
 		void			close_all_fd();
 
