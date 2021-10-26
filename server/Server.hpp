@@ -110,6 +110,7 @@ class Server
 		void			pong_command( int fd, char *buffer );
 
 		void			sendPing(  );
+		void			welcome( int const & fd );
 
 
 };

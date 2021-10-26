@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/25 22:19:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:10:27 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,4 +345,22 @@ void Server::deleteUser( int const & fd )
 	this->_nicks.remove( tmp_usr->getNick() );
 	delete tmp_usr;
 	this->_fd_users.erase( fd );
+}
+
+void Server::welcome( int const & fd )
+{
+	std::string part1 = BLUE"███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+	std::string part2 = BLUE"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+	std::string part3 = GREEN"█████╗     ██║        ██║██████╔╝██║     "WHITE;
+	std::string part4 = GREEN"██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+	std::string part5 = GREEN"██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+	std::string part6 = BLUE"			Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	
+	send_reply("372", part1, fd);
+	send_reply("372", part2, fd);
+	send_reply("372", part3, fd);
+	send_reply("372", part4, fd);
+	send_reply("372", part5, fd);
+	send_reply("372", part6, fd);
+
 }

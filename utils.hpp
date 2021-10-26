@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 16:54:12 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:05:21 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,15 @@
 #include <sys/time.h>
 #include <chrono>
 #include <iomanip>
+
+# define YELLOW	"\033[1;33m"
+# define GREEN	"\033[1;32m"
+# define BLUE	"\033[1;34m"
+# define PINK	"\033[1;35m"
+# define GRAY	"\033[1;30m"
+# define CYAN	"\033[1;36m"
+# define RED	"\033[1;31m"
+# define WHITE	"\033[0;37m"
 
 bool	find_command(std::string command, std::list<std::string> commands);
 void	send_error(std::string error, std::string str, int fd);
