@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/25 22:00:33 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 22:19:59 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ class User
 		std::string					_nick;
 		std::string					_realName;
 		std::string					_ping;
+		std::string					_buffer_cmd;
 		user_modes					_modes;
 		int							_sock_fd;
 		std::list<Channel *>		_channels;
@@ -120,6 +121,7 @@ class User
 		uint64_t	const &			getTimePing() const;
 		bool const &				getPingStatus() const;
 		std::string					getIp(  ) const ;
+		std::string	const &			getBufferCmd() const;
 		
 
 		// Setters
@@ -132,6 +134,7 @@ class User
 		void						setLastTime( uint64_t const & time );
 		void						setPingStatus( bool const &  status );
 		void						setTimePing( uint64_t const & time );
+		void						setBufferCmd( std::string const & buffer_cmd );
 
 		// Overload
 		bool						operator==(User & obj);

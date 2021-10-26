@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 20:07:29 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 22:49:17 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static void setnonblocking(int sock)
 
 Server::Server(): _fd_users(), _name_channel()
 {
+	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
 	this->_listen_server_sock = 0;
@@ -48,8 +49,9 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_addr_server.sin_port = htons(PORT);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
+	setsockopt(this->_listen_server_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 	if ( bind( this->_listen_server_sock, ( struct sockaddr * ) &this->_addr_server, sizeof( this->_addr_server ) )  == -1 )
-	{	
+	{	close(this->_listen_server_sock);
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
@@ -269,10 +271,26 @@ void Server::getCustomerRequest( int fd_client, int i)
 		(void ) i;
 		// this->_list_connected_user[i] = 0;
 	}
+	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
+	{
+		std::string buffer_cmd = this->_fd_users[fd_client]->getBufferCmd() + buffer;
+		this->_fd_users[fd_client]->setBufferCmd( buffer_cmd );
+
+	}
 	else
 	{
-		std::string buff2 (buffer);	
-		this->parse_command(fd_client, buff2, buffer);
+		if ( this->_fd_users[fd_client]->getBufferCmd().length() > 0 )
+		{
+			std::string buff2 ( this->_fd_users[fd_client]->getBufferCmd() + buffer );
+			std::string buff3 ( this->_fd_users[fd_client]->getBufferCmd() + buffer );
+			this->parse_command(fd_client, buff2 , &buff3[0] );
+			this->_fd_users[fd_client]->setBufferCmd( "" );
+		}
+		else 
+		{
+			std::string buff2 (buffer);
+			this->parse_command(fd_client, buff2, buffer);
+		}
 	}
 }
 
@@ -359,6 +377,7 @@ void Server::welcome( int const & fd )
 	std::string part6 = BLUE"    Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
 	send_reply(RPL_WELCOME, "Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
+	send_reply("372", part1, this->_fd_users[ fd ]);
 	send_reply("372", part1, this->_fd_users[ fd ]);
 	send_reply("372", part2, this->_fd_users[ fd ]);
 	send_reply("372", part3, this->_fd_users[ fd ]);
