@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/26 15:50:36 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:24:33 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,6 @@ void	Server::user_command( int fd, char *buffer )
 		std::cout << std::endl;
 		displayTimestamp();
 		std::cout << " : User created,        IP: " << tmp->getIp() << " Socket: " << fd;
-		this->welcome(fd);
+		// this->welcome(fd);
 	}
 }

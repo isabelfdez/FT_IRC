@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/25 22:11:55 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:25:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ void	Server::pong_command( int fd, char *buffer)
 	std::vector<std::string> token = split( buffer, ' ' );
 	if ( token[0] == this->_fd_users[fd]->getPing() )
 		{
+			if (this->_fd_users[fd]->getTimePing() == 0)
+				this->welcome( fd );
 			this->_fd_users[fd]->setPingStatus( false );
 			this->_fd_users[fd]->setTimePing( 120000 );
 			std::cout << std::endl;
