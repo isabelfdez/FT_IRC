@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 16:05:21 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 18:39:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@
 
 bool	find_command(std::string command, std::list<std::string> commands);
 void	send_error(std::string error, std::string str, int fd);
-void	send_reply(std::string replay, std::string str, int fd);
+void	send_reply(std::string replay, std::string str, User * usr);
 char	**ft_split(char const *s, char c);
 int		ft_isalpha(int c);
 int		ft_isalnum(int c);

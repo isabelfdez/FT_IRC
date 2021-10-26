@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 16:20:45 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 20:07:29 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,7 +235,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	}
 }
 
-void Server::getCustomerRequest( int & fd_client, int i)
+void Server::getCustomerRequest( int fd_client, int i)
 {
 	char		buffer[512];
 	memset(buffer, 0, sizeof(buffer));
@@ -264,8 +264,10 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	//std::cout << "buffer: " <<  buffer << std::endl;
 	if ( !byte )
 	{
-		close( fd_client );
-		this->_list_connected_user[i] = 0;
+		// close( fd_client );
+		this->deleteUser( fd_client );
+		(void ) i;
+		// this->_list_connected_user[i] = 0;
 	}
 	else
 	{
@@ -339,32 +341,29 @@ void Server::deleteUser( int const & fd )
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
-	this->close_fd( fd );
-	for ( size_t i = 0; i < FD_SETSIZE; i++ )
-	{
-		if ( fd == this->_list_connected_user[i] )
-			this->_list_connected_user[i] = 0;
-	}
+
 	this->_connected_users.remove( tmp_usr );
 	this->_nicks.remove( tmp_usr->getNick() );
-	delete tmp_usr;
+	this->close_fd( fd );
 	this->_fd_users.erase( fd );
+	delete tmp_usr;
 }
 
 void Server::welcome( int const & fd )
 {
-	std::string part1 = BLUE"███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
-	std::string part2 = BLUE"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
-	std::string part3 = GREEN"█████╗     ██║        ██║██████╔╝██║     "WHITE;
-	std::string part4 = GREEN"██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
-	std::string part5 = GREEN"██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
-	std::string part6 = BLUE"			Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	std::string part1 = BLUE"    ███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+	std::string part2 = BLUE"    ██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+	std::string part3 = GREEN"    █████╗     ██║        ██║██████╔╝██║     "WHITE;
+	std::string part4 = GREEN"    ██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+	std::string part5 = GREEN"    ██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+	std::string part6 = BLUE"    Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
-	send_reply("372", part1, fd);
-	send_reply("372", part2, fd);
-	send_reply("372", part3, fd);
-	send_reply("372", part4, fd);
-	send_reply("372", part5, fd);
-	send_reply("372", part6, fd);
+	send_reply(RPL_WELCOME, "Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
+	send_reply("372", part1, this->_fd_users[ fd ]);
+	send_reply("372", part2, this->_fd_users[ fd ]);
+	send_reply("372", part3, this->_fd_users[ fd ]);
+	send_reply("372", part4, this->_fd_users[ fd ]);
+	send_reply("372", part5, this->_fd_users[ fd ]);
+	send_reply("372", part6, this->_fd_users[ fd ]);
 
 }

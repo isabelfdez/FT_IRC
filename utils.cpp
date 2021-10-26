@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/25 18:02:35 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 18:44:13 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,16 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl)
     chnl->sendMsgChannel(mask, usr->getsockfd());
 }
 
-void	send_reply(std::string replay, std::string str, int fd)
+void	send_reply(std::string replay, std::string str, User * usr)
 {
 	std::string message;
 
 	message.assign(":ft_irc.com ");
 	message.append(replay);
-	message.append(" * ");
-	message.append(str);
+	message.append(" " + usr->getNick());
+	message.append(" :"+ str);
 	message.append("\n");
-	send(fd, message.c_str(), message.length(), 0);
+	send(usr->getsockfd(), message.c_str(), message.length(), 0);
 
 }
 

@@ -39,7 +39,7 @@
 # define ERR_NEEDMOREPARAMS			"461"
 
 // Definiciones de replys
-
+#define  RPL_WELCOME				"001"
 # define RPL_NOTOPIC				"332"
 # define RPL_USERS					"393"
 
@@ -79,7 +79,7 @@ class Server
 		void			build_select_list();
 		void			attendClients();
 		void			join_new_connection();
-		void			getCustomerRequest( int & id_client, int i);
+		void			getCustomerRequest( int  id_client, int i);
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 

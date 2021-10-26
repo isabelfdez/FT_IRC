@@ -36,8 +36,8 @@ void    Server::join_channel(std::string str1, int & fd)
         send_message_channel(s, this->_fd_users[fd], this->_name_channel[str1]);
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_NOTOPIC, " JOIN: " + str1, fd);
-        send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
+        send_reply(RPL_NOTOPIC, " JOIN: " + str1, this->_fd_users[fd]);
+        send_reply(RPL_USERS, this->_name_channel[str1]->userList(), this->_fd_users[fd]);
     }
     else
     {
@@ -45,8 +45,8 @@ void    Server::join_channel(std::string str1, int & fd)
         this->_name_channel[str1] = new Channel(str1, this->_fd_users[fd]);
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_NOTOPIC, " JOIN: " + str1, fd);
-        send_reply(RPL_USERS, this->_name_channel[str1]->userList(), fd);
+        send_reply(RPL_NOTOPIC, " JOIN: " + str1, this->_fd_users[fd]);
+        send_reply(RPL_USERS, this->_name_channel[str1]->userList(), this->_fd_users[fd]);
     }
 }
 

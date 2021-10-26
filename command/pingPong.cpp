@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/26 16:25:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 20:08:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ void	Server::sendPing()
 	
 	iterator start = this->_fd_users.begin();
 	iterator end = this->_fd_users.end();
-	
 	for ( ;  start != end; ++start )
 	{
 		if ( ( getTime() - start->second->getLastTime() ) > start->second->getTimePing() ) 
@@ -52,7 +51,13 @@ void	Server::sendPing()
 				send( start->first, ping.c_str(), ping.length(), 0);
 				std::cout << std::endl;
 				displayTimestamp();
-				std::cout << " : Ping send,           IP: " << this->_fd_users[ start->first ]->getIp() << " Socket: " << start->first << std::endl;;
+				std::cout << " : Ping send,           IP: " << this->_fd_users[ start->first ]->getIp() << " Socket: " << start->first << std::endl;
+
+			if ( this->_fd_users[ start->first ]->getTimePing() == 0)
+			{
+				send_reply("396", "ft_irc.com :is now your display host", this->_fd_users[ start->first ]);
+				send_reply("MODE", ":+xwT", this->_fd_users[ start->first ]);
+			}
 			}
 		}
 	}

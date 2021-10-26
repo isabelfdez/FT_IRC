@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/25 22:00:45 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 18:28:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ std::string				User::getChannelsString()
 {
 	std::string s;
 
-		std::cout << "hola3\n";
 
 	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
