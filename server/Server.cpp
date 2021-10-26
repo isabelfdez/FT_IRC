@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 22:49:17 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 23:13:22 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,8 +329,6 @@ void Server::close_all_fd()
 	}
 
 }
-
-
 
 void			Server::deleteChannel( std::string channel )
 {
