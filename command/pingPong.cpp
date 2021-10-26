@@ -18,7 +18,9 @@ static std::string generatePing()
 	char ping[13];
     srand( time( NULL ) );
     for( size_t i = 0; i <= 11; i++ )
+	{
         ping[ i ] = 33 + rand() % ( 126 - 33 );
+	}
 	ping[ 12 ] = '\0';
 	return static_cast<std::string>( ping );
 }
@@ -68,8 +70,8 @@ void	Server::pong_command( int fd, char *buffer)
 	std::vector<std::string> token = split( buffer, ' ' );
 	if ( token[0] == this->_fd_users[fd]->getPing() )
 		{
-			if (this->_fd_users[fd]->getTimePing() == 0)
-				this->welcome( fd );
+			// if (this->_fd_users[fd]->getTimePing() == 0)
+			// 	this->welcome( fd );
 			this->_fd_users[fd]->setPingStatus( false );
 			this->_fd_users[fd]->setTimePing( 120000 );
 			std::cout << std::endl;

@@ -401,20 +401,20 @@ void Server::deleteUser( int const & fd )
 	this->_fd_users.erase( fd );
 }
 
-void Server::welcome( int const & fd )
-{
-	std::string part1 = BLUE"███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
-	std::string part2 = BLUE"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
-	std::string part3 = GREEN"█████╗     ██║        ██║██████╔╝██║     "WHITE;
-	std::string part4 = GREEN"██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
-	std::string part5 = GREEN"██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
-	std::string part6 = BLUE"			Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+// void Server::welcome( int const & fd )
+// {
+// 	std::string part1 = BLUE"███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+// 	std::string part2 = BLUE"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+// 	std::string part3 = GREEN"█████╗     ██║        ██║██████╔╝██║     "WHITE;
+// 	std::string part4 = GREEN"██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+// 	std::string part5 = GREEN"██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+// 	std::string part6 = BLUE"			Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
-	send_reply("372", part1, fd);
-	send_reply("372", part2, fd);
-	send_reply("372", part3, fd);
-	send_reply("372", part4, fd);
-	send_reply("372", part5, fd);
-	send_reply("372", part6, fd);
+// 	send_reply("372", part1, fd);
+// 	send_reply("372", part2, fd);
+// 	send_reply("372", part3, fd);
+// 	send_reply("372", part4, fd);
+// 	send_reply("372", part5, fd);
+// 	send_reply("372", part6, fd);
 
-}
+// }

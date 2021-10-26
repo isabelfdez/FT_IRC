@@ -123,7 +123,7 @@ class Server
 
 
 		void			sendPing(  );
-		void			welcome( int const & fd );
+		//void			welcome( int const & fd );
 
 
 };
