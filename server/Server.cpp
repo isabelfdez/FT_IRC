@@ -75,7 +75,11 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("quit");
 	this->_commands.push_back("PONG");
 	this->_commands.push_back("pong");
-
+	this->_commands.push_back("MODE");
+	this->_commands.push_back("mode");
+	this->_commands.push_back("OPER");
+	this->_commands.push_back("oper");
+	this->_password_oper = "abracadabra";
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -85,8 +89,8 @@ Server::Server(): _fd_users(), _name_channel()
 
 Server::~Server()
 {
-	close( this->_listen_server_sock );
 	close_all_fd();
+	close( this->_listen_server_sock );
 	FD_ZERO( &this->_reads );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user ) );
 	memset( (char *) &this->_addr_server, 0 , sizeof( this->_addr_server ) );
@@ -232,6 +236,10 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->quit_command(fd, str);
 		else if ( command == "PONG" || command == "pong")
 			this->pong_command(fd, str);
+		else if ( command == "MODE" || command == "mode")
+			this->mode_command(str, fd);
+		else if ( command == "OPER" || command == "oper")
+			this->oper_command(str, fd);
 	}
 }
 
@@ -274,6 +282,38 @@ void Server::getCustomerRequest( int & fd_client, int i)
 	}
 }
 
+bool			Server::isOper(std::string usr)
+{
+	for (std::list<User*>::iterator it = _opers.begin(); it != _opers.end(); it++)
+	{
+		std::cout << *it << std::endl;
+		if ((*it)->getNick() == usr)
+			return true;
+	}
+	return false;
+}
+
+bool			Server::isUsr(std::string usr)
+{
+	for (std::list<User*>::iterator it = _connected_users.begin(); it != _connected_users.end(); it++)
+	{
+		if ((*it)->getNick() == usr)
+			return true;
+	}
+	return false;
+}
+
+
+bool			Server::isChannel(std::string channel)
+{
+	if (this->_name_channel.count(channel))
+		return true;
+	return false;
+}
+
+
+
+
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
 int		const &	Server::getListenSockServer( void ) const { return this->_listen_server_sock; }
 fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
@@ -283,6 +323,16 @@ int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }
 size_t			Server::getNumChannel( void ) 	const{ return this->_name_channel.size(); }
 size_t			Server::getNumConnections( void )		const{ return this->_fd_users.size(); }
 size_t			Server::getNumUser( void )		const{ return this->_connected_users.size(); }
+
+User			*Server::getUserWithNick(std::string nick)
+{
+	for (std::list<User*>::iterator it = this->_connected_users.begin(); it != this->_connected_users.end(); it++)
+	{
+		if ((*it)->getNick() == nick)
+			return (*it);
+	}
+	return nullptr;
+}
 
 
 void Server::close_fd(int fd)

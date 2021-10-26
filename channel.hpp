@@ -41,10 +41,18 @@ class Channel
 		std::list<User *>&	getUsers();
 		bool				getIsFull() const;
 		bool				isOp(User * user);
+		bool    			isUser(std::string user);
+		User    			*getUser(std::string user);
+
+
 		std::string			userList();
 
 		// Setters
 		void				setName(std::string name);
+		void    			setOp(User * user);
+		void				setOpOff(std::string user);
+
+
 		
 		// Overload
 

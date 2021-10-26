@@ -20,6 +20,7 @@ int main ()
 	try 
 	{
 		Server server;
+
 		svr = &server;
 		while (42)
 		{
