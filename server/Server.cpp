@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 16:10:27 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:20:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,7 +334,11 @@ void Server::deleteUser( int const & fd )
 	iteratorChannel end = tmp_usr->getChannels().end();
 	
 	for (; channel != end; ++channel )
+	{
 		(*channel)->deleteUser( tmp_usr );
+		if (!(*channel)->getUsers().size())
+			this->deleteChannel( (*channel)->getName() );
+	}
 	this->close_fd( fd );
 	for ( size_t i = 0; i < FD_SETSIZE; i++ )
 	{
