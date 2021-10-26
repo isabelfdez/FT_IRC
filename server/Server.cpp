@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 23:20:46 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:20:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,21 +117,27 @@ void Server::join_new_connection()
 {
 	int connection;
 
-	connection = accept(this->_listen_server_sock, NULL, NULL);
+	struct sockaddr_in addr_client ;
+	
+	memset( (char *) &addr_client, 0 , sizeof(addr_client) );
+	socklen_t len_sock = sizeof( addr_client);
+
+	connection = accept(this->_listen_server_sock, ( struct sockaddr * ) &addr_client, &len_sock);
 	if (connection < 0)
 		throw Server::GlobalServerExecption();
 	// setnonblocking
+	
 	setnonblocking( connection );
 	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
 		{
+			this->_list_connected_user[i] = connection;
+			this->_fd_users[connection] =  new User(connection, addr_client);
+			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			std::cout << std::endl;
 			displayTimestamp();
-			std::cout << " : Connection accepted, IP: " << this->getIpUser() << " Socket: " << connection;
-			this->_list_connected_user[i] = connection;
-			this->_fd_users[connection] =  new User(connection);
-			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
+			std::cout << " : Connection accepted, IP: " << this->_fd_users[connection]->getIp() << " Socket: " << connection;
 			connection = -1;
 		}
 	}
@@ -167,7 +173,7 @@ void Server::attendClients()
 		{
 			std::cout << std::endl;
 			displayTimestamp();
-			std::cout << " : Attend client,       IP: " << this->getIpUser()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
+			std::cout << " : Attend client,       IP: " << this->_fd_users[ this->_list_connected_user[i] ]->getIp()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			this->getCustomerRequest( this->_list_connected_user[i], i );
 		}
@@ -279,9 +285,6 @@ size_t			Server::getNumConnections( void )		const{ return this->_fd_users.size()
 size_t			Server::getNumUser( void )		const{ return this->_connected_users.size(); }
 
 
-
-
-
 void Server::close_fd(int fd)
 {
 	for ( size_t i = 0; i <FD_SETSIZE; i++ )
@@ -290,7 +293,7 @@ void Server::close_fd(int fd)
 	close (fd);
 	std::cout << std::endl;
 	displayTimestamp();
-	std::cout << " : Connection close,    IP: " << this->getIpUser() << " Socket: " << fd;
+	std::cout << " : Connection close,    IP: " << this->_fd_users[ fd ]->getIp() << " Socket: " << fd;
 }
 
 void Server::close_all_fd()
@@ -308,10 +311,60 @@ void Server::close_all_fd()
 }
 
 
-std::string Server::getIpUser( void ) const 
+
+void			Server::deleteChannel( std::string channel )
 {
-	struct in_addr clientIP;
-	clientIP = this->_addr_server.sin_addr;
-	char ipStr[INET_ADDRSTRLEN];
-	return inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN);
+	std::map<std::string, Channel*>::iterator it;
+
+	it = this->_name_channel.find(channel);
+	if (it != this->_name_channel.end())
+	{
+		delete this->_name_channel[channel];
+		this->_name_channel.erase(it);
+	}
+}
+
+void Server::deleteUser( int const & fd )
+{
+	typedef std::list<Channel *>::iterator iteratorChannel;
+	User *tmp_usr;
+
+	tmp_usr = this->_fd_users[ fd ];
+	iteratorChannel channel = tmp_usr->getChannels().begin();
+	iteratorChannel end = tmp_usr->getChannels().end();
+	
+	for (; channel != end; ++channel )
+	{
+		(*channel)->deleteUser( tmp_usr );
+		if (!(*channel)->getUsers().size())
+			this->deleteChannel( (*channel)->getName() );
+	}
+	this->close_fd( fd );
+	for ( size_t i = 0; i < FD_SETSIZE; i++ )
+	{
+		if ( fd == this->_list_connected_user[i] )
+			this->_list_connected_user[i] = 0;
+	}
+	this->_connected_users.remove( tmp_usr );
+	this->_nicks.remove( tmp_usr->getNick() );
+	delete tmp_usr;
+	this->_fd_users.erase( fd );
+}
+
+void Server::welcome( int const & fd )
+{
+	std::string part1 = BLUE"███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+	std::string part2 = BLUE"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+	std::string part3 = GREEN"█████╗     ██║        ██║██████╔╝██║     "WHITE;
+	std::string part4 = GREEN"██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+	std::string part5 = GREEN"██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+	std::string part6 = BLUE"			Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	
+	send_reply("372", part1, fd);
+	send_reply("372", part2, fd);
+	send_reply("372", part3, fd);
+	send_reply("372", part4, fd);
+	send_reply("372", part5, fd);
+	send_reply("372", part6, fd);
+
 }

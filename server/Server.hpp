@@ -60,7 +60,7 @@ class Server
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
-		std::list< Channel * >			_channel;
+		// std::list< Channel * >			_channel;
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
@@ -89,12 +89,12 @@ class Server
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
 		fd_set	const & getSocks()				const;//krios-fu
-		std::string 	getIpUser( void )		const;//krios-fu
 		size_t			getNumChannel( void ) 	const;//krios-fu
 		size_t			getNumConnections ()	const;
 		size_t			getNumUser( void )		const;//krios-fu
 
 		void			deleteChannel( std::string );
+		void			deleteUser( int const & fd );
 		void			close_fd( int fd );
 		void			close_all_fd();
 
@@ -110,6 +110,7 @@ class Server
 		void			pong_command( int fd, char *buffer );
 
 		void			sendPing(  );
+		void			welcome( int const & fd );
 
 
 };

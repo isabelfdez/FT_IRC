@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   User.cpp                                           :+:      :+:    :+:   */
+/*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 20:59:47 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 22:00:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 // Constructor && destructor
 
-User::User(int & fd) : _sock_fd(fd)
+User::User(int & fd, struct sockaddr_in const & addr) : _sock_fd(fd)
 {
 	init_modes();
+	this->_addr = addr;
 	this->_is_registered = false;
 	this->_max_channels = false;
 	this->_ping_status = false;
@@ -173,3 +174,12 @@ void	User::addChannel(Channel *  channel)
 		this->_max_channels = true;
 }
 
+
+
+std::string User::getIp(  ) const 
+{
+	struct in_addr clientIP;
+	clientIP = this->_addr.sin_addr;
+	char ipStr[INET_ADDRSTRLEN];
+	return inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN);
+}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   User.hpp                                           :+:      :+:    :+:   */
+/*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 18:35:06 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/25 22:00:33 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include "channel.hpp"
+#include <arpa/inet.h>
 
 # define MAX_CHANNELS 10
 
@@ -97,9 +98,11 @@ class User
 		uint64_t					_lastTime;
 		uint64_t					_time_ping;
 
+		struct sockaddr_in 			_addr;
+
 	public:
 		// Constructor && destructor
-		User(int & fd);
+		User(int & fd, struct sockaddr_in const & addr);
 		~User();
 
 		// Getters
@@ -116,6 +119,7 @@ class User
 		uint64_t	const &			getLastTime() const;
 		uint64_t	const &			getTimePing() const;
 		bool const &				getPingStatus() const;
+		std::string					getIp(  ) const ;
 		
 
 		// Setters
