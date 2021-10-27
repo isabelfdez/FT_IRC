@@ -30,13 +30,14 @@
 # define ERR_TOOMANYTARGETS			"407"
 # define ERR_NORECIPIENT			"411"
 # define ERR_NOTEXTTOSEND			"412"
+# define ERR_UNKNOWNCOMMAND			"421"
 # define ERR_NONICKNAMEGIVEN		"431"
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
 # define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
-# define ERR_NEEDMOREPARAMS			"461"
+# define ERR_USERNAMEINVALID		"468"
 
 // Definiciones de replys
 #define  RPL_WELCOME				"001"
@@ -79,7 +80,7 @@ class Server
 		void			build_select_list();
 		void			attendClients();
 		void			join_new_connection();
-		void			getCustomerRequest( int  id_client, int i);
+		void			getCustomerRequest( int  id_client );
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 

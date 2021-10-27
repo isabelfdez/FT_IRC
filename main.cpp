@@ -11,12 +11,12 @@ void signal_kill ( int number )
 	{
 		std::cout << "\n[[[ forced closure ]]] \n";
 		svr->~Server();
-		kill (getpid(), 9);
 		exit(EXIT_FAILURE);
 	}
 }
 int main ()
 {
+	int i = 1;
 	try 
 	{
 		Server server;
@@ -37,6 +37,26 @@ int main ()
 					<< " : Connections : " << server.getNumConnections()
 					<< " Users: " << server.getNumUser()
 					<< " Channel: " << server.getNumChannel();
+					if ( i == 5)
+						i = 1;
+					switch (i)
+					{
+						case 1:
+							std::cout << YELLOW" / "WHITE ;
+							break;
+						case 2: 
+							std::cout << YELLOW" - "WHITE ;
+							break;
+						case 3:
+						std::cout << YELLOW" \\ "WHITE;
+							break;
+						case 4:
+							std::cout << YELLOW" | "WHITE;
+							break;
+						default:
+							break;
+					}
+				i++;
 				fflush(stdout);
 			}
 			else

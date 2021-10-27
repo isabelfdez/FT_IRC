@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/25 22:07:44 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 17:13:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,23 @@
 void Server::quit_command(int fd, char *buffer)
 {
 	typedef std::list<Channel *>::iterator iteratorChannel;
-	User *tmp = this->_fd_users.at(fd);
+	char *tmp2;
+	User *usr = this->_fd_users.at(fd);
 
-	std::string msg_quit = "ERROR :Closing link: (" + tmp->getNick()
-		+ "@" + tmp->getIp() + ") [Signed off]\n";
+	send_reply("ERROR :Closing link:", "[Signed off]", usr);
 
-	std::string msg_quit_users = ": " + tmp->getNick() + "! " + buffer;
-	send(fd, msg_quit.c_str(),  msg_quit.length(), 0);
+	if ( ( tmp2 = strchr( buffer, '\r' ) ) || ( tmp2 = strchr( buffer, '\n' ) ) )
+	 	*tmp2 = 0;
+	std::string msg_quit_users = buffer;
 
-	iteratorChannel channel = tmp->getChannels().begin();
-	iteratorChannel end = tmp->getChannels().end();
+	iteratorChannel channel =usr->getChannels().begin();
+	iteratorChannel end = usr->getChannels().end();
 
 	for (; channel != end ; ++channel )
-		(*channel)->sendMsgChannel( msg_quit_users, fd );
+		send_message_channel(msg_quit_users, usr ,*channel);
+
+	std::cout << std::endl;
+	displayTimestamp();
+	std::cout << " : Quit success,        IP: " << usr->getIp() << " Socket: " << fd;
 	this->deleteUser( fd );
 }

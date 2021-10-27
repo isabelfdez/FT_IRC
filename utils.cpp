@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 18:44:13 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 18:05:15 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,10 +228,10 @@ void displayTimestamp( void )
 	time_t now = time(0);
 
 	tm ltm = *localtime(&now);
-	std::cout << std::setfill('0') << "[" << (ltm.tm_year + 1900)
+	std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
 			  << std::setw(2) << ltm.tm_mon + 1
 			  << std::setw(2) << ltm.tm_mday << "_"
 			  << std::setw(2) << ltm.tm_hour
 			  << std::setw(2) << ltm.tm_min
-			  << std::setw(2) << ltm.tm_sec << "] ";
+			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
 }

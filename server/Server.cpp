@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 23:13:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 18:02:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("PONG");
 	this->_commands.push_back("pong");
 
-
-	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
 
@@ -87,19 +85,17 @@ Server::Server(): _fd_users(), _name_channel()
 
 Server::~Server()
 {
+	std::cout << "Destructor Server\n";
 	close( this->_listen_server_sock );
 	close_all_fd();
 	FD_ZERO( &this->_reads );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user ) );
 	memset( (char *) &this->_addr_server, 0 , sizeof( this->_addr_server ) );
-	std::cout << "Destructor Server\n";
 }
-
 
 void Server::build_select_list( void )
 {
-	FD_ZERO(&this->_reads);
-
+	FD_ZERO( &this->_reads );
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -125,9 +121,8 @@ void Server::join_new_connection()
 	socklen_t len_sock = sizeof( addr_client);
 
 	connection = accept(this->_listen_server_sock, ( struct sockaddr * ) &addr_client, &len_sock);
-	if (connection < 0)
+	if ( connection < 0 )
 		throw Server::GlobalServerExecption();
-	// setnonblocking
 	
 	setnonblocking( connection );
 	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
@@ -135,7 +130,7 @@ void Server::join_new_connection()
 		if(this->_list_connected_user[i] == 0)
 		{
 			this->_list_connected_user[i] = connection;
-			this->_fd_users[connection] =  new User(connection, addr_client);
+			this->_fd_users[connection] =  new User( connection, addr_client );
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			std::cout << std::endl;
 			displayTimestamp();
@@ -177,17 +172,11 @@ void Server::attendClients()
 			displayTimestamp();
 			std::cout << " : Attend client,       IP: " << this->_fd_users[ this->_list_connected_user[i] ]->getIp()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
-			this->getCustomerRequest( this->_list_connected_user[i], i );
+			this->getCustomerRequest( this->_list_connected_user[i]);
 		}
 	}
 	std::cout << std::endl;
 }
-
-
- //  <user> <mode> <unused> <realname>  (int fd, std::string buff, char * str); error list add 
-
-
-
 
 
 void Server::parse_command(int fd, std::string buff, char * str)
@@ -234,62 +223,40 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->quit_command(fd, str);
 		else if ( command == "PONG" || command == "pong")
 			this->pong_command(fd, str);
+		else
+			send_error(ERR_UNKNOWNCOMMAND, command, fd);
 	}
 }
 
-void Server::getCustomerRequest( int fd_client, int i)
+void Server::getCustomerRequest( int fd_client )
 {
 	char		buffer[512];
+	User		*usr;
+	
+	usr = this->_fd_users[ fd_client ];
 	memset(buffer, 0, sizeof(buffer));
 	int byte = recv(fd_client, buffer, 512, 0);
-	//char	*aux;
-	//std::string	buff;
-	//arreglar!
-	//int byte = recv(fd_client, buffer, 9, 0);
-	//buff += buffer;
-//
-	//i++;
-	//if ( !byte )
-	//{
-	//	close( fd_client );
-	//	this->_list_connected_user[i] = 0;
-	//}
-	//while (byte == 9)
-	//{
-//
-	//	std::cout << "byte = " << byte << std::endl;
-	//	byte = recv(fd_client, buffer, 9, 0);
-	//	buff += buffer;
-	//}
-	//std::cout << "byte = " << byte << std::endl;
-	//std::cout << "se sale\n";
-	//std::cout << "buffer: " <<  buffer << std::endl;
+	
 	if ( !byte )
-	{
-		// close( fd_client );
 		this->deleteUser( fd_client );
-		(void ) i;
-		// this->_list_connected_user[i] = 0;
-	}
 	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
 	{
-		std::string buffer_cmd = this->_fd_users[fd_client]->getBufferCmd() + buffer;
-		this->_fd_users[fd_client]->setBufferCmd( buffer_cmd );
-
+		std::string buffer_cmd = usr->getBufferCmd() + buffer;
+		usr->setBufferCmd( buffer_cmd );
 	}
 	else
 	{
-		if ( this->_fd_users[fd_client]->getBufferCmd().length() > 0 )
+		if ( usr->getBufferCmd().length() > 0 )
 		{
-			std::string buff2 ( this->_fd_users[fd_client]->getBufferCmd() + buffer );
-			std::string buff3 ( this->_fd_users[fd_client]->getBufferCmd() + buffer );
+			std::string buff2 ( usr->getBufferCmd() + buffer );
+			std::string buff3 ( usr->getBufferCmd() + buffer );
 			this->parse_command(fd_client, buff2 , &buff3[0] );
-			this->_fd_users[fd_client]->setBufferCmd( "" );
+			usr->setBufferCmd( "" );
 		}
-		else 
+		else
 		{
-			std::string buff2 (buffer);
-			this->parse_command(fd_client, buff2, buffer);
+			std::string buff2 ( buffer );
+			this->parse_command( fd_client, buff2, buffer );
 		}
 	}
 }
@@ -318,12 +285,15 @@ void Server::close_fd(int fd)
 
 void Server::close_all_fd()
 {
-	std::map<int, User *>::iterator start = this->_fd_users.begin();
-	std::map<int, User *>::iterator end = this->_fd_users.end();
+	typedef std::map<int, User *>::iterator iterator_usr;
+
+	iterator_usr start = this->_fd_users.begin();
+	iterator_usr end = this->_fd_users.end();
 
 	for (; start != end; ++start )
 	{
-		std::cout << "Cerrando fd: " << start->first << std::endl;
+		displayTimestamp();
+		std::cout << " : Connection close,    IP: " << start->second->getIp() << " Socket: " << start->second->getsockfd() << std::endl;
 		close( start->first );
 		FD_CLR( start->first, &this->_reads );
 	}
