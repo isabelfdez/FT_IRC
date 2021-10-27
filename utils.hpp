@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 18:39:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 19:54:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,6 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl);
 std::vector<std::string>    split(char * buff, char c);
 uint64_t	getTime(void);
 void displayTimestamp( void );
+void displayLog(std::string const & log, std::string const & cmd , User *usr );
 
 #endif

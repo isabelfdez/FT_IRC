@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 16:12:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 20:01:52 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,9 @@ void    Server::nick_command(char * str, int & fd)
         // Añadimos el usuario a la lista de usuarios
         this->_connected_users.push_back(this->_fd_users[fd]);
         this->_fd_users[fd]->setTimePing(0);
-        std::cout << std::endl;
-        displayTimestamp();
-        std::cout << " : User created,        IP: " << this->_fd_users[fd]->getIp() << " Socket: " << fd;
+  
+	    displayLog("User created", "", this->_fd_users[fd]);
+
     }
 }
 // Falta gestionar TOO MANY TARGETS. No sé si el error está bien.

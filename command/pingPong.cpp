@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/27 17:44:58 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 20:55:05 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void	Server::sendPing()
 				else
 					send_reply("ERROR :Closing link:", " [Registration timeout]", usr);
 				this->deleteUser( start->first );
-				std::cout << std::endl;
 				return ;
 			}
 			else if ( usr->getPingStatus() == false
@@ -55,9 +54,8 @@ void	Server::sendPing()
 				ping += usr->getPing() + "\n";
 				usr->setPingStatus( true );
 				send( usr->getsockfd(), ping.c_str(), ping.length(), 0);
-				std::cout << std::endl;
-				displayTimestamp();
-				std::cout << " : Ping send,           IP: " << usr->getIp() << " Socket: " << usr->getsockfd() << std::endl;
+				std::cout << "\r";
+				displayLog("Ping send", "", usr);
 
 			if ( usr->getTimePing() == 0)
 			{
@@ -84,9 +82,8 @@ void	Server::pong_command( int fd, char *buffer)
 			this->welcome( fd );
 		usr ->setPingStatus( false );
 		usr ->setTimePing( 120000 );
-		std::cout << std::endl;
-		displayTimestamp();
-		std::cout << " : Ping received,       IP: " << usr->getIp() << " Socket: " << fd;
+		std::cout << "\r";
+		displayLog("Ping received", "", usr);
 	}
 	else
 	{

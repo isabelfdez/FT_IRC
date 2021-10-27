@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/27 17:13:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 21:06:53 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void Server::quit_command(int fd, char *buffer)
 	for (; channel != end ; ++channel )
 		send_message_channel(msg_quit_users, usr ,*channel);
 
-	std::cout << std::endl;
-	displayTimestamp();
-	std::cout << " : Quit success,        IP: " << usr->getIp() << " Socket: " << fd;
+
+	displayLog("Quit success", "", usr);
+	
 	this->deleteUser( fd );
 }

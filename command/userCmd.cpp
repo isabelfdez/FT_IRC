@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/27 17:46:33 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 20:02:05 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ void	Server::user_command( int fd, char *buffer )
 		usr->setRegistered(true);
 		usr->setTimePing(0);
 		this->_connected_users.push_back( usr );
-		std::cout << std::endl;
-		displayTimestamp();
-		std::cout << " : User created,        IP: " << usr->getIp() << " Socket: " << fd;
+		displayLog("User created", "", this->_fd_users[fd]);
+
 	}
 }

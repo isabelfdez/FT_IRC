@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/27 18:02:44 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/27 20:59:13 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,8 @@ void Server::join_new_connection()
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User( connection, addr_client );
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
-			std::cout << std::endl;
-			displayTimestamp();
-			std::cout << " : Connection accepted, IP: " << this->_fd_users[connection]->getIp() << " Socket: " << connection;
+			std::cout << "\r";
+			displayLog("Connection accepted", "", this->_fd_users[connection]);
 			connection = -1;
 		}
 	}
@@ -168,14 +167,11 @@ void Server::attendClients()
 	{
 		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
 		{
-			std::cout << std::endl;
-			displayTimestamp();
-			std::cout << " : Attend client,       IP: " << this->_fd_users[ this->_list_connected_user[i] ]->getIp()  << " Socket: " << this->_list_connected_user[i] << " CMD : ";
-			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
+			 this->_fd_users[this->_list_connected_user[i]]->setLastTime( getTime() ); 
+			std::cout << "\r";
 			this->getCustomerRequest( this->_list_connected_user[i]);
 		}
 	}
-	std::cout << std::endl;
 }
 
 
@@ -188,9 +184,11 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	}
 	std::string buff2 = buff.substr(0, buff.find('\r'));
 	std::string command = buff2.substr(0, buff2.find(' '));
-	std::cout << command; // no deleted krios-fu
+
+	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
+	
 	if (!find_command(command, this->_commands))
-		return ; // Aquí tal vez haya que imprimir \r\n
+		return send_error(ERR_UNKNOWNCOMMAND, command, fd);
 	if (!this->_fd_users[fd]->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
@@ -223,8 +221,6 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->quit_command(fd, str);
 		else if ( command == "PONG" || command == "pong")
 			this->pong_command(fd, str);
-		else
-			send_error(ERR_UNKNOWNCOMMAND, command, fd);
 	}
 }
 
@@ -278,9 +274,9 @@ void Server::close_fd(int fd)
 		if( this->_list_connected_user[i] == fd)
 			this->_list_connected_user[i] = 0;
 	close (fd);
-	std::cout << std::endl;
-	displayTimestamp();
-	std::cout << " : Connection close,    IP: " << this->_fd_users[ fd ]->getIp() << " Socket: " << fd;
+	std::cout << "\r";
+	displayLog("Connection closed", "", this->_fd_users[fd]);
+
 }
 
 void Server::close_all_fd()
@@ -292,8 +288,9 @@ void Server::close_all_fd()
 
 	for (; start != end; ++start )
 	{
-		displayTimestamp();
-		std::cout << " : Connection close,    IP: " << start->second->getIp() << " Socket: " << start->second->getsockfd() << std::endl;
+		std::cout << "\r";
+		displayLog("Connection closed", "", this->_fd_users[start->first ] );
+		std::cout << std::endl;
 		close( start->first );
 		FD_CLR( start->first, &this->_reads );
 	}
@@ -329,10 +326,12 @@ void Server::deleteUser( int const & fd )
 	}
 
 	this->_connected_users.remove( tmp_usr );
-	this->_nicks.remove( tmp_usr->getNick() );
 	this->close_fd( fd );
 	this->_fd_users.erase( fd );
+	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	delete tmp_usr;
+	this->_nicks.remove( tmp_usr->getNick() );
+	
 }
 
 void Server::welcome( int const & fd )
