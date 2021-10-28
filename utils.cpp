@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 18:03:23 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 20:25:04 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,12 +190,6 @@ bool	ft_isspecial(char c)
 	return (true);
 }
 
-std::string		ft_toupper(std::string str)
-{
-	transform(str.begin(), str.end(), str.begin(), ::toupper);
-	return (str);
-}
-
 char	*ft_substr(char const *s, char c)
 {
 	size_t	i;
@@ -252,4 +246,10 @@ void displayTimestamp( void )
 			  << std::setw(2) << ltm.tm_hour
 			  << std::setw(2) << ltm.tm_min
 			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
+}
+
+std::string		ft_toupper(std::string str)
+{
+	transform(str.begin(), str.end(), str.begin(), ::toupper);
+	return (str);
 }

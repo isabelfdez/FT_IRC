@@ -13,7 +13,6 @@
 
 #include "../server/Server.hpp"
 #include "../utils.hpp"
-
 void	Server::privmsg_command(std::string & command, int & fd)
 {
 	std::string 				delimiter = " ";
