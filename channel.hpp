@@ -25,6 +25,7 @@ class User;
 class Channel
 {
 	private:
+		std::list<User *>	_banned;
 		std::string			_name;
 		std::list<User *>	_users;
 		std::list<User *>	_operators;
@@ -39,18 +40,22 @@ class Channel
 		// Getters
 		std::string			getName() const;
 		std::list<User *>&	getUsers();
+		std::list<User *>&	getBanned();
 		bool				getIsFull() const;
 		bool				isOp(User * user);
+		bool				isBanned(User * user);
 		bool    			isUser(std::string user);
 		User    			*getUser(std::string user);
-
+		
 
 		std::string			userList();
 
 		// Setters
+		void				banOff(User * user);
+		void				ban(User *);
 		void				setName(std::string name);
 		void    			setOp(User * user);
-		void				setOpOff(std::string user);
+		void				setOpOff(std::string user, User * usr);
 
 
 		

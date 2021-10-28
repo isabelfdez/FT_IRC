@@ -383,9 +383,17 @@ void Server::deleteUser( int const & fd )
 	this->_fd_users.erase( fd );
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	delete tmp_usr;
-	this->_nicks.remove( tmp_usr->getNick() );
-	
+	this->_nicks.remove( tmp_usr->getNick() );	
 }
+
+void	Server::deleteBan( User *user)
+{
+	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
+	{
+		(*(it->second)).banOff(user);
+	}
+}
+
 
 void Server::welcome( int const & fd )
 {
