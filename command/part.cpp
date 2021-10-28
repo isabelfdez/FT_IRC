@@ -39,7 +39,6 @@ void	Server::part_command(char * str, int & fd)
 	if (*str == ':')
 		str++;
 	parse = split(str, ',');
-	std::cout << parse[0] << std::endl;
 	if (!parse.size())
 	{
 		return (send_error(ERR_NEEDMOREPARAMS, "PART :Not enough parameters", fd));

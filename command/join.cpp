@@ -11,7 +11,6 @@ void    Server::join_channel(std::string str1, int & fd)
     if (str1 == "0")
     {
         str1 = "part " +  this->_fd_users[fd]->getChannelsString();
-        std::cout << str1 << "\n";
         return (part_command(&*str1.begin(), fd));
     }
     else if (str1[0] != '#')
@@ -25,14 +24,15 @@ void    Server::join_channel(std::string str1, int & fd)
         j++;
     }
     if (this->_fd_users[fd]->getMaxChannels())
-
         return (send_error(ERR_TOOMANYCHANNELS, this->_fd_users[fd]->getNick() + " :You have joined too many channels", fd));
     if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
         return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", fd));
     else if (this->_name_channel[str1])
     {
         // User join channel
-        s = this->_fd_users[fd]->getNick() + " joined " + this->_name_channel[str1]->getName();
+        if (this->_name_channel[str1]->isUser(this->_fd_users[fd]->getNick()))
+            return (send_error("", str1 + " :You are already on channel", fd));
+        s = "joined " + this->_name_channel[str1]->getName();
         send_message_channel(s, this->_fd_users[fd], this->_name_channel[str1]);
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
