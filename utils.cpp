@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/27 20:39:51 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/28 16:02:40 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void    send_message(std::string & message, int & fd, User * usr)
     mask.append(usr->getNick());
     mask.append("!");
     mask.append(usr->getUserName());
-    mask.append("@ft_irc.com");
+    mask.append("@"+usr->getIp());
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
@@ -44,7 +44,7 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl)
     mask.append(usr->getNick());
     mask.append("!");
     mask.append(usr->getUserName());
-    mask.append("@ft_irc.com");
+    mask.append("@"+usr->getIp());
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
