@@ -6,31 +6,60 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/21 19:27:18 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:01:40 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "../utils.hpp"
 
+static void setnonblocking(int sock)
+{
+	int opts;
+
+	opts = fcntl(sock,F_GETFL);
+	if (opts < 0) {
+		perror("fcntl(F_GETFL)");
+		exit(EXIT_FAILURE);
+	}
+	opts = (opts | O_NONBLOCK);
+	if (fcntl(sock,F_SETFL,opts) < 0) {
+		perror("fcntl(F_SETFL)");
+		exit(EXIT_FAILURE);
+	}
+	return;
+}
+
 Server::Server(): _fd_users(), _name_channel()
 {
+	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
 	this->_listen_server_sock = 0;
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
 	if ( this->_listen_server_sock == -1 )
+	{
+		perror("Socket");
 		throw Server::GlobalServerExecption();
+	}
+	setnonblocking( this->_listen_server_sock );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
-	memset( (char *) &this->_addr_server, 0 , sizeof(sockaddr_in) );
+	memset( (char *) &this->_addr_server, 0 , sizeof(this->_addr_server) );
 	this->_addr_server.sin_port = htons(PORT);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
-	if ( bind( this->_listen_server_sock, (struct sockaddr *) &this->_addr_server, sizeof (this->_addr_server) )  == -1)
+	setsockopt(this->_listen_server_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+	if ( bind( this->_listen_server_sock, ( struct sockaddr * ) &this->_addr_server, sizeof( this->_addr_server ) )  == -1 )
+	{	close(this->_listen_server_sock);
+		perror("Bind");
 		throw Server::GlobalServerExecption();
+	}
 	if ( listen (this->_listen_server_sock, 5) == -1)
+	{
+		perror("Listen");
 		throw Server::GlobalServerExecption();
+	}
 	this->_highsock = this->_listen_server_sock;
 	this->_commands.push_back("USER");
 	this->_commands.push_back("NICK");
@@ -46,24 +75,37 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("notice");
 	this->_commands.push_back("part");
 	this->_commands.push_back("quit");
+	this->_commands.push_back("PONG");
+	this->_commands.push_back("pong");
+	this->_commands.push_back("MODE");
+	this->_commands.push_back("mode");
+	this->_commands.push_back("OPER");
+	this->_commands.push_back("oper");
+	this->_password_oper = "abracadabra";
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
+
+
+
 Server::~Server()
 {
-	
+	std::cout << "Destructor Server\n";
+	close( this->_listen_server_sock );
+	close_all_fd();
+	close( this->_listen_server_sock );
+	FD_ZERO( &this->_reads );
+	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user ) );
+	memset( (char *) &this->_addr_server, 0 , sizeof( this->_addr_server ) );
 }
-
 
 void Server::build_select_list( void )
 {
-	FD_ZERO(&this->_reads);
-
-	
+	FD_ZERO( &this->_reads );
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
-	for (size_t i = 0; i <FD_SETSIZE; i++)
+	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
 		if( this->_list_connected_user[i] != 0)
 		{
@@ -71,37 +113,46 @@ void Server::build_select_list( void )
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
-		
 	}
 }
+
+
 
 void Server::join_new_connection()
 {
 	int connection;
 
-	connection = accept(this->_listen_server_sock, NULL, NULL);
-	if (connection < 0)
+	struct sockaddr_in addr_client ;
+	
+	memset( (char *) &addr_client, 0 , sizeof(addr_client) );
+	socklen_t len_sock = sizeof( addr_client);
+
+	connection = accept(this->_listen_server_sock, ( struct sockaddr * ) &addr_client, &len_sock);
+	if ( connection < 0 )
 		throw Server::GlobalServerExecption();
-	// setnonblocking
-	std::cout << connection << "\n";
+	
+	setnonblocking( connection );
 	for (size_t i = 0; i < FD_SETSIZE && (connection != -1); i++)
 	{
 		if(this->_list_connected_user[i] == 0)
 		{
-			std::cout << "Conenection accepted: FD:" << connection << " pos: " << i << std::endl;
 			this->_list_connected_user[i] = connection;
-			this->_fd_users[connection] =  new User(connection);
+			this->_fd_users[connection] =  new User( connection, addr_client );
+			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
+			std::cout << "\r";
+			displayLog("Connection accepted", "", this->_fd_users[connection]);
 			connection = -1;
 			std::cout << "segfault\n";
 		}
 	}
 	if ( connection != -1)
 	{
-		std::cout << "No roon left for new client" << std::endl;
-		close ( connection );
+		std::cout << "No roon left for new client";
+		close_fd ( connection );
 	}
-	
 }
+
+
 
 const char* Server::GlobalServerExecption::what() const throw ()
 {
@@ -123,16 +174,13 @@ void Server::attendClients()
 	for (size_t i = 0; i < FD_SETSIZE; i++)
 	{
 		if ( FD_ISSET( this->_list_connected_user[i], &this->_reads) )
-			this->getCustomerRequest( this->_list_connected_user[i], i);
+		{
+			 this->_fd_users[this->_list_connected_user[i]]->setLastTime( getTime() ); 
+			std::cout << "\r";
+			this->getCustomerRequest( this->_list_connected_user[i]);
+		}
 	}
-	
 }
-
-
- //  <user> <mode> <unused> <realname>  (int fd, std::string buff, char * str); error list add 
-
-
-
 
 
 void Server::parse_command(int fd, std::string buff, char * str)
@@ -144,8 +192,11 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	}
 	std::string buff2 = buff.substr(0, buff.find('\r'));
 	std::string command = buff2.substr(0, buff2.find(' '));
+
+	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
+	
 	if (!find_command(command, this->_commands))
-		return ; // Aquí tal vez haya que imprimir \r\n
+		return send_error(ERR_UNKNOWNCOMMAND, command, fd);
 	if (!this->_fd_users[fd]->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
@@ -160,7 +211,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
 	}
-	else if (this->_fd_users[fd]->getRegistered())
+	else if ( this->_fd_users[fd]->getRegistered() )
 	{
 		if ((command == "USER" || command == "user"))
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
@@ -174,53 +225,185 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		//	notice_command();
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
-		//else if (command == "QUIT" || command == "quit")
-		//	this->quit_command(fd, str);
+		else if (command == "QUIT" || command == "quit")
+			this->quit_command(fd, str);
+		else if ( command == "PONG" || command == "pong")
+			this->pong_command(fd, str);
+		else if ( command == "MODE" || command == "mode")
+			this->mode_command(str, fd);
+		else if ( command == "OPER" || command == "oper")
+			this->oper_command(str, fd);
 	}
 }
 
-void Server::getCustomerRequest( int & fd_client, int i)
+void Server::getCustomerRequest( int fd_client )
 {
 	char		buffer[512];
+	User		*usr;
+	
+	usr = this->_fd_users[ fd_client ];
 	memset(buffer, 0, sizeof(buffer));
 	int byte = recv(fd_client, buffer, 512, 0);
-	//char	*aux;
-	//std::string	buff;
-	//arreglar!
-	//int byte = recv(fd_client, buffer, 9, 0);
-	//buff += buffer;
-//
-	//i++;
-	//if ( !byte )
-	//{
-	//	close( fd_client );
-	//	this->_list_connected_user[i] = 0;
-	//}
-	//while (byte == 9)
-	//{
-//
-	//	std::cout << "byte = " << byte << std::endl;
-	//	byte = recv(fd_client, buffer, 9, 0);
-	//	buff += buffer;
-	//}
-	//std::cout << "byte = " << byte << std::endl;
-	//std::cout << "se sale\n";
-	//std::cout << "buffer: " <<  buffer << std::endl;
+	
 	if ( !byte )
+		this->deleteUser( fd_client );
+	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
 	{
-		close( fd_client );
-		this->_list_connected_user[i] = 0;
+		std::string buffer_cmd = usr->getBufferCmd() + buffer;
+		usr->setBufferCmd( buffer_cmd );
 	}
 	else
 	{
-		std::string buff2 (buffer);	
-		std::cout << buffer << std::endl;
-		std::cout << "HG\n";
-		this->parse_command(fd_client, buff2, buffer);
+		if ( usr->getBufferCmd().length() > 0 )
+		{
+			std::string buff2 ( usr->getBufferCmd() + buffer );
+			std::string buff3 ( usr->getBufferCmd() + buffer );
+			this->parse_command(fd_client, buff2 , &buff3[0] );
+			usr->setBufferCmd( "" );
+		}
+		else
+		{
+			std::string buff2 ( buffer );
+			this->parse_command( fd_client, buff2, buffer );
+		}
 	}
 }
+
+bool			Server::isOper(std::string usr)
+{
+	for (std::list<User*>::iterator it = _opers.begin(); it != _opers.end(); it++)
+	{
+		std::cout << *it << std::endl;
+		if ((*it)->getNick() == usr)
+			return true;
+	}
+	return false;
+}
+
+bool			Server::isUsr(std::string usr)
+{
+	for (std::list<User*>::iterator it = _connected_users.begin(); it != _connected_users.end(); it++)
+	{
+		if ((*it)->getNick() == usr)
+			return true;
+	}
+	return false;
+}
+
+
+bool			Server::isChannel(std::string channel)
+{
+	if (this->_name_channel.count(channel))
+		return true;
+	return false;
+}
+
+
+
 
 int		const &	Server::getNumReadSock( void ) const { return this->_num_read_sock; }
 int		const &	Server::getListenSockServer( void ) const { return this->_listen_server_sock; }
 fd_set	const &	Server::getSocks( void ) const { return this->_reads; }
 int		const &	Server::getHigthSock ( void ) const { return this->_highsock; }
+
+
+size_t			Server::getNumChannel( void ) 	const{ return this->_name_channel.size(); }
+size_t			Server::getNumConnections( void )		const{ return this->_fd_users.size(); }
+size_t			Server::getNumUser( void )		const{ return this->_connected_users.size(); }
+
+User			*Server::getUserWithNick(std::string nick)
+{
+	for (std::list<User*>::iterator it = this->_connected_users.begin(); it != this->_connected_users.end(); it++)
+	{
+		if ((*it)->getNick() == nick)
+			return (*it);
+	}
+	return nullptr;
+}
+
+
+void Server::close_fd(int fd)
+{
+	for ( size_t i = 0; i <FD_SETSIZE; i++ )
+		if( this->_list_connected_user[i] == fd)
+			this->_list_connected_user[i] = 0;
+	close (fd);
+	std::cout << "\r";
+	displayLog("Connection closed", "", this->_fd_users[fd]);
+
+}
+
+void Server::close_all_fd()
+{
+	typedef std::map<int, User *>::iterator iterator_usr;
+
+	iterator_usr start = this->_fd_users.begin();
+	iterator_usr end = this->_fd_users.end();
+
+	for (; start != end; ++start )
+	{
+		std::cout << "\r";
+		displayLog("Connection closed", "", this->_fd_users[start->first ] );
+		std::cout << std::endl;
+		close( start->first );
+		FD_CLR( start->first, &this->_reads );
+	}
+
+}
+
+void			Server::deleteChannel( std::string channel )
+{
+	std::map<std::string, Channel*>::iterator it;
+
+	it = this->_name_channel.find(channel);
+	if (it != this->_name_channel.end())
+	{
+		delete this->_name_channel[channel];
+		this->_name_channel.erase(it);
+	}
+}
+
+void Server::deleteUser( int const & fd )
+{
+	typedef std::list<Channel *>::iterator iteratorChannel;
+	User *tmp_usr;
+
+	tmp_usr = this->_fd_users[ fd ];
+	iteratorChannel channel = tmp_usr->getChannels().begin();
+	iteratorChannel end = tmp_usr->getChannels().end();
+	
+	for (; channel != end; ++channel )
+	{
+		(*channel)->deleteUser( tmp_usr );
+		if (!(*channel)->getUsers().size())
+			this->deleteChannel( (*channel)->getName() );
+	}
+
+	this->_connected_users.remove( tmp_usr );
+	this->close_fd( fd );
+	this->_fd_users.erase( fd );
+	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
+	delete tmp_usr;
+	this->_nicks.remove( tmp_usr->getNick() );
+	
+}
+
+void Server::welcome( int const & fd )
+{
+	std::string part1 = BLUE"    ███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+	std::string part2 = BLUE"    ██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+	std::string part3 = GREEN"    █████╗     ██║        ██║██████╔╝██║     "WHITE;
+	std::string part4 = GREEN"    ██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+	std::string part5 = GREEN"    ██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+	std::string part6 = BLUE"    Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	
+	send_reply(RPL_WELCOME, "Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
+	send_reply("372", part1, this->_fd_users[ fd ]);
+	send_reply("372", part1, this->_fd_users[ fd ]);
+	send_reply("372", part2, this->_fd_users[ fd ]);
+	send_reply("372", part3, this->_fd_users[ fd ]);
+	send_reply("372", part4, this->_fd_users[ fd ]);
+	send_reply("372", part5, this->_fd_users[ fd ]);
+	send_reply("372", part6, this->_fd_users[ fd ]);
+
+}

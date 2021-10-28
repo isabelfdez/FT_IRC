@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:40:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 04:52:06 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,31 @@ class Channel
 
 		// Getters
 		std::string			getName() const;
-		std::list<User *>	getUsers() const;
+		std::list<User *>&	getUsers();
 		bool				getIsFull() const;
 		bool				isOp(User * user);
+		bool    			isUser(std::string user);
+		User    			*getUser(std::string user);
+
+
 		std::string			userList();
 
 		// Setters
 		void				setName(std::string name);
+		void    			setOp(User * user);
+		void				setOpOff(std::string user);
+
+
 		
 		// Overload
-		bool				operator==(Channel & obj);
 
 		// Other functions
 		void				deleteUser(User * user);
 		void				addUser(User * user);
-		void				sendMsgChannel(std::string & msg);
+		void				sendMsgChannel(std::string msg);
+		//overload para no enviar el mensaje al emisor :) by krios-fu
+		bool				operator==(Channel & obj);
+		void				sendMsgChannel( std::string msg , int fd) ;
 
 	
 };

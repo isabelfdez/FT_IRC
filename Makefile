@@ -1,10 +1,13 @@
-SRCS 		= main.cpp	channel.cpp	./server/Server.cpp	user.cpp commands.cpp utils.cpp
+SRCS 		= main.cpp channel.cpp	./server/Server.cpp	user.cpp utils.cpp split.cpp \
+				./command/pingPong.cpp ./command/quit.cpp ./command/userCmd.cpp ./command/part.cpp \
+				./command/privmsg.cpp ./command/nick.cpp ./command/join.cpp ./command/mode.cpp \
+				./command/oper.cpp
 
 OBJS 		= $(SRCS:.cpp=.o)
 
 CXX			= clang++ 
 
-CXXFLAGS	= -Wall -Werror -Wextra -std=c++98
+CXXFLAGS	= -Wall -Werror -Wextra -g3 -fsanitize=address
 
 NAME		= IRC
 

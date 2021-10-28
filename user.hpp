@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/21 17:28:12 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:03:07 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include "channel.hpp"
+#include <arpa/inet.h>
 
 # define MAX_CHANNELS 10
 
@@ -87,16 +88,22 @@ class User
 		std::string					_username;
 		std::string					_nick;
 		std::string					_realName;
+		std::string					_ping;
+		std::string					_buffer_cmd;
 		user_modes					_modes;
 		int							_sock_fd;
 		std::list<Channel *>		_channels;
 		bool						_is_registered;
 		bool						_max_channels;
-		std::string					_mask;
+		bool						_ping_status;
+		uint64_t					_lastTime;
+		uint64_t					_time_ping;
+
+		struct sockaddr_in 			_addr;
 
 	public:
 		// Constructor && destructor
-		User(int & fd);
+		User(int & fd, struct sockaddr_in const & addr);
 		~User();
 
 		// Getters
@@ -107,8 +114,14 @@ class User
 		bool						getRegistered() const;
 		bool						getMaxChannels() const;
 		std::string const &         getRealName() const;
-		std::list< Channel *>		getChannels() const;
-		std::string	const &			getMask() const;		
+		std::list< Channel *> &		getChannels();
+		std::string					getChannelsString();
+		std::string const &			getPing() const ;
+		uint64_t	const &			getLastTime() const;
+		uint64_t	const &			getTimePing() const;
+		bool const &				getPingStatus() const;
+		std::string					getIp(  ) const ;
+		std::string	const &			getBufferCmd() const;
 		
 
 		// Setters
@@ -117,7 +130,11 @@ class User
 		void						setmode(char mode, bool state);
 		void						setRegistered(bool status);
 		void                        setRealName(std::string const & realName);
-		void						setMask(std::string const & mask);
+		void 						setPing( std::string const & ping ); //
+		void						setLastTime( uint64_t const & time );
+		void						setPingStatus( bool const &  status );
+		void						setTimePing( uint64_t const & time );
+		void						setBufferCmd( std::string const & buffer_cmd );
 
 		// Overload
 		bool						operator==(User & obj);

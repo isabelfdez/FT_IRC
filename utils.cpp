@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/21 18:50:36 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:03:12 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,47 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
+void    send_message(std::string & message, int & fd, User * usr)
+{
+    std::string mask;
 
+    mask.append(":");
+    mask.append(usr->getNick());
+    mask.append("!");
+    mask.append(usr->getUserName());
+    mask.append("@" + usr->getIp());
+    mask.append(" ");
+    mask.append(message);
+    mask.append("\n");
+    send(fd, mask.c_str(), mask.length(), 0);
+}
 
-void	send_reply(std::string replay, std::string str, int fd)
+void    send_message_channel(std::string & message, User * usr, Channel * chnl)
+{
+    std::string mask;
+
+    //str.append(usr->getMask());
+    mask.append(":");
+    mask.append(usr->getNick());
+    mask.append("!");
+    mask.append(usr->getUserName());
+    mask.append("@" + usr->getIp());
+    mask.append(" ");
+    mask.append(message);
+    mask.append("\n");
+    chnl->sendMsgChannel(mask, usr->getsockfd());
+}
+
+void	send_reply(std::string reply, std::string str, User * usr)
 {
 	std::string message;
 
 	message.assign(":ft_irc.com ");
-	message.append(replay);
-	message.append(" * ");
-	message.append(str);
+	message.append(reply);
+	message.append(" " + usr->getNick());
+	message.append(" :"+ str);
 	message.append("\n");
-	send(fd, message.c_str(), message.length(), 0);
+	send(usr->getsockfd(), message.c_str(), message.length(), 0);
 
 }
 
@@ -236,4 +265,38 @@ char	*ft_substr(char const *s, char c)
 	}
 	str[i] = 0;
 	return (str);
+}
+
+uint64_t	getTime(void)
+{
+	static struct timeval	end;
+
+	gettimeofday(&end, NULL);
+	return ((end.tv_sec * (uint64_t)1000) + (end.tv_usec / 1000));
+}
+
+//			std::cout << " : Connection accepted, IP: " << this->_fd_users[connection]->getIp() << " Socket: " << connection;
+
+void displayLog(std::string const & log, std::string const & cmd , User *usr )
+{
+	// std::cout << std::endl;
+	displayTimestamp();
+	std::cout << " : "<< std::setfill('.')  << std::setw(30) << log.substr(0,25);
+	std::cout << " IP: " <<  usr->getIp();
+	std::cout << " Socket: " << usr->getsockfd();
+	std::cout << cmd << std::endl;
+}
+
+
+void displayTimestamp( void )
+{
+	time_t now = time(0);
+
+	tm ltm = *localtime(&now);
+	std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
+			  << std::setw(2) << ltm.tm_mon + 1
+			  << std::setw(2) << ltm.tm_mday << "_"
+			  << std::setw(2) << ltm.tm_hour
+			  << std::setw(2) << ltm.tm_min
+			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
 }

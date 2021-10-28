@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/21 17:26:02 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:05:24 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,15 @@
 
 // Constructor && destructor
 
-User::User(int & fd) : _sock_fd(fd)
+User::User(int & fd, struct sockaddr_in const & addr) : _sock_fd(fd)
 {
 	init_modes();
+	this->_addr = addr;
 	this->_is_registered = false;
 	this->_max_channels = false;
+	this->_ping_status = false;
+	this->_time_ping = 30000;
+	this->_buffer_cmd = "";
 }
 
 User::~User() { }
@@ -62,15 +66,43 @@ bool	User::getRegistered() const { return (this->_is_registered); }
 
 bool	User::getMaxChannels() const { return (this->_max_channels); }
 
-std::list< Channel *>	User::getChannels() const  { return this->_channels; }
+bool const & User::getPingStatus() const { return this->_ping_status ; }
 
-std::string const & User::getMask() const { return this->_mask; }
+std::list< Channel *> & User::getChannels() { return this->_channels; }
+
+std::string				User::getChannelsString()
+{
+	std::string s;
+
+
+	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		s += (*it)->getName() + ",";
+	}
+		std::cout << s << "\n";
+	return (s);
+}
+
+std::string const & User::getPing() const { return this->_ping; }
+uint64_t const & User::getLastTime() const { return this->_lastTime; }
+uint64_t const & User::getTimePing() const { return this->_time_ping; }
+std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
+
+//std::string const & User::getMask() const { return this->_mask; }
 
 
 
 // Setters
 
 void	User::setUserName(std::string name) { this->_username = name; }
+
+void 	User::setPing( std::string const & ping ) { this->_ping = ping; }
+void	User::setPingStatus( bool const &  status ) { this->_ping_status = status; }
+
+void	User::setLastTime ( uint64_t const & time ) { this->_lastTime = time; }
+
+void	User::setTimePing ( uint64_t const & time ) { this->_time_ping = time; }
+
 
 void	User::setNick(std::string nick) { this->_nick = nick; }
 
@@ -101,7 +133,11 @@ void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
 
-void	User::setMask(std::string const & mask) { this->_mask = mask; }
+void	User::setBufferCmd( std::string const & buffer_cmd )
+{
+	this->_buffer_cmd = buffer_cmd;
+}
+
 
 
 
@@ -141,10 +177,19 @@ void	User::deleteChannel(Channel * channel)
 
 
 
-void	User::addChannel(Channel * channel)
+void	User::addChannel(Channel *  channel)
 {
 	this->_channels.push_back(channel);
 	if (_channels.size() >= MAX_CHANNELS)
 		this->_max_channels = true;
 }
 
+
+
+std::string User::getIp(  ) const 
+{
+	struct in_addr clientIP;
+	clientIP = this->_addr.sin_addr;
+	char ipStr[INET_ADDRSTRLEN];
+	return inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN);
+}

@@ -22,6 +22,7 @@
 
 // Definiciones de errores
 
+# define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
 # define ERR_NOSUCHCHANNEL			"403"
@@ -29,6 +30,7 @@
 # define ERR_TOOMANYTARGETS			"407"
 # define ERR_NORECIPIENT			"411"
 # define ERR_NOTEXTTOSEND			"412"
+# define ERR_UNKNOWNCOMMAND			"421"
 # define ERR_NONICKNAMEGIVEN		"431"
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
@@ -36,13 +38,16 @@
 # define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
+# define ERR_CHANOPRIVSNEEDED		"482"
+# define ERR_USERNOTINCHANNEL		"441"
+# define ERR_PASSWDMISMATCH			"464"
+# define ERR_USERNAMEINVALID		"468"
 
 // Definiciones de replys
-
 # define RPL_WELCOME				"001"
 # define RPL_NOTOPIC				"332"
 # define RPL_USERS					"393"
-
+# define RPL_YOUREOPER				"381"
 
 
 class Server
@@ -60,10 +65,12 @@ class Server
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
-		std::list< Channel * >			_channel;
+		// std::list< Channel * >			_channel;
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
+		std::list<User *>				_opers;
+		std::string						_password_oper;
 
 	public:
 		Server();
@@ -79,33 +86,47 @@ class Server
 		void			build_select_list();
 		void			attendClients();
 		void			join_new_connection();
-		void			getCustomerRequest( int & id_client, int i);
+		void			getCustomerRequest( int  id_client );
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 
 		
-		void			setNumReadSock(void );
-		int		const & getNumReadSock( void ) const ;
+		void			setNumReadSock( void );
+		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
-		fd_set	const & getSocks()				const;
+		fd_set	const & getSocks()				const;//krios-fu
+		size_t			getNumChannel( void ) 	const;//krios-fu
+		size_t			getNumConnections ()	const;
+		size_t			getNumUser( void )		const;//krios-fu
+		User			*getUserWithNick(std::string);
+		bool			isUsr(std::string);
+		bool			isOper(std::string);
+		bool			isChannel(std::string);
 
+		void			deleteChannel( std::string );
+		void			deleteUser( int const & fd );
+		void			close_fd( int fd );
+		void			close_all_fd();
 
 		// Comandos
 		void			nick_command( char * str, int & fd );
 		void			privmsg_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
-		//void			quit_command(int fd, char *buffer);
+		void			quit_command(int fd, char *buffer);
 		void			join_command(char * str, int & fd);
-		void			join_channel(char * str, int & fd);
+		void			join_channel(std::string str, int & fd);
 		void			part_command(char * str, int & fd);
-		void			part_channel(char * str, int & fd);
+		void			part_channel(std::string str, int & fd);
+		void			pong_command( int fd, char *buffer );
+		void			mode_command(char * str, int & fd);
+		void			oper_command(char * str, int & fd);
 
 
 
-		// send msg
+		void			sendPing(  );
+		void			welcome( int const & fd );
 
-		//void send_msg_chanell( Channel const & channel, std::string message );
 
 };
 

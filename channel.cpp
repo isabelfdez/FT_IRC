@@ -6,11 +6,11 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/19 13:32:31 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/24 04:52:00 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "channel.hpp"
+#include "utils.hpp"
 
 // Constructor && destructor
 
@@ -27,7 +27,7 @@ Channel::~Channel() {  }
 
 std::string Channel::getName() const { return(this->_name); }
 
-std::list<User *> Channel::getUsers() const
+std::list<User *> & Channel::getUsers() 
 {
 	return (this->_users);
 }
@@ -42,6 +42,27 @@ bool	Channel::isOp(User * user)
 			return (true);
 	}
 	return (false);
+}
+
+User    *Channel::getUser(std::string user)
+{
+    for (std::list<User*>::iterator it = _users.begin(); it != _users.end(); it++)
+    {
+        if ((*it)->getNick() == user)
+            return ((*it));
+    }
+    return (nullptr);
+}
+
+
+bool    Channel::isUser(std::string user)
+{
+    for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+    {
+        if ((*it)->getNick() == user)
+            return (true);
+    }
+    return (false);
 }
 
 std::string	Channel::userList()
@@ -65,6 +86,23 @@ std::string	Channel::userList()
 
 void	Channel::setName(std::string name) { this->_name = name; }
 
+void    Channel::setOp(User * user)
+{
+    this->_operators.push_back(user);
+}
+
+void    Channel::setOpOff(std::string user)
+{
+	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
+	{
+		if (user == (*it)->getNick())
+		{
+			_operators.erase(it);
+			return;
+		}
+	}
+}
+
 // Overloads
 
 bool	Channel::operator==(Channel & obj)
@@ -81,20 +119,23 @@ void	Channel::deleteUser(User * user)
 	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
-		if (*it == user) // Esto no se si esta bien
+		if ((*it)->getNick() == user->getNick()) // Esto no se si esta bien
 		{
+			// delete (*it);
+			this->_users.erase(it);
 			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
 			{
-				if (*it2 == user)
+				if ((*it2)->getNick() == user->getNick())
 				{
+					// delete (*it2);
 					this->_operators.erase(it2);
+					if (!this->_operators.size())
+						this->_operators.push_back(*(this->_users.begin()));
 					break ;
 				}
 			}
-			this->_users.erase(it);
-			//s.assign(user->getNick());
-			s += user->getNick() + " has left the channel: " + this->_name + "\r\n";
-			sendMsgChannel(s);
+			s = "has left the channel " + this->_name;
+			send_message_channel(s, user, this);
 			return ;
 		}
 	}
@@ -107,7 +148,17 @@ void	Channel::addUser(User * user)
 		this->_isfull = true;
 }
 
-void	Channel::sendMsgChannel(std::string & msg)
+// krios-fu
+void	Channel::sendMsgChannel( std::string msg , int fd)
+{
+	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if ( (*it)->getsockfd() != fd )
+			send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
+	}
+}
+
+void	Channel::sendMsgChannel(std::string msg)
 {
 	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
 	{
