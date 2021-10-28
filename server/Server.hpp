@@ -22,6 +22,7 @@
 
 // Definiciones de errores
 
+# define ERR_SINTAX					"001"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
@@ -112,6 +113,7 @@ class Server
 		// Comandos
 		void			nick_command( char * str, int & fd );
 		void			privmsg_command(std::string & command, int & fd);
+		void			notice_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
 		void			quit_command(int fd, char *buffer);
 		void			join_command(char * str, int & fd);

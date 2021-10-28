@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 17:11:24 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:22:27 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			join_command(str, fd);
 		else if (command == "PRIVMSG" || command == "privmsg")
 			this->privmsg_command(buff2, fd);
-		//else if (command == "NOTICE" || command == "notice")
-		//	notice_command();
+		else if (command == "NOTICE" || command == "notice")
+			this->notice_command(buff2, fd);
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
 		else if (command == "QUIT" || command == "quit")
