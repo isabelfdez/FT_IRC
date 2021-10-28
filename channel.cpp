@@ -44,6 +44,27 @@ bool	Channel::isOp(User * user)
 	return (false);
 }
 
+User    *Channel::getUser(std::string user)
+{
+    for (std::list<User*>::iterator it = _users.begin(); it != _users.end(); it++)
+    {
+        if ((*it)->getNick() == user)
+            return ((*it));
+    }
+    return (nullptr);
+}
+
+
+bool    Channel::isUser(std::string user)
+{
+    for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+    {
+        if ((*it)->getNick() == user)
+            return (true);
+    }
+    return (false);
+}
+
 std::string	Channel::userList()
 {
 	std::string	s;
@@ -64,6 +85,23 @@ std::string	Channel::userList()
 // Setters
 
 void	Channel::setName(std::string name) { this->_name = name; }
+
+void    Channel::setOp(User * user)
+{
+    this->_operators.push_back(user);
+}
+
+void    Channel::setOpOff(std::string user)
+{
+	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
+	{
+		if (user == (*it)->getNick())
+		{
+			_operators.erase(it);
+			return;
+		}
+	}
+}
 
 // Overloads
 

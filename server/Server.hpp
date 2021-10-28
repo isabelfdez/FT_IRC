@@ -37,13 +37,17 @@
 # define ERR_NOTREGISTERED			"451"
 # define ERR_NEEDMOREPARAMS         "461"
 # define ERR_ALREADYREGISTRED		"462"
+# define ERR_NEEDMOREPARAMS			"461"
+# define ERR_CHANOPRIVSNEEDED		"482"
+# define ERR_USERNOTINCHANNEL		"441"
+# define ERR_PASSWDMISMATCH			"464"
 # define ERR_USERNAMEINVALID		"468"
 
 // Definiciones de replys
 #define  RPL_WELCOME				"001"
 # define RPL_NOTOPIC				"332"
 # define RPL_USERS					"393"
-
+# define RPL_YOUREOPER				"381"
 
 
 class Server
@@ -65,6 +69,8 @@ class Server
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
+		std::list<User *>				_opers;
+		std::string						_password_oper;
 
 	public:
 		Server();
@@ -93,6 +99,10 @@ class Server
 		size_t			getNumChannel( void ) 	const;//krios-fu
 		size_t			getNumConnections ()	const;
 		size_t			getNumUser( void )		const;//krios-fu
+		User			*getUserWithNick(std::string);
+		bool			isUsr(std::string);
+		bool			isOper(std::string);
+		bool			isChannel(std::string);
 
 		void			deleteChannel( std::string );
 		void			deleteUser( int const & fd );
@@ -109,6 +119,10 @@ class Server
 		void			part_command(char * str, int & fd);
 		void			part_channel(std::string str, int & fd);
 		void			pong_command( int fd, char *buffer );
+		void			mode_command(char * str, int & fd);
+		void			oper_command(char * str, int & fd);
+
+
 
 		void			sendPing(  );
 		void			welcome( int const & fd );

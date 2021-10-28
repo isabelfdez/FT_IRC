@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/27 20:55:05 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/28 14:57:53 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ static std::string generatePing()
 	char ping[13];
     srand( time( NULL ) );
     for( size_t i = 0; i <= 11; i++ )
+	{
         ping[ i ] = 33 + rand() % ( 126 - 33 );
+	}
 	ping[ 12 ] = '\0';
 	return static_cast<std::string>( ping );
 }
