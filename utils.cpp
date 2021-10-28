@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 17:03:12 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:08:39 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,65 +67,12 @@ void	send_reply(std::string reply, std::string str, User * usr)
 void	send_error(std::string error, std::string str, int fd)
 {
 	std::string message;
-
 	message.assign(":ft_irc.com ");
 	message.append(error);
 	message.append(" * ");
 	message.append(str);
 	message.append("\n");
     send(fd, message.c_str(), message.length(), 0);
-}
-
-void	send_message(std::string & message, int & fd, User * usr)
-{
-	std::string mask;
-
-	//mask.append(":");
-	//mask.append(usr->getNick());
-	//mask.append("!");
-	//mask.append(usr->getUserName());
-	//mask.append("@ft_irc.com");
-	mask.append(usr->getMask());
-	mask.append(" ");
-	mask.append(message);
-	mask.append("\n");
-	send(fd, mask.c_str(), mask.length(), 0);
-}
-
-void	send_message_channel(std::string & message, User * usr, Channel * chnl)
-{
-	std::string mask;
-
-	mask.append(usr->getMask());
-	//mask.append(":");
-	//mask.append(usr->getNick());
-	//mask.append("!");
-	//mask.append(usr->getUserName());
-	//mask.append("@ft_irc.com");
-	mask.append(" ");
-	mask.append(message);
-	mask.append("\n");
-	chnl->sendMsgChannel(mask);
-}
-
-void complete_registration(User * usr)
-{
-	std::string mask;
-	std::string	s;
-
-	// Cambiamos el valor del estado de registro
-	usr->setRegistered(true);
-	// Escribimos la mask
-	mask.append(":");
-	mask.append(usr->getNick());
-	mask.append("!");
-	mask.append(usr->getUserName());
-	mask.append("@ft_irc.com");
-	usr->setMask(mask);
-	s.append("Welcome to the Internet Relay Network\n");
-	mask.erase(0,1);
-	s.append(mask);
-	send_reply(RPL_WELCOME, s, usr->getsockfd());
 }
 
 static int	ft_countwords(char const *s, char c)

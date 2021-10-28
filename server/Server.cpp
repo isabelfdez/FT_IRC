@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 17:01:40 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:11:24 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ void Server::join_new_connection()
 			std::cout << "\r";
 			displayLog("Connection accepted", "", this->_fd_users[connection]);
 			connection = -1;
-			std::cout << "segfault\n";
 		}
 	}
 	if ( connection != -1)

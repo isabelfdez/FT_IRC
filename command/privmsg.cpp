@@ -32,7 +32,6 @@ void	Server::privmsg_command(std::string & command, int & fd)
 	token = command.substr(0, pos);
 	while (command.begin() != command.end() && *(command.begin()) == ' ')
 		command.erase(0, 1);
-	std::cout << "el target es !" << token << "!\n";
 	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
 	{
 		if ((*it)->getNick() == token)
