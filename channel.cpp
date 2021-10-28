@@ -14,7 +14,7 @@
 
 // Constructor && destructor
 
-Channel::Channel(std::string name, User *user): _name(name), _users(), _operators()
+Channel::Channel(std::string name, User *user): _banned(), _name(name), _users(), _operators()
 {
 	this->_maxusers = MAX_USERS;
 	this->_isfull = false;
@@ -32,11 +32,26 @@ std::list<User *> & Channel::getUsers()
 	return (this->_users);
 }
 
+std::list<User *> & Channel::getBanned() 
+{
+	return (this->_banned);
+}
+
 bool	Channel::getIsFull() const { return(this->_isfull); }
 
 bool	Channel::isOp(User * user)
 {
 	for (std::list<User *>::iterator it = this->_operators.begin(); it != this->_operators.end(); it++)
+	{
+		if ((*it)->getNick() == user->getNick())
+			return (true);
+	}
+	return (false);
+}
+
+bool	Channel::isBanned(User * user)
+{
+	for (std::list<User *>::iterator it = this->_banned.begin(); it != this->_banned.end(); it++)
 	{
 		if ((*it)->getNick() == user->getNick())
 			return (true);
@@ -53,7 +68,6 @@ User    *Channel::getUser(std::string user)
     }
     return (nullptr);
 }
-
 
 bool    Channel::isUser(std::string user)
 {
@@ -91,13 +105,37 @@ void    Channel::setOp(User * user)
     this->_operators.push_back(user);
 }
 
-void    Channel::setOpOff(std::string user)
+void	Channel::ban(User * user)
+{
+	this->_banned.push_back(user);
+	this->deleteUser(user);
+}
+
+void	Channel::banOff(User * user)
+{
+	for (std::list<User*>::iterator it = _banned.begin(); it != _banned.end(); it++)
+	{
+		if (user->getNick() == (*it)->getNick())
+		{
+			_banned.erase(it);
+			return;
+		}
+	}
+}
+
+
+void    Channel::setOpOff(std::string user, User * usr)
 {
 	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
 	{
 		if (user == (*it)->getNick())
 		{
 			_operators.erase(it);
+			if (!this->_operators.size())
+			{
+				this->_operators.push_back(*(this->_users.begin()));
+				send_reply("", " :You are now Channel Operator", usr);
+			}
 			return;
 		}
 	}
@@ -119,15 +157,13 @@ void	Channel::deleteUser(User * user)
 	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
     {
-		if ((*it)->getNick() == user->getNick()) // Esto no se si esta bien
+		if ((*it)->getNick() == user->getNick())
 		{
-			// delete (*it);
 			this->_users.erase(it);
 			for (std::list<User *>::iterator it2 = this->_operators.begin(); it2 != this->_operators.end(); ++it2)
 			{
 				if ((*it2)->getNick() == user->getNick())
 				{
-					// delete (*it2);
 					this->_operators.erase(it2);
 					if (!this->_operators.size())
 						this->_operators.push_back(*(this->_users.begin()));

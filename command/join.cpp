@@ -27,6 +27,8 @@ void    Server::join_channel(std::string str1, int & fd)
         return (send_error(ERR_TOOMANYCHANNELS, this->_fd_users[fd]->getNick() + " :You have joined too many channels", fd));
     if (this->_name_channel.count(str1) && this->_name_channel[str1]->getIsFull())
         return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", fd));
+    if (this->_name_channel.count(str1) && this->_name_channel[str1]->isBanned(this->_fd_users[fd]))
+        return (send_error(ERR_BANNEDFROMCHAN, str1 + " :Cannot join channel (+b)", fd));
     else if (this->_name_channel[str1])
     {
         // User join channel

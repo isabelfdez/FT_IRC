@@ -42,6 +42,7 @@
 # define ERR_USERNOTINCHANNEL		"441"
 # define ERR_PASSWDMISMATCH			"464"
 # define ERR_USERNAMEINVALID		"468"
+# define ERR_BANNEDFROMCHAN			"474"
 
 // Definiciones de replys
 #define  RPL_WELCOME				"001"
@@ -106,6 +107,7 @@ class Server
 
 		void			deleteChannel( std::string );
 		void			deleteUser( int const & fd );
+		void			deleteBan( User *);
 		void			close_fd( int fd );
 		void			close_all_fd();
 
@@ -121,6 +123,7 @@ class Server
 		void			pong_command( int fd, char *buffer );
 		void			mode_command(char * str, int & fd);
 		void			oper_command(char * str, int & fd);
+		void			kick_command(char * str, int & fd);
 
 
 
