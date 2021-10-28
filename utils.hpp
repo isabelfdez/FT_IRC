@@ -29,6 +29,7 @@
 #include <sys/time.h>
 #include <chrono>
 #include <iomanip>
+#include <algorithm>
 
 # define YELLOW	"\033[1;33m"
 # define GREEN	"\033[1;32m"
@@ -54,5 +55,6 @@ std::vector<std::string>    split(char * buff, char c);
 uint64_t	getTime(void);
 void displayTimestamp( void );
 void displayLog(std::string const & log, std::string const & cmd , User *usr );
+std::string		ft_toupper(std::string str);
 
 #endif

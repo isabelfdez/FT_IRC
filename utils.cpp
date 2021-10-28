@@ -247,3 +247,9 @@ void displayTimestamp( void )
 			  << std::setw(2) << ltm.tm_min
 			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
 }
+
+std::string		ft_toupper(std::string str)
+{
+	transform(str.begin(), str.end(), str.begin(), ::toupper);
+	return (str);
+}

@@ -22,6 +22,7 @@
 
 // Definiciones de errores
 
+# define ERR_SINTAX                 "001"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
@@ -124,6 +125,7 @@ class Server
 		void			mode_command(char * str, int & fd);
 		void			oper_command(char * str, int & fd);
 		void			kick_command(char * str, int & fd);
+		void			notice_command(std::string & command, int & fd);
 
 
 
