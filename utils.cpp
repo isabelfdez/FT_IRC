@@ -28,7 +28,7 @@ void    send_message(std::string & message, int & fd, User * usr)
     mask.append(usr->getNick());
     mask.append("!");
     mask.append(usr->getUserName());
-    mask.append("@ft_irc.com");
+    mask.append("@" + usr->getIp());
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
@@ -44,19 +44,19 @@ void    send_message_channel(std::string & message, User * usr, Channel * chnl)
     mask.append(usr->getNick());
     mask.append("!");
     mask.append(usr->getUserName());
-    mask.append("@ft_irc.com");
+    mask.append("@" + usr->getIp());
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
     chnl->sendMsgChannel(mask, usr->getsockfd());
 }
 
-void	send_reply(std::string replay, std::string str, User * usr)
+void	send_reply(std::string reply, std::string str, User * usr)
 {
 	std::string message;
 
 	message.assign(":ft_irc.com ");
-	message.append(replay);
+	message.append(reply);
 	message.append(" " + usr->getNick());
 	message.append(" :"+ str);
 	message.append("\n");

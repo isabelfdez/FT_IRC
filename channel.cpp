@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "channel.hpp"
+#include "utils.hpp"
 
 // Constructor && destructor
 
@@ -134,8 +134,8 @@ void	Channel::deleteUser(User * user)
 					break ;
 				}
 			}
-			s += user->getNick() + " has left the channel " + this->_name + "\r\n";
-			sendMsgChannel(s);
+			s = "has left the channel " + this->_name;
+			send_message_channel(s, user, this);
 			return ;
 		}
 	}
