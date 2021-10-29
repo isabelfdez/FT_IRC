@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 14:58:55 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/28 20:24:13 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("mode");
 	this->_commands.push_back("OPER");
 	this->_commands.push_back("oper");
+	this->_commands.push_back("KICK");
+	this->_commands.push_back("kick");
 	this->_password_oper = "abracadabra";
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
@@ -220,8 +222,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			join_command(str, fd);
 		else if (command == "PRIVMSG" || command == "privmsg")
 			this->privmsg_command(buff2, fd);
-		//else if (command == "NOTICE" || command == "notice")
-		//	notice_command();
+		else if (command == "NOTICE" || command == "notice")
+            this->notice_command(buff2, fd);
 		else if (command == "PART" || command == "part")
 			part_command(str, fd);
 		else if (command == "QUIT" || command == "quit")
@@ -232,6 +234,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->mode_command(str, fd);
 		else if ( command == "OPER" || command == "oper")
 			this->oper_command(str, fd);
+		else if ( command == "KICK" || command == "kick")
+			this->kick_command(str, fd);
 	}
 }
 

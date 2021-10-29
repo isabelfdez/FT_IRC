@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/26 22:49:40 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:05:24 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,9 @@ std::string const & User::getPing() const { return this->_ping; }
 uint64_t const & User::getLastTime() const { return this->_lastTime; }
 uint64_t const & User::getTimePing() const { return this->_time_ping; }
 std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
+
+//std::string const & User::getMask() const { return this->_mask; }
+
 
 
 // Setters

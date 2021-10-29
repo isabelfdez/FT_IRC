@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   privmsg.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/28 17:18:55 by isfernan          #+#    #+#             */
+/*   Updated: 2021/10/28 17:56:37 by isfernan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "../server/Server.hpp"
 #include "../utils.hpp"
-
 void	Server::privmsg_command(std::string & command, int & fd)
 {
 	std::string 				delimiter = " ";
@@ -12,7 +23,6 @@ void	Server::privmsg_command(std::string & command, int & fd)
 	std::string					s;
 	std::string					message;
 
-	//std::string					aux(command);
 
 	if ((pos = command.find(delimiter)) == std::string::npos)
 	{
@@ -28,14 +38,21 @@ void	Server::privmsg_command(std::string & command, int & fd)
 		return (send_error(ERR_NORECIPIENT, s, fd));
 	}
 	if ((pos = command.find(delimiter)) == std::string::npos)
-		return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+	{
+		if (!(*(command.begin()) == ':'))
+			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
+		else
+		{
+			s.assign(":No recipient given (PRIVMSG)");
+			return (send_error(ERR_NOTEXTTOSEND, s, fd));
+		}
+	}
 	token = command.substr(0, pos);
 	while (command.begin() != command.end() && *(command.begin()) == ' ')
 		command.erase(0, 1);
-	std::cout << "el target es !" << token << "!\n";
 	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
 	{
-		if ((*it)->getNick() == token)
+		if (ft_toupper((*it)->getNick()) == ft_toupper(token))
 		{
 			deliver_fd = (*it)->getsockfd();
 			break ;
@@ -51,7 +68,11 @@ void	Server::privmsg_command(std::string & command, int & fd)
 			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
 		if (!(*(command.begin()) == ':'))
 		{
-			s.assign(token);
+			if (!ft_isspecial(*(command.begin())) && !ft_isalpha(*(command.begin())))
+			{
+				s.assign(" : Incorrect sintax.");
+				return (send_error(ERR_SINTAX, s, fd));
+			}
 			s.assign(" : Too many recipients.");
 			return (send_error(ERR_TOOMANYTARGETS, s, fd));
 		}
@@ -67,7 +88,7 @@ void	Server::privmsg_command(std::string & command, int & fd)
 	if (this->_name_channel.find(token) == this->_name_channel.end())
 	{
 		s.assign(token);
-		s.assign(" :No such nick/channel");
+		s.append(" :No such nick/channel");
 		return (send_error(ERR_NOSUCHNICK, s, fd));
 
 	}
@@ -80,7 +101,11 @@ void	Server::privmsg_command(std::string & command, int & fd)
 			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
 		if (!(*(command.begin()) == ':'))
 		{
-			s.assign(token);
+			if (!ft_isspecial(*(command.begin())) && !ft_isalpha(*(command.begin())))
+			{
+				s.assign(" : Incorrect sintax.");
+				return (send_error(ERR_SINTAX, s, fd));
+			}
 			s.assign(" : Too many recipients.");
 			return (send_error(ERR_TOOMANYTARGETS, s, fd));
 		}

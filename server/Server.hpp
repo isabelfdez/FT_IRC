@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
+/*   Updated: 2021/10/28 20:26:02 by isfernan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef __SERVER__HPP
 # define __SERVER__HPP
 
@@ -22,6 +34,7 @@
 
 // Definiciones de errores
 
+# define ERR_SINTAX                 "001"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
@@ -45,7 +58,7 @@
 # define ERR_BANNEDFROMCHAN			"474"
 
 // Definiciones de replys
-#define  RPL_WELCOME				"001"
+# define RPL_WELCOME				"001"
 # define RPL_NOTOPIC				"332"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
@@ -114,6 +127,7 @@ class Server
 		// Comandos
 		void			nick_command( char * str, int & fd );
 		void			privmsg_command(std::string & command, int & fd);
+		void			notice_command(std::string & command, int & fd);
 		void			user_command( int fd, char *buffer );
 		void			quit_command(int fd, char *buffer);
 		void			join_command(char * str, int & fd);
