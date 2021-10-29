@@ -11,11 +11,11 @@ void    Server::mode_command(char * str, int & fd)
         return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
     if (isChannel(parse[1]))
     {
-        if (parse.size() < 4)
+        if (parse.size() < 3)
             return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
         if (!this->_name_channel.count(parse[1]))
             return (send_error(ERR_NOSUCHCHANNEL, "MODE :No such channel", fd));
-        else if (!this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]) && !this->isOper(parse[3]))
+        else if (!this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]) && !this->isOper(this->_fd_users[fd]->getNick()))
             return (send_error(ERR_CHANOPRIVSNEEDED, "MODE :You are not channel operator", fd));
         else if (parse[2].size() < 2)
             return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
@@ -23,6 +23,8 @@ void    Server::mode_command(char * str, int & fd)
         {
             if (parse[2][1] == 'o')
             {
+                if (parse.size() < 4)
+                    return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
                 if (this->_name_channel[parse[1]]->isUser(parse[3]))
                 {
                     this->_name_channel[parse[1]]->setOp(getUserWithNick(parse[3]));
@@ -34,6 +36,8 @@ void    Server::mode_command(char * str, int & fd)
             }
             else if (parse[2][1] == 'b')
             {
+                if (parse.size() < 4)
+                    return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
                 if (!this->_name_channel[parse[1]]->isUser(parse[3]))
                     return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
                 else if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])) || this->isOper(parse[3]))
@@ -44,17 +48,31 @@ void    Server::mode_command(char * str, int & fd)
                     send_reply("", " you have being banned from Channel " + parse[1], getUserWithNick(parse[3]));
                 }
             }
+            else if (parse[2][1] == 'i')
+            {
+                this->_name_channel[parse[1]]->setInvite(true);
+                send_reply("", parse[1] + " channel only accept people with invitation", this->_fd_users[fd]);
+            }
 
         }
         else if (parse[2][0] == '-')
         {
             if (parse[2][1] == 'o')
             {
+                if (parse.size() < 4)
+                    return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
+                else if (!this->_name_channel[parse[1]]->isUser(parse[3]))
+                    return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
                 if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])))
                 {
                     send_reply("", parse[3] + " is not Channel Operator " + parse[1], this->_fd_users[fd]);
                     this->_name_channel[parse[1]]->setOpOff(parse[3], this->_fd_users[fd]);
                 }
+            }
+            else if (parse[2][1] == 'i')
+            {
+                this->_name_channel[parse[1]]->setInvite(false);
+                send_reply("", parse[1] + " channel dont need invitation", this->_fd_users[fd]);
             }
         }
         else

@@ -29,8 +29,10 @@ class Channel
 		std::string			_name;
 		std::list<User *>	_users;
 		std::list<User *>	_operators;
+		std::list<User *>	_invites;
 		unsigned			_maxusers;
 		bool				_isfull;
+		bool				_invite;
 
 	public:
 		// Construtor && destructor
@@ -44,7 +46,9 @@ class Channel
 		bool				getIsFull() const;
 		bool				isOp(User * user);
 		bool				isBanned(User * user);
+		bool    			isInvited(std::string user);
 		bool    			isUser(std::string user);
+		bool				isInvite();
 		User    			*getUser(std::string user);
 		
 
@@ -56,6 +60,8 @@ class Channel
 		void				setName(std::string name);
 		void    			setOp(User * user);
 		void				setOpOff(std::string user, User * usr);
+		void				setInvite(bool);
+		void				pushInvite(User * user);
 
 
 		

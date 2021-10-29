@@ -31,6 +31,8 @@ void    Server::join_channel(std::string str1, int & fd)
         return (send_error(ERR_BANNEDFROMCHAN, str1 + " :Cannot join channel (+b)", fd));
     else if (this->_name_channel[str1])
     {
+        if (this->_name_channel[str1]->isInvite() && !this->_name_channel[str1]->isInvited(this->_fd_users[fd]->getNick()) && !this->isOper(this->_fd_users[fd]->getNick()))
+            return (send_error(ERR_INVITEONLYCHAN, str1 + " :Cannot join channel (+i)", fd));
         // User join channel
         if (this->_name_channel[str1]->isUser(this->_fd_users[fd]->getNick()))
             return (send_error("", str1 + " :You are already on channel", fd));
