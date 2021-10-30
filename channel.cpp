@@ -14,7 +14,7 @@
 
 // Constructor && destructor
 
-Channel::Channel(std::string name, User *user): _banned(), _name(name), _users(), _operators()
+Channel::Channel(std::string const & name, User *user): _banned(), _name(name), _users(), _operators()
 {
 	this->_maxusers = MAX_USERS;
 	this->_isfull = false;
@@ -98,7 +98,7 @@ std::string	Channel::userList()
 
 // Setters
 
-void	Channel::setName(std::string name) { this->_name = name; }
+void	Channel::setName(std::string const & name) { this->_name = name; }
 
 void    Channel::setOp(User * user)
 {
@@ -191,13 +191,5 @@ void	Channel::sendMsgChannel( std::string msg , int fd)
 	{
 		if ( (*it)->getsockfd() != fd )
 			send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
-	}
-}
-
-void	Channel::sendMsgChannel(std::string msg)
-{
-	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
-	{
-		send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
 	}
 }

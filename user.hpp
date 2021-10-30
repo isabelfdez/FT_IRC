@@ -108,7 +108,7 @@ class User
 
 		// Getters
 		std::string					getUserName() const;
-		std::string					getNick() const;
+		std::string	const &			getNick() const;
 		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
 		int							getsockfd()	const;
 		bool						getRegistered() const;

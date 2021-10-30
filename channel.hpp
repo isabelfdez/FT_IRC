@@ -34,7 +34,7 @@ class Channel
 
 	public:
 		// Construtor && destructor
-		Channel(std::string name, User *user);
+		Channel(std::string const & name, User *user);
 		~Channel();
 
 		// Getters
@@ -53,7 +53,7 @@ class Channel
 		// Setters
 		void				banOff(User * user);
 		void				ban(User *);
-		void				setName(std::string name);
+		void				setName(std::string const & name);
 		void    			setOp(User * user);
 		void				setOpOff(std::string user, User * usr);
 
@@ -64,7 +64,6 @@ class Channel
 		// Other functions
 		void				deleteUser(User * user);
 		void				addUser(User * user);
-		void				sendMsgChannel(std::string msg);
 		//overload para no enviar el mensaje al emisor :) by krios-fu
 		bool				operator==(Channel & obj);
 		void				sendMsgChannel( std::string msg , int fd) ;

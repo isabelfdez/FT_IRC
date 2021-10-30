@@ -35,11 +35,9 @@ void	Server::user_command( int fd, char *buffer )
 	usr->setRealName(token[3]);
 	if ( usr->getNick().size() > 0 && !usr->getRegistered() )
 	{
-		
 		usr->setRegistered(true);
 		usr->setTimePing(0);
 		this->_connected_users.push_back( usr );
 		displayLog("User created", "", this->_fd_users[fd]);
-
 	}
 }

@@ -1,7 +1,7 @@
 #include "./server/Server.hpp"
 #include "user.hpp"
 #include "channel.hpp"
-#include <signal.h>
+#include <csignal>
 
 Server *svr;
 

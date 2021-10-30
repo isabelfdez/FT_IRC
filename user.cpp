@@ -31,7 +31,7 @@ User::~User() { }
 
 std::string User::getUserName() const { return (this->_username); }
 
-std::string User::getNick() const { return (this->_nick); }
+std::string const & User::getNick() const { return (this->_nick); }
 
 bool	User::getmode(char mode) const
 {
@@ -52,7 +52,7 @@ bool	User::getmode(char mode) const
 		case 's':
             return (this->_modes.s);
 		default:
-			return (0);
+			return ( false );
 	}
 }
 
@@ -73,7 +73,6 @@ std::list< Channel *> & User::getChannels() { return this->_channels; }
 std::string				User::getChannelsString()
 {
 	std::string s;
-
 
 	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
