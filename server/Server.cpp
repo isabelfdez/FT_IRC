@@ -85,6 +85,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("kick");
 	this->_commands.push_back("INVITE");
 	this->_commands.push_back("invite");
+	this->_commands.push_back("TOPIC");
+	this->_commands.push_back("topic");
 	this->_password_oper = "abracadabra";
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
@@ -240,6 +242,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->kick_command(str, fd);
 		else if ( command == "INVITE" || command == "invite")
 			this->invite_command(str, fd);
+		else if ( command == "TOPIC" || command == "topic")
+			this->topic_command(str, fd);
 	}
 }
 

@@ -51,7 +51,7 @@ void    Server::mode_command(char * str, int & fd)
             else if (parse[2][1] == 'i')
             {
                 this->_name_channel[parse[1]]->setInvite(true);
-                send_reply("", parse[1] + " channel only accept people with invitation", this->_fd_users[fd]);
+		        this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " needs invitation\n");
             }
 
         }
@@ -72,7 +72,7 @@ void    Server::mode_command(char * str, int & fd)
             else if (parse[2][1] == 'i')
             {
                 this->_name_channel[parse[1]]->setInvite(false);
-                send_reply("", parse[1] + " channel dont need invitation", this->_fd_users[fd]);
+		        this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " dont need invitation\n");
             }
         }
         else

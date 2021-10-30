@@ -61,7 +61,8 @@
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"
-# define RPL_NOTOPIC				"332"
+# define RPL_NOTOPIC				"331"
+# define RPL_TOPIC					"332"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
 # define RPL_INVITING 				"341"
@@ -142,6 +143,8 @@ class Server
 		void			oper_command(char * str, int & fd);
 		void			kick_command(char * str, int & fd);
 		void			invite_command(char * str, int & fd);
+		void			topic_command(char * str, int & fd);
+
 
 
 

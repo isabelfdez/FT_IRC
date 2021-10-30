@@ -27,6 +27,7 @@ class Channel
 	private:
 		std::list<User *>	_banned;
 		std::string			_name;
+		std::string			_topic;
 		std::list<User *>	_users;
 		std::list<User *>	_operators;
 		std::list<User *>	_invites;
@@ -43,6 +44,7 @@ class Channel
 		std::string			getName() const;
 		std::list<User *>&	getUsers();
 		std::list<User *>&	getBanned();
+		std::string			getTopic();
 		bool				getIsFull() const;
 		bool				isOp(User * user);
 		bool				isBanned(User * user);
@@ -62,7 +64,7 @@ class Channel
 		void				setOpOff(std::string user, User * usr);
 		void				setInvite(bool);
 		void				pushInvite(User * user);
-
+		void				setTopic(std::string topic);
 
 		
 		// Overload

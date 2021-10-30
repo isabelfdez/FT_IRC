@@ -26,6 +26,8 @@ Channel::~Channel() {  }
 
 // Getters
 
+std::string	Channel::getTopic() { return this->_topic; }
+
 std::string Channel::getName() const { return(this->_name); }
 
 std::list<User *> & Channel::getUsers() 
@@ -136,10 +138,9 @@ void	Channel::banOff(User * user)
 	}
 }
 
-void	Channel::setInvite(bool set)
-{
-	this->_invite = set;
-}
+void	Channel::setTopic(std::string topic) { this->_topic = topic; }
+
+void	Channel::setInvite(bool set) { this->_invite = set; }
 
 void	Channel::pushInvite(User * user)
 {
