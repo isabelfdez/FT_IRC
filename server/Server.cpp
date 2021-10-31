@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 20:24:13 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/31 19:51:21 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("TOPIC");
 	this->_commands.push_back("topic");
 	this->_password_oper = "abracadabra";
+	this->_commands.push_back("LIST");
+	this->_commands.push_back("list");
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -190,13 +192,26 @@ void Server::attendClients()
 
 void Server::parse_command(int fd, std::string buff, char * str)
 {
+	std::string	command;
+	std::string	buff2;
+	size_t		pos;
+
 	while (*str == ' ')
 	{
 		buff.erase(buff.begin());
 		str++;
 	}
-	std::string buff2 = buff.substr(0, buff.find('\r'));
-	std::string command = buff2.substr(0, buff2.find(' '));
+
+	if ( (pos = buff.find('\r')) != std::string::npos || (pos = buff.find('\n')) != std::string::npos )
+		buff2 = buff.substr(0, pos);
+	else
+		buff2 = buff;
+
+	pos = buff2.find(' ');
+	if ( pos != std::string::npos )
+		command = buff2.substr(0, pos);
+	else
+		command = buff2;
 
 	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
 	
@@ -244,6 +259,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->invite_command(str, fd);
 		else if ( command == "TOPIC" || command == "topic")
 			this->topic_command(str, fd);
+		else if ( command == "LIST" || command == "list")
+			this->list_command( str, fd );
 	}
 }
 
@@ -393,8 +410,9 @@ void Server::deleteUser( int const & fd )
 	this->close_fd( fd );
 	this->_fd_users.erase( fd );
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
+	this->_nicks.remove( tmp_usr->getNick() );
 	delete tmp_usr;
-	this->_nicks.remove( tmp_usr->getNick() );	
+
 }
 
 void	Server::deleteBan( User *user)

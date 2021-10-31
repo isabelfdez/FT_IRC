@@ -40,23 +40,23 @@ int main ()
 					<< " Channel: " << server.getNumChannel();
 					if ( i == 5)
 						i = 1;
-					// switch (i)
-					// {
-					// 	case 1:
-					// 		std::cout << YELLOW" / "WHITE ;
-					// 		break;
-					// 	case 2: 
-					// 		std::cout << YELLOW" - "WHITE ;
-					// 		break;
-					// 	case 3:
-					// 	std::cout << YELLOW" \\ "WHITE;
-					// 		break;
-					// 	case 4:
-					// 		std::cout << YELLOW" | "WHITE;
-					// 		break;
-					// 	default:
-					// 		break;
-					// }
+					 switch (i)
+					 {
+					 	case 1:
+					 		std::cout << YELLOW" / "WHITE ;
+					 		break;
+					 	case 2:
+					 		std::cout << YELLOW" - "WHITE ;
+					 		break;
+					 	case 3:
+					 	std::cout << YELLOW" \\ "WHITE;
+					 		break;
+					 	case 4:
+					 		std::cout << YELLOW" | "WHITE;
+					 		break;
+					 	default:
+					 		break;
+					 }
 				i++;
 				fflush(stdout);
 			}

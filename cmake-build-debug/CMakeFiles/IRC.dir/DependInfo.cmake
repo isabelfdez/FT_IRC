@@ -9,8 +9,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/krios-fu/Desktop/IRC/channel.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/channel.cpp.o"
+  "/Users/krios-fu/Desktop/IRC/command/invite.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/invite.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/join.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/join.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/kick.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/kick.cpp.o"
+  "/Users/krios-fu/Desktop/IRC/command/list.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/list.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/mode.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/mode.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/nick.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/nick.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/notice.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/notice.cpp.o"
@@ -19,6 +21,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/krios-fu/Desktop/IRC/command/pingPong.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/pingPong.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/privmsg.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/privmsg.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/quit.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/quit.cpp.o"
+  "/Users/krios-fu/Desktop/IRC/command/topic.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/topic.cpp.o"
   "/Users/krios-fu/Desktop/IRC/command/userCmd.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/command/userCmd.cpp.o"
   "/Users/krios-fu/Desktop/IRC/main.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/main.cpp.o"
   "/Users/krios-fu/Desktop/IRC/server/Server.cpp" "/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir/server/Server.cpp.o"

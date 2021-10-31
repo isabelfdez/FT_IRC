@@ -153,6 +153,30 @@ channel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/channel.cpp.s
 .PHONY : channel.cpp.s
 
+command/invite.o: command/invite.cpp.o
+.PHONY : command/invite.o
+
+# target to build an object file
+command/invite.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/invite.cpp.o
+.PHONY : command/invite.cpp.o
+
+command/invite.i: command/invite.cpp.i
+.PHONY : command/invite.i
+
+# target to preprocess a source file
+command/invite.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/invite.cpp.i
+.PHONY : command/invite.cpp.i
+
+command/invite.s: command/invite.cpp.s
+.PHONY : command/invite.s
+
+# target to generate assembly for a file
+command/invite.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/invite.cpp.s
+.PHONY : command/invite.cpp.s
+
 command/join.o: command/join.cpp.o
 .PHONY : command/join.o
 
@@ -200,6 +224,30 @@ command/kick.s: command/kick.cpp.s
 command/kick.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/kick.cpp.s
 .PHONY : command/kick.cpp.s
+
+command/list.o: command/list.cpp.o
+.PHONY : command/list.o
+
+# target to build an object file
+command/list.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/list.cpp.o
+.PHONY : command/list.cpp.o
+
+command/list.i: command/list.cpp.i
+.PHONY : command/list.i
+
+# target to preprocess a source file
+command/list.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/list.cpp.i
+.PHONY : command/list.cpp.i
+
+command/list.s: command/list.cpp.s
+.PHONY : command/list.s
+
+# target to generate assembly for a file
+command/list.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/list.cpp.s
+.PHONY : command/list.cpp.s
 
 command/mode.o: command/mode.cpp.o
 .PHONY : command/mode.o
@@ -393,6 +441,30 @@ command/quit.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/quit.cpp.s
 .PHONY : command/quit.cpp.s
 
+command/topic.o: command/topic.cpp.o
+.PHONY : command/topic.o
+
+# target to build an object file
+command/topic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/topic.cpp.o
+.PHONY : command/topic.cpp.o
+
+command/topic.i: command/topic.cpp.i
+.PHONY : command/topic.i
+
+# target to preprocess a source file
+command/topic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/topic.cpp.i
+.PHONY : command/topic.cpp.i
+
+command/topic.s: command/topic.cpp.s
+.PHONY : command/topic.s
+
+# target to generate assembly for a file
+command/topic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IRC.dir/build.make CMakeFiles/IRC.dir/command/topic.cpp.s
+.PHONY : command/topic.cpp.s
+
 command/userCmd.o: command/userCmd.cpp.o
 .PHONY : command/userCmd.o
 
@@ -549,12 +621,18 @@ help:
 	@echo "... channel.o"
 	@echo "... channel.i"
 	@echo "... channel.s"
+	@echo "... command/invite.o"
+	@echo "... command/invite.i"
+	@echo "... command/invite.s"
 	@echo "... command/join.o"
 	@echo "... command/join.i"
 	@echo "... command/join.s"
 	@echo "... command/kick.o"
 	@echo "... command/kick.i"
 	@echo "... command/kick.s"
+	@echo "... command/list.o"
+	@echo "... command/list.i"
+	@echo "... command/list.s"
 	@echo "... command/mode.o"
 	@echo "... command/mode.i"
 	@echo "... command/mode.s"
@@ -579,6 +657,9 @@ help:
 	@echo "... command/quit.o"
 	@echo "... command/quit.i"
 	@echo "... command/quit.s"
+	@echo "... command/topic.o"
+	@echo "... command/topic.i"
+	@echo "... command/topic.s"
 	@echo "... command/userCmd.o"
 	@echo "... command/userCmd.i"
 	@echo "... command/userCmd.s"

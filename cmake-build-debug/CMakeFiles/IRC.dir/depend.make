@@ -6,6 +6,12 @@ CMakeFiles/IRC.dir/channel.cpp.o: \
  ../channel.hpp \
  ../user.hpp \
  ../utils.hpp
+CMakeFiles/IRC.dir/command/invite.cpp.o: \
+ ../channel.hpp \
+ ../command/invite.cpp \
+ ../server/Server.hpp \
+ ../user.hpp \
+ ../utils.hpp
 CMakeFiles/IRC.dir/command/join.cpp.o: \
  ../channel.hpp \
  ../command/join.cpp \
@@ -15,6 +21,12 @@ CMakeFiles/IRC.dir/command/join.cpp.o: \
 CMakeFiles/IRC.dir/command/kick.cpp.o: \
  ../channel.hpp \
  ../command/kick.cpp \
+ ../server/Server.hpp \
+ ../user.hpp \
+ ../utils.hpp
+CMakeFiles/IRC.dir/command/list.cpp.o: \
+ ../channel.hpp \
+ ../command/list.cpp \
  ../server/Server.hpp \
  ../user.hpp \
  ../utils.hpp
@@ -63,6 +75,12 @@ CMakeFiles/IRC.dir/command/privmsg.cpp.o: \
 CMakeFiles/IRC.dir/command/quit.cpp.o: \
  ../channel.hpp \
  ../command/quit.cpp \
+ ../server/Server.hpp \
+ ../user.hpp \
+ ../utils.hpp
+CMakeFiles/IRC.dir/command/topic.cpp.o: \
+ ../channel.hpp \
+ ../command/topic.cpp \
  ../server/Server.hpp \
  ../user.hpp \
  ../utils.hpp

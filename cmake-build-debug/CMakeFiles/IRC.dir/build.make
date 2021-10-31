@@ -287,6 +287,45 @@ CMakeFiles/IRC.dir/command/notice.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IRC.dir/command/notice.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/krios-fu/Desktop/IRC/command/notice.cpp -o CMakeFiles/IRC.dir/command/notice.cpp.s
 
+CMakeFiles/IRC.dir/command/list.cpp.o: CMakeFiles/IRC.dir/flags.make
+CMakeFiles/IRC.dir/command/list.cpp.o: ../command/list.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/IRC.dir/command/list.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IRC.dir/command/list.cpp.o -c /Users/krios-fu/Desktop/IRC/command/list.cpp
+
+CMakeFiles/IRC.dir/command/list.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IRC.dir/command/list.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/krios-fu/Desktop/IRC/command/list.cpp > CMakeFiles/IRC.dir/command/list.cpp.i
+
+CMakeFiles/IRC.dir/command/list.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IRC.dir/command/list.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/krios-fu/Desktop/IRC/command/list.cpp -o CMakeFiles/IRC.dir/command/list.cpp.s
+
+CMakeFiles/IRC.dir/command/invite.cpp.o: CMakeFiles/IRC.dir/flags.make
+CMakeFiles/IRC.dir/command/invite.cpp.o: ../command/invite.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/IRC.dir/command/invite.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IRC.dir/command/invite.cpp.o -c /Users/krios-fu/Desktop/IRC/command/invite.cpp
+
+CMakeFiles/IRC.dir/command/invite.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IRC.dir/command/invite.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/krios-fu/Desktop/IRC/command/invite.cpp > CMakeFiles/IRC.dir/command/invite.cpp.i
+
+CMakeFiles/IRC.dir/command/invite.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IRC.dir/command/invite.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/krios-fu/Desktop/IRC/command/invite.cpp -o CMakeFiles/IRC.dir/command/invite.cpp.s
+
+CMakeFiles/IRC.dir/command/topic.cpp.o: CMakeFiles/IRC.dir/flags.make
+CMakeFiles/IRC.dir/command/topic.cpp.o: ../command/topic.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/IRC.dir/command/topic.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/IRC.dir/command/topic.cpp.o -c /Users/krios-fu/Desktop/IRC/command/topic.cpp
+
+CMakeFiles/IRC.dir/command/topic.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/IRC.dir/command/topic.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/krios-fu/Desktop/IRC/command/topic.cpp > CMakeFiles/IRC.dir/command/topic.cpp.i
+
+CMakeFiles/IRC.dir/command/topic.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/IRC.dir/command/topic.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/krios-fu/Desktop/IRC/command/topic.cpp -o CMakeFiles/IRC.dir/command/topic.cpp.s
+
 # Object files for target IRC
 IRC_OBJECTS = \
 "CMakeFiles/IRC.dir/main.cpp.o" \
@@ -305,7 +344,10 @@ IRC_OBJECTS = \
 "CMakeFiles/IRC.dir/command/mode.cpp.o" \
 "CMakeFiles/IRC.dir/command/oper.cpp.o" \
 "CMakeFiles/IRC.dir/command/kick.cpp.o" \
-"CMakeFiles/IRC.dir/command/notice.cpp.o"
+"CMakeFiles/IRC.dir/command/notice.cpp.o" \
+"CMakeFiles/IRC.dir/command/list.cpp.o" \
+"CMakeFiles/IRC.dir/command/invite.cpp.o" \
+"CMakeFiles/IRC.dir/command/topic.cpp.o"
 
 # External object files for target IRC
 IRC_EXTERNAL_OBJECTS =
@@ -327,9 +369,12 @@ IRC: CMakeFiles/IRC.dir/command/mode.cpp.o
 IRC: CMakeFiles/IRC.dir/command/oper.cpp.o
 IRC: CMakeFiles/IRC.dir/command/kick.cpp.o
 IRC: CMakeFiles/IRC.dir/command/notice.cpp.o
+IRC: CMakeFiles/IRC.dir/command/list.cpp.o
+IRC: CMakeFiles/IRC.dir/command/invite.cpp.o
+IRC: CMakeFiles/IRC.dir/command/topic.cpp.o
 IRC: CMakeFiles/IRC.dir/build.make
 IRC: CMakeFiles/IRC.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Linking CXX executable IRC"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX executable IRC"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/IRC.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

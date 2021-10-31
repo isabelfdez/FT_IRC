@@ -52,6 +52,7 @@ class Channel
 		bool    			isUser(std::string user);
 		bool				isInvite();
 		User    			*getUser(std::string user);
+		size_t 				getNumUser() const ;
 		
 
 		std::string			userList();

@@ -14,11 +14,9 @@ user.hpp
 iostream
 -
 
-/Users/krios-fu/Desktop/IRC/command/userCmd.cpp
+/Users/krios-fu/Desktop/IRC/command/list.cpp
 ../server/Server.hpp
 /Users/krios-fu/Desktop/IRC/server/Server.hpp
-../utils.hpp
-/Users/krios-fu/Desktop/IRC/utils.hpp
 
 /Users/krios-fu/Desktop/IRC/server/Server.hpp
 string

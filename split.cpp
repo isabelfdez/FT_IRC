@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/25 16:48:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 19:27:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::vector<std::string> split(char * buff, char c)
 	std::string					tmp;
 	std::vector<std::string>	matrix;
 	char *						tmp2;
-	if ( buff == 0 )
+	if ( *buff == 0 )
 		return matrix;
 	if ( ( tmp2 = strchr( buff, '\r' ) ) || ( tmp2 = strchr( buff, '\n' ) ) )
 	 	*tmp2 = 0;

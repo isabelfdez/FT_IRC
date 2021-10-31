@@ -49,8 +49,8 @@ void	Server::sendPing()
 				this->deleteUser( start->first );
 				return ;
 			}
-			else if ( usr->getPingStatus() == false
-				&& usr->getRegistered() )
+			else if (!usr->getPingStatus()
+					 && usr->getRegistered() )
 			{
 				usr->setPing( generatePing() );
 				ping += usr->getPing() + "\n";

@@ -30,6 +30,8 @@ std::string	Channel::getTopic() { return this->_topic; }
 
 std::string Channel::getName() const { return(this->_name); }
 
+size_t Channel::getNumUser() const { return  this->_users.size(); }
+
 std::list<User *> & Channel::getUsers() 
 {
 	return (this->_users);

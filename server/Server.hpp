@@ -32,6 +32,7 @@
 
 # define PORT 6667
 
+
 // Definiciones de errores
 
 # define ERR_SINTAX                 "001"
@@ -61,6 +62,8 @@
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"
+# define  RPL_LIST					"322"
+# define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
 # define RPL_TOPIC					"332"
 # define RPL_USERS					"393"

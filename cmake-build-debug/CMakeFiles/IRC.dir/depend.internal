@@ -6,6 +6,12 @@ CMakeFiles/IRC.dir/channel.cpp.o
  /Users/krios-fu/Desktop/IRC/channel.hpp
  /Users/krios-fu/Desktop/IRC/user.hpp
  /Users/krios-fu/Desktop/IRC/utils.hpp
+CMakeFiles/IRC.dir/command/invite.cpp.o
+ /Users/krios-fu/Desktop/IRC/channel.hpp
+ /Users/krios-fu/Desktop/IRC/command/invite.cpp
+ /Users/krios-fu/Desktop/IRC/server/Server.hpp
+ /Users/krios-fu/Desktop/IRC/user.hpp
+ /Users/krios-fu/Desktop/IRC/utils.hpp
 CMakeFiles/IRC.dir/command/join.cpp.o
  /Users/krios-fu/Desktop/IRC/channel.hpp
  /Users/krios-fu/Desktop/IRC/command/join.cpp
@@ -15,6 +21,12 @@ CMakeFiles/IRC.dir/command/join.cpp.o
 CMakeFiles/IRC.dir/command/kick.cpp.o
  /Users/krios-fu/Desktop/IRC/channel.hpp
  /Users/krios-fu/Desktop/IRC/command/kick.cpp
+ /Users/krios-fu/Desktop/IRC/server/Server.hpp
+ /Users/krios-fu/Desktop/IRC/user.hpp
+ /Users/krios-fu/Desktop/IRC/utils.hpp
+CMakeFiles/IRC.dir/command/list.cpp.o
+ /Users/krios-fu/Desktop/IRC/channel.hpp
+ /Users/krios-fu/Desktop/IRC/command/list.cpp
  /Users/krios-fu/Desktop/IRC/server/Server.hpp
  /Users/krios-fu/Desktop/IRC/user.hpp
  /Users/krios-fu/Desktop/IRC/utils.hpp
@@ -63,6 +75,12 @@ CMakeFiles/IRC.dir/command/privmsg.cpp.o
 CMakeFiles/IRC.dir/command/quit.cpp.o
  /Users/krios-fu/Desktop/IRC/channel.hpp
  /Users/krios-fu/Desktop/IRC/command/quit.cpp
+ /Users/krios-fu/Desktop/IRC/server/Server.hpp
+ /Users/krios-fu/Desktop/IRC/user.hpp
+ /Users/krios-fu/Desktop/IRC/utils.hpp
+CMakeFiles/IRC.dir/command/topic.cpp.o
+ /Users/krios-fu/Desktop/IRC/channel.hpp
+ /Users/krios-fu/Desktop/IRC/command/topic.cpp
  /Users/krios-fu/Desktop/IRC/server/Server.hpp
  /Users/krios-fu/Desktop/IRC/user.hpp
  /Users/krios-fu/Desktop/IRC/utils.hpp

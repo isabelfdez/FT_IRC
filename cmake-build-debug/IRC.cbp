@@ -86,10 +86,16 @@
 		<Unit filename="/Users/krios-fu/Desktop/IRC/channel.hpp">
 			<Option target="IRC"/>
 		</Unit>
+		<Unit filename="/Users/krios-fu/Desktop/IRC/command/invite.cpp">
+			<Option target="IRC"/>
+		</Unit>
 		<Unit filename="/Users/krios-fu/Desktop/IRC/command/join.cpp">
 			<Option target="IRC"/>
 		</Unit>
 		<Unit filename="/Users/krios-fu/Desktop/IRC/command/kick.cpp">
+			<Option target="IRC"/>
+		</Unit>
+		<Unit filename="/Users/krios-fu/Desktop/IRC/command/list.cpp">
 			<Option target="IRC"/>
 		</Unit>
 		<Unit filename="/Users/krios-fu/Desktop/IRC/command/mode.cpp">
@@ -114,6 +120,9 @@
 			<Option target="IRC"/>
 		</Unit>
 		<Unit filename="/Users/krios-fu/Desktop/IRC/command/quit.cpp">
+			<Option target="IRC"/>
+		</Unit>
+		<Unit filename="/Users/krios-fu/Desktop/IRC/command/topic.cpp">
 			<Option target="IRC"/>
 		</Unit>
 		<Unit filename="/Users/krios-fu/Desktop/IRC/command/userCmd.cpp">
