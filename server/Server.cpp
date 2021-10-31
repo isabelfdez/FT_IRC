@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/31 19:51:21 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 21:48:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_password_oper = "abracadabra";
 	this->_commands.push_back("LIST");
 	this->_commands.push_back("list");
+	this->_commands.push_back("NAMES");
+	this->_commands.push_back("names");
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -261,6 +263,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->topic_command(str, fd);
 		else if ( command == "LIST" || command == "list")
 			this->list_command( str, fd );
+		else if ( command == "NAMES" || command == "names")
+			this->names_command( str, fd );
 	}
 }
 

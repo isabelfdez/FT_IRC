@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/31 17:50:08 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 21:42:02 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@
 # define ERR_ERRONEUSNICKNAME		"432"
 # define ERR_NICKNAMEINUSE			"433"
 # define ERR_NOTREGISTERED			"451"
-# define ERR_NEEDMOREPARAMS         "461"
+# define ERR_NEEDMOREPARAMS			"461"
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
 # define ERR_CHANOPRIVSNEEDED		"482"
@@ -66,9 +66,11 @@
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
 # define RPL_TOPIC					"332"
+# define RPL_INVITING 				"341"
+# define RPL_NAMREPLY				"353"
+# define RPL_ENDOFNAMES				"366"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
-# define RPL_INVITING 				"341"
 
 
 class Server
@@ -147,6 +149,8 @@ class Server
 		void 			list_command( char *str, int fd);
 		void			invite_command(char * str, int & fd);
 		void			topic_command(char * str, int & fd);
+		void 			names_command( char *str, int fd);
+
 
 
 

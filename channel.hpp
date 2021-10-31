@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/24 04:52:06 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 21:29:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ class Channel
 		
 
 		std::string			userList();
+		std::string			userListNames();
+
 
 		// Setters
 		void				banOff(User * user);
