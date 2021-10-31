@@ -83,6 +83,10 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("oper");
 	this->_commands.push_back("KICK");
 	this->_commands.push_back("kick");
+	this->_commands.push_back("INVITE");
+	this->_commands.push_back("invite");
+	this->_commands.push_back("TOPIC");
+	this->_commands.push_back("topic");
 	this->_password_oper = "abracadabra";
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
@@ -236,6 +240,10 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->oper_command(str, fd);
 		else if ( command == "KICK" || command == "kick")
 			this->kick_command(str, fd);
+		else if ( command == "INVITE" || command == "invite")
+			this->invite_command(str, fd);
+		else if ( command == "TOPIC" || command == "topic")
+			this->topic_command(str, fd);
 	}
 }
 
@@ -276,7 +284,6 @@ bool			Server::isOper(std::string usr)
 {
 	for (std::list<User*>::iterator it = _opers.begin(); it != _opers.end(); it++)
 	{
-		std::cout << *it << std::endl;
 		if ((*it)->getNick() == usr)
 			return true;
 	}
@@ -401,20 +408,21 @@ void	Server::deleteBan( User *user)
 
 void Server::welcome( int const & fd )
 {
-	std::string part1 = BLUE"    ███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
-	std::string part2 = BLUE"    ██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
-	std::string part3 = GREEN"    █████╗     ██║        ██║██████╔╝██║     "WHITE;
-	std::string part4 = GREEN"    ██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
-	std::string part5 = GREEN"    ██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
-	std::string part6 = BLUE"    Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	(void) fd;
+	// std::string part1 = BLUE"    ███████╗████████╗     ██╗██████╗  ██████╗"WHITE;
+	// std::string part2 = BLUE"    ██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝"WHITE;
+	// std::string part3 = GREEN"    █████╗     ██║        ██║██████╔╝██║     "WHITE;
+	// std::string part4 = GREEN"    ██╔══╝     ██║        ██║██╔══██╗██║     "WHITE;
+	// std::string part5 = GREEN"    ██║        ██║███████╗██║██║  ██║╚██████╗"WHITE;
+	// std::string part6 = BLUE"    Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
-	send_reply(RPL_WELCOME, "Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
-	send_reply("372", part1, this->_fd_users[ fd ]);
-	send_reply("372", part1, this->_fd_users[ fd ]);
-	send_reply("372", part2, this->_fd_users[ fd ]);
-	send_reply("372", part3, this->_fd_users[ fd ]);
-	send_reply("372", part4, this->_fd_users[ fd ]);
-	send_reply("372", part5, this->_fd_users[ fd ]);
-	send_reply("372", part6, this->_fd_users[ fd ]);
+	// send_reply(RPL_WELCOME, "Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
+	// send_reply("372", part1, this->_fd_users[ fd ]);
+	// send_reply("372", part1, this->_fd_users[ fd ]);
+	// send_reply("372", part2, this->_fd_users[ fd ]);
+	// send_reply("372", part3, this->_fd_users[ fd ]);
+	// send_reply("372", part4, this->_fd_users[ fd ]);
+	// send_reply("372", part5, this->_fd_users[ fd ]);
+	// send_reply("372", part6, this->_fd_users[ fd ]);
 
 }

@@ -18,6 +18,7 @@ Channel::Channel(std::string const & name, User *user): _banned(), _name(name), 
 {
 	this->_maxusers = MAX_USERS;
 	this->_isfull = false;
+	this->_invite = false;
 	this->_operators.push_back(user);
 }
 
@@ -25,11 +26,25 @@ Channel::~Channel() {  }
 
 // Getters
 
+std::string	Channel::getTopic() { return this->_topic; }
+
 std::string Channel::getName() const { return(this->_name); }
 
 std::list<User *> & Channel::getUsers() 
 {
 	return (this->_users);
+}
+
+bool				Channel::isInvite() {return (this->_invite);}
+
+bool				Channel::isInvited(std::string user)
+{
+	for (std::list<User *>::iterator it = this->_invites.begin(); it != this->_invites.end(); it++)
+	{
+		if ((*it)->getNick() == user)
+			return (true);
+	}
+	return (false);
 }
 
 std::list<User *> & Channel::getBanned() 
@@ -123,6 +138,14 @@ void	Channel::banOff(User * user)
 	}
 }
 
+void	Channel::setTopic(std::string topic) { this->_topic = topic; }
+
+void	Channel::setInvite(bool set) { this->_invite = set; }
+
+void	Channel::pushInvite(User * user)
+{
+	this->_invites.push_back(user);
+}
 
 void    Channel::setOpOff(std::string user, User * usr)
 {

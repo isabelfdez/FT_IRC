@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 20:26:02 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/31 17:50:08 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,16 @@
 # define ERR_PASSWDMISMATCH			"464"
 # define ERR_USERNAMEINVALID		"468"
 # define ERR_BANNEDFROMCHAN			"474"
+# define ERR_USERONCHANNEL			"443"
+# define ERR_INVITEONLYCHAN			"473"
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"
-# define RPL_NOTOPIC				"332"
+# define RPL_NOTOPIC				"331"
+# define RPL_TOPIC					"332"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
+# define RPL_INVITING 				"341"
 
 
 class Server
@@ -138,6 +142,12 @@ class Server
 		void			oper_command(char * str, int & fd);
 		void			kick_command(char * str, int & fd);
 		void 			list_command( char *str, int fd);
+		void			invite_command(char * str, int & fd);
+		void			topic_command(char * str, int & fd);
+
+
+
+
 
 		void			sendPing(  );
 		void			welcome( int const & fd );
