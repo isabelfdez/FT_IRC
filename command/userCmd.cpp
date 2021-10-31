@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../server/Server.hpp"
-#include "../utils.hpp"
 
 void	Server::user_command( int fd, char *buffer )
 {

@@ -10,7 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-void Server::list()
+#include "../server/Server.hpp"
+
+void Server::list_command( char *str, int fd)
 {
+	buffer  = buffer  + 4;
+	while (*buffer  == ' ')
+		buffer ++;
+	if (*buffer == ':')
+		buffer++;
+
+	std::vector<std::string> token = split(buffer, ',');
+
 
 }

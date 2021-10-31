@@ -1,0 +1,3 @@
+/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/krios-fu/Desktop/IRC/cmake-build-debug/CMakeFiles/IRC.dir

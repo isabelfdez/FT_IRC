@@ -79,7 +79,6 @@ class Server
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
-		// std::list< Channel * >			_channel;
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
@@ -138,8 +137,7 @@ class Server
 		void			mode_command(char * str, int & fd);
 		void			oper_command(char * str, int & fd);
 		void			kick_command(char * str, int & fd);
-
-
+		void 			list_command( char *str, int fd);
 
 		void			sendPing(  );
 		void			welcome( int const & fd );
