@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/27 21:06:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 23:11:27 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void Server::quit_command(int fd, char *buffer)
 	char *tmp2;
 	User *usr = this->_fd_users.at(fd);
 
-	send_reply("ERROR :Closing link:", "[Signed off]", usr);
+	send_reply("ERROR :Closing link: ", "[Signed off]", usr);
 
 	if ( ( tmp2 = strchr( buffer, '\r' ) ) || ( tmp2 = strchr( buffer, '\n' ) ) )
 	 	*tmp2 = 0;

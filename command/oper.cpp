@@ -15,9 +15,9 @@ void	Server::oper_command(char * str, int & fd)
   {
     this->_opers.push_back(this->_fd_users[fd]);
     this->deleteBan(this->_fd_users[fd]);
-    return (send_reply(RPL_YOUREOPER, ":You are now an IRC operator", this->_fd_users[fd]));
+    return (send_reply(RPL_YOUREOPER, " :You are now an IRC operator", this->_fd_users[fd]));
   }
   else
-    return (send_error(ERR_PASSWDMISMATCH, ":Password incorrect", fd));
+    return (send_error(ERR_PASSWDMISMATCH, " :Password incorrect", fd));
 }
 

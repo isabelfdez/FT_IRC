@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/31 21:59:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 23:22:32 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,5 @@ void Server::names_command(char *buffer , int fd )
 			send_reply(RPL_NAMREPLY, message, usr);
 		}
 	}
-	send_reply(RPL_ENDOFNAMES	, "End of /NAMES list", usr);
+	send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
 }

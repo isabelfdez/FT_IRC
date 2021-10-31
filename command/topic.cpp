@@ -24,12 +24,12 @@ void	Server::topic_command(char * str, int & fd)
 	{
 		this->_name_channel[parse[1]]->setTopic("");
 		this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " no topic\n", fd);
-		return (send_reply(RPL_NOTOPIC, parse[1] + " :No topic is set", this->_fd_users[fd]));
+		return (send_reply(RPL_NOTOPIC, " :" + parse[1] + " :No topic is set", this->_fd_users[fd]));
 	}
 	else
 	{
 		this->_name_channel[parse[1]]->setTopic(message);
 		this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " topic is : " + message + "\n", fd);
-		return (send_reply(RPL_TOPIC, parse[1] + " :" + message, this->_fd_users[fd]));
+		return (send_reply(RPL_TOPIC, " :" + parse[1] + " :" + message, this->_fd_users[fd]));
 	}
 }

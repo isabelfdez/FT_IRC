@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/31 21:34:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/10/31 23:20:17 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,15 @@ void Server::list_command( char *buffer, int fd)
 
 	if ( token.size() <= 0 )
 	{
-		 it_channel start = this->_name_channel.begin();
-		 it_channel end = this->_name_channel.end();
+		it_channel start = this->_name_channel.begin();
+		it_channel end = this->_name_channel.end();
 
-		 for (; start != end ; ++start )
-		 {
+		for (; start != end ; ++start )
+		{
 			channel = start->second;
-			message = channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " : " + channel->getTopic();
-		 	send_reply(RPL_LIST, message, usr);
-		 }
+			message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :" + channel->getTopic();
+			send_reply(RPL_LIST, message, usr);
+		}
 	}
 	for (size_t i = 0; i < token.size(); i++)
 	{
@@ -53,5 +53,5 @@ void Server::list_command( char *buffer, int fd)
 			 send_reply(RPL_LIST, message, usr);
 		}
 	}
-	send_reply(RPL_LISTEND, "End of channel list", usr);
+	send_reply(RPL_LISTEND, " :End of channel list", usr);
 }

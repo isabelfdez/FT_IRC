@@ -29,7 +29,7 @@ void	Server::invite_command(char * str, int & fd)
 	{
 		s = "You are invite to join " + parse[2];
 		send_message(s, deliver_fd, this->_fd_users[fd]);
-		send_reply(RPL_INVITING, parse[2] + " " + parse[1], this->_fd_users[fd]);
+		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], this->_fd_users[fd]);
 		return ;
 	}
 	else if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[parse[2]]->isOp(this->_fd_users[fd]))
@@ -40,7 +40,7 @@ void	Server::invite_command(char * str, int & fd)
 			return;
 		s = "You are invite to join " + parse[2];
 		send_message(s, deliver_fd, this->_fd_users[fd]);
-		send_reply(RPL_INVITING, parse[2] + " " + parse[1], this->_fd_users[fd]);
+		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], this->_fd_users[fd]);
 		this->_name_channel[parse[2]]->pushInvite(getUserWithNick(parse[1]));
 	}
 }

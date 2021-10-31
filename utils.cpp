@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 20:25:04 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/10/31 23:02:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	send_reply(std::string reply, std::string str, User * usr)
 	message.assign(":ft_irc.com ");
 	message.append(reply);
 	message.append(" " + usr->getNick());
-	message.append(" :"+ str);
+	message.append(str);
 	message.append("\n");
 	send(usr->getsockfd(), message.c_str(), message.length(), 0);
 
@@ -72,7 +72,7 @@ void	send_error(std::string error, std::string str, int fd)
 	message.append(" * ");
 	message.append(str);
 	message.append("\n");
-    send(fd, message.c_str(), message.length(), 0);
+	send(fd, message.c_str(), message.length(), 0);
 }
 
 static int	ft_countwords(char const *s, char c)

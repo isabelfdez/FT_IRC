@@ -51,7 +51,9 @@ void    Server::join_channel(std::string str1, int & fd)
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
         send_reply(RPL_NOTOPIC, " JOIN: " + str1, this->_fd_users[fd]);
-        send_reply(RPL_USERS, this->_name_channel[str1]->userList(), this->_fd_users[fd]);
+        send_reply(RPL_USERS, " :" + this->_name_channel[str1]->userList(), this->_fd_users[fd]);
+	    send_reply(RPL_ENDOFNAMES	, " :End of /NAMES list", this->_fd_users[fd]);
+
     }
 }
 

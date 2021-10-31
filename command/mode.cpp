@@ -28,8 +28,8 @@ void    Server::mode_command(char * str, int & fd)
                 if (this->_name_channel[parse[1]]->isUser(parse[3]))
                 {
                     this->_name_channel[parse[1]]->setOp(getUserWithNick(parse[3]));
-                    send_reply("", parse[3] + " :is Channel Operator of " + parse[1], this->_fd_users[fd]);
-                    send_reply("", " you are now Channel Operator of " + parse[1], getUserWithNick(parse[3]));                    
+                    send_reply("", " :" + parse[3] + " :is Channel Operator of " + parse[1], this->_fd_users[fd]);
+                    send_reply("", " :you are now Channel Operator of " + parse[1], getUserWithNick(parse[3]));                    
                 }
                 else
                     return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
@@ -45,7 +45,7 @@ void    Server::mode_command(char * str, int & fd)
                 else
                 {
                     this->_name_channel[parse[1]]->ban(getUserWithNick(parse[3]));
-                    send_reply("", " you have being banned from Channel " + parse[1], getUserWithNick(parse[3]));
+                    send_reply("", " :you have being banned from Channel " + parse[1], getUserWithNick(parse[3]));
                 }
             }
             else if (parse[2][1] == 'i')
@@ -65,7 +65,7 @@ void    Server::mode_command(char * str, int & fd)
                     return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
                 if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])))
                 {
-                    send_reply("", parse[3] + " is not Channel Operator " + parse[1], this->_fd_users[fd]);
+                    send_reply("", " :" + parse[3] + " is not Channel Operator " + parse[1], this->_fd_users[fd]);
                     this->_name_channel[parse[1]]->setOpOff(parse[3], this->_fd_users[fd]);
                 }
             }
