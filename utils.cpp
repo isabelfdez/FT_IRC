@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 22:53:13 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/01 22:55:43 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,11 +238,9 @@ uint64_t	getTime(void)
 	return ((end.tv_sec * (uint64_t)1000) + (end.tv_usec / 1000));
 }
 
-//			std::cout << " : Connection accepted, IP: " << this->_fd_users[connection]->getIp() << " Socket: " << connection;
 
 void displayLog(std::string const & log, std::string const & cmd , User *usr )
 {
-	// std::cout << std::endl;
 	displayTimestamp();
 	std::cout << " : "<< std::setfill('.')  << std::setw(30) << log.substr(0,25);
 	std::cout << " IP: " <<  usr->getIp();
