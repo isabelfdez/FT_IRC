@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/31 23:22:32 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/01 21:13:02 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ void Server::names_command(char *buffer , int fd )
 	size_t			pos;
 	Channel			*channel;
 	User			*usr;
+	bool			flags;
+
+	flags = false;
 
 	buffer  = buffer  + 5;
 	while (*buffer  == ' ')
@@ -39,7 +42,10 @@ void Server::names_command(char *buffer , int fd )
 		{
 			message = " = " + channel->getName() + " :" + channel->userListNames();
 			send_reply(RPL_NAMREPLY, message, usr);
+			send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
+			flags = true;
 		}
 	}
-	send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
+	if ( !flags )
+		send_reply(RPL_ENDOFNAMES	, " :End of /NAMES list", usr);
 }

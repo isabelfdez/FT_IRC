@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 17:03:07 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/01 20:43:10 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct	user_modes
 class User
 {
 	private:
+		std::list<Channel *>		_channels;
 		std::string					_username;
 		std::string					_nick;
 		std::string					_realName;
@@ -92,10 +93,10 @@ class User
 		std::string					_buffer_cmd;
 		user_modes					_modes;
 		int							_sock_fd;
-		std::list<Channel *>		_channels;
 		bool						_is_registered;
 		bool						_max_channels;
 		bool						_ping_status;
+		bool						_is_send_msg;
 		uint64_t					_lastTime;
 		uint64_t					_time_ping;
 
@@ -122,6 +123,7 @@ class User
 		bool const &				getPingStatus() const;
 		std::string					getIp(  ) const ;
 		std::string	const &			getBufferCmd() const;
+		bool const &				getIsSendMsg() const;
 		
 
 		// Setters
@@ -135,7 +137,7 @@ class User
 		void						setPingStatus( bool const &  status );
 		void						setTimePing( uint64_t const & time );
 		void						setBufferCmd( std::string const & buffer_cmd );
-
+		void						setIsSendMsg(bool const & status);
 		// Overload
 		bool						operator==(User & obj);
 

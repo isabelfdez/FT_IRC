@@ -52,8 +52,7 @@ void    Server::join_channel(std::string str1, int & fd)
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
         send_reply(RPL_NOTOPIC, " JOIN: " + str1, this->_fd_users[fd]);
         send_reply(RPL_USERS, " :" + this->_name_channel[str1]->userList(), this->_fd_users[fd]);
-	    send_reply(RPL_ENDOFNAMES	, " :End of /NAMES list", this->_fd_users[fd]);
-
+		send_reply(RPL_ENDOFNAMES	," " + this->_name_channel[str1]->getName() + " :End of /NAMES list", this->_fd_users[fd]);
     }
 }
 
@@ -71,5 +70,8 @@ void	Server::join_command(char * str, int & fd)
 	if (!parse.size())
 		return (send_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters", fd));
 	for (std::vector<std::string>::iterator it = parse.begin(); it != parse.end(); it++)
+    {
 		Server::join_channel(*it, fd);
+        this->reStartSendMsg();
+    }
 }

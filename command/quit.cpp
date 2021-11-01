@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/31 23:11:27 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/01 22:20:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Server::quit_command(int fd, char *buffer)
 	iteratorChannel end = usr->getChannels().end();
 
 	for (; channel != end ; ++channel )
-		send_message_channel(msg_quit_users, usr ,*channel);
+		send_message_channel_block(msg_quit_users, usr ,*channel);
 
 
 	displayLog("Quit success", "", usr);

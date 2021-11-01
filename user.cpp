@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/28 17:05:24 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/01 20:48:14 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ User::User(int & fd, struct sockaddr_in const & addr) : _sock_fd(fd)
 	this->_is_registered = false;
 	this->_max_channels = false;
 	this->_ping_status = false;
+	this->_is_send_msg = false;
 	this->_time_ping = 30000;
 	this->_buffer_cmd = "";
 }
@@ -86,6 +87,7 @@ std::string const & User::getPing() const { return this->_ping; }
 uint64_t const & User::getLastTime() const { return this->_lastTime; }
 uint64_t const & User::getTimePing() const { return this->_time_ping; }
 std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
+bool const & User::getIsSendMsg() const { return this->_is_send_msg; }
 
 //std::string const & User::getMask() const { return this->_mask; }
 
@@ -136,6 +138,8 @@ void	User::setBufferCmd( std::string const & buffer_cmd )
 {
 	this->_buffer_cmd = buffer_cmd;
 }
+
+void	User::setIsSendMsg( bool const & status ) { this->_is_send_msg = status ; }
 
 
 

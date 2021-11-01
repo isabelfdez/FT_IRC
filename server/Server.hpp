@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/31 21:42:02 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/01 20:49:46 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,7 @@ class Server
 
 		void			sendPing(  );
 		void			welcome( int const & fd );
+		void			reStartSendMsg();
 
 
 };
