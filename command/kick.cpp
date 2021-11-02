@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:33:40 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/31 23:05:40 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 15:16:49 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	Server::kick_command(char *str, int & fd)
             if (this->_name_channel[v_channels.front()]->isUser(*it1))
             {
                 this->_name_channel[v_channels.front()]->deleteUser(getUserWithNick(*it1));
-                send_reply("", " KICK: you have being kiked from channel " + v_channels.front() + " " + message, getUserWithNick(*it1));
+                send_reply("", " KICK: you have being kicked from channel " + v_channels.front() + " " + message, getUserWithNick(*it1));
                 getUserWithNick(*it1)->deleteChannel(this->_name_channel[v_channels.front()]);
                 if (this->_name_channel[v_channels.front()]->getUsers().size() < 1)
                     deleteChannel(v_channels.front());
