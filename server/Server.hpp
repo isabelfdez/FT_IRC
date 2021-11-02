@@ -100,7 +100,6 @@ class Server
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
-		std::list<User *>				_opers;
 		std::string						_password_oper;
 
 	public:
@@ -132,7 +131,6 @@ class Server
 		size_t			getNumUser( void )		const;//krios-fu
 		User			*getUserWithNick(std::string);
 		bool			isUsr(std::string);
-		bool			isOper(std::string);
 		bool			isChannel(std::string);
 
 		void			deleteChannel( std::string );

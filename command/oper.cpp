@@ -13,7 +13,6 @@ void	Server::oper_command(char * str, int & fd)
     return (send_error(ERR_USERSDONTMATCH, "OPER :Cannot change mode for other users", fd));
   else if (parse[2] == this->_password_oper)
   {
-    this->_opers.push_back(this->_fd_users[fd]);
     this->deleteBan(this->_fd_users[fd]);
     this->_fd_users[fd]->setmode('o', true);
     return (send_reply(RPL_YOUREOPER, " :You are now an IRC operator", this->_fd_users[fd]));

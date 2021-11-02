@@ -302,16 +302,6 @@ void Server::getCustomerRequest( int fd_client )
 	this->reStartSendMsg();
 }
 
-bool			Server::isOper(std::string usr)
-{
-	for (std::list<User*>::iterator it = _opers.begin(); it != _opers.end(); it++)
-	{
-		if ((*it)->getNick() == usr)
-			return true;
-	}
-	return false;
-}
-
 bool			Server::isUsr(std::string usr)
 {
 	for (std::list<User*>::iterator it = _connected_users.begin(); it != _connected_users.end(); it++)

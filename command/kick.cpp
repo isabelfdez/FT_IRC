@@ -48,7 +48,7 @@ void	Server::kick_command(char *str, int & fd)
     {
         if (!isChannel(v_channels.front()))
                 return (send_error(ERR_NOSUCHCHANNEL, v_channels.front() + " :No such channel", fd));
-        if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[v_channels.front()]->isOp(this->_fd_users[fd]))
+        if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[v_channels.front()]->isOp(this->_fd_users[fd]))
             return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", fd));
         for (it1 = v_users.begin(); it1 != v_users.end(); it1++)
         {
@@ -72,7 +72,7 @@ void	Server::kick_command(char *str, int & fd)
         {
             if (!isChannel(*it2))
                 return (send_error(ERR_NOSUCHCHANNEL, (*it2) + " :No such channel", fd));
-            if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[(*it2)]->isOp(this->_fd_users[fd]))
+            if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[(*it2)]->isOp(this->_fd_users[fd]))
                 return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", fd));
             if (this->_name_channel[(*it2)]->isUser(*it1))
             {
