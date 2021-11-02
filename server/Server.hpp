@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 15:46:57 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 17:46:43 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,16 @@
 # define ERR_NEEDMOREPARAMS			"461"
 # define ERR_ALREADYREGISTRED		"462"
 # define ERR_NEEDMOREPARAMS			"461"
-# define ERR_CHANOPRIVSNEEDED		"482"
 # define ERR_USERNOTINCHANNEL		"441"
 # define ERR_PASSWDMISMATCH			"464"
 # define ERR_USERNAMEINVALID		"468"
 # define ERR_BANNEDFROMCHAN			"474"
 # define ERR_USERONCHANNEL			"443"
 # define ERR_INVITEONLYCHAN			"473"
+# define ERR_NOPRIVILEGES			"481"
+# define ERR_CHANOPRIVSNEEDED		"482"
+# define ERR_UMODEUNKNOWNFLAG		"501"
+# define ERR_USERSDONTMATCH			"502"
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"

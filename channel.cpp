@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 14:16:01 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 17:27:27 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ std::string	Channel::userList()
 {
 	std::string	s;
 
-	s.assign("list of users: ");
+	s.assign("list of users :");
 	for (std::list<User*>::iterator it = this->_users.begin(); it != _users.end(); it++)
 	{
 		if (isOp(*it))

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:14:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 17:46:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void    Server::nick_command(char * str, int & fd)
     }
     for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
     {
-        if (*it == parse[0])
+        if (ft_toupper(*it) == ft_toupper(parse[0]))
         {
             s.append(parse[0]);
             s.append(" :Nickname is already in use");
@@ -84,7 +84,7 @@ void    Server::nick_command(char * str, int & fd)
         // PASO 1: Borrar su antiguo nick de la lista de nicks
         for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
         {
-            if (*it == this->_fd_users[fd]->getNick())
+            if ((*it) == this->_fd_users[fd]->getNick())
                 it = this->_nicks.erase(it);
         }           
         // PASO 2: Añadir el nuevo nick a la lista de nicks

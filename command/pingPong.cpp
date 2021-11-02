@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/02 15:58:13 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 17:47:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	Server::sendPing()
 				usr->setPingStatus( true );
 				send( usr->getsockfd(), ping.c_str(), ping.length(), 0);
 				std::cout << "\r";
-				displayLog("Ping send", "", usr);
+				displayLog("Ping sent", "", usr);
 
 				if ( usr->getTimePing() == 0)
 				{
