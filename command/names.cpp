@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/01 21:13:02 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 19:40:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,21 @@ void Server::names_command(char *buffer , int fd )
 		channel = this->_name_channel[ token[i] ];
 		if ( channel )
 		{
-			message = " = " + channel->getName() + " :" + channel->userListNames();
-			send_reply(RPL_NAMREPLY, message, usr);
-			send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
-			flags = true;
+			if ( channel->isInvite() && channel->isUser( this->_fd_users[fd]->getNick() ) )
+			{
+				message = " * " + channel->getName() + " :" + channel->userListNames();
+				send_reply(RPL_NAMREPLY, message, usr);
+				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
+				flags = true;
+			}
+			else if ( !channel->isInvite() )
+			{
+
+				message = " = " + channel->getName() + " :" + channel->userListNames();
+				send_reply(RPL_NAMREPLY, message, usr);
+				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
+				flags = true;
+			}
 		}
 	}
 	if ( !flags )

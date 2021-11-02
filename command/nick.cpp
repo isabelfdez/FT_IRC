@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:46:11 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 18:45:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,13 @@ void    Server::nick_command(char * str, int & fd)
     {
         if (ft_toupper(*it) == ft_toupper(parse[0]))
         {
-            s.append(parse[0]);
-            s.append(" :Nickname is already in use");
-            return (send_error(ERR_NICKNAMEINUSE, s, fd));
+            if ((this->_fd_users[fd]->getNick().size() && (ft_toupper(*it) != ft_toupper(this->_fd_users[fd]->getNick())))
+                 || !this->_fd_users[fd]->getNick().size())
+            {
+                s.append(parse[0]);
+                s.append(" :Nickname is already in use");
+                return (send_error(ERR_NICKNAMEINUSE, s, fd));
+            }
         }
     }
     // Si hemos llegado hasta aquí, el nick recibido es válido
@@ -90,9 +94,21 @@ void    Server::nick_command(char * str, int & fd)
         // PASO 2: Añadir el nuevo nick a la lista de nicks
         this->_nicks.push_back(parse[0]);
 
-        // PASO 3: Cambiar el nick del usuario      
-        this->_fd_users[fd]->setNick(parse[0]);
+        // PASO 3: Notificar el cambio a los usuarios que compartan canal con él
+        typedef std::list<Channel *>::iterator it_channel;
 
+        it_channel start = this->_fd_users[fd]->getChannels().begin();
+        it_channel end = this->_fd_users[fd]->getChannels().end();
+        std::string s;
+        for (; start != end ; ++start)
+        {
+            s.assign("NICK :");
+            s.append(parse[0]);
+            send_message_channel_block(s, this->_fd_users[fd], *start);
+        }
+
+        // PASO 4: Cambiar el nick del usuario      
+        this->_fd_users[fd]->setNick(parse[0]);
     }
     // CASO 2: El usuario se asigna un nick por primera vez
     else if (!this->_fd_users[fd]->getNick().size())

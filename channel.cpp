@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:27:27 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/02 19:33:56 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,13 @@ std::string	Channel::userListNames()
 
 	for (std::list<User*>::iterator it = this->_users.begin(); it != _users.end(); it++)
 	{
-		if (isOp(*it))
-			s.append("@");
-		s.append((*it)->getNick());
-		s.append(" ");
+		if( !(*it)->getmode('i') )
+		{
+			if (isOp(*it))
+				s.append("@");
+			s.append((*it)->getNick());
+			s.append(" ");
+		}
 	}
 
 	return (s);

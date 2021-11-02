@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 18:43:06 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 19:31:25 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,6 +445,7 @@ void		Server::reStartSendMsg()
 
 void Server::welcome( int const & fd )
 {
+	User *usr = this->_fd_users[ fd ];
 	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/     " RED"    / // /  |__ \\ "WHITE;
 	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /        " RED"   / // /_  __/ / "WHITE;
 	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /         " RED"  /__  __/ / __/      "WHITE;
@@ -457,25 +458,25 @@ void Server::welcome( int const & fd )
 
 
 	
-	std::string part10 = BLUE"         Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	std::string part10 = BLUE"         Welcome: "RED + usr->getNick() + ""WHITE;
 	
-	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@"+ this->_fd_users[fd]->getIp() , this->_fd_users[ fd ]);
+	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + usr->getNick() + "!" + usr->getUserName() + "@"+ this->_fd_users[fd]->getIp() , usr);
 	send_reply(RPL_YOURHOST, " :Your host is ft_irc.com, running version v:0.42",  this->_fd_users[fd]);
 	send_reply(RPL_CREATE, " :This server was creates 12:42:42 Oct 14 2021", this->_fd_users[fd]);
-	send_reply(RPL_MYINFO, " :ft_irc v:0.42 io iob", this->_fd_users[fd]);
+	send_reply(RPL_MYINFO, " :ft_irc v:0.42 io iobl", this->_fd_users[fd]);
 	send_reply(RPL_MOTDSTART, " :ft_irc.com message of the day", this->_fd_users[fd]);
-	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part1, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part2, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part3, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part4, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part5, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part6, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part7, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part8, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part9, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part10, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" , usr);
+	send_reply(RPL_MOTD, " :" + part1, usr);
+	send_reply(RPL_MOTD, " :" + part2, usr);
+	send_reply(RPL_MOTD, " :" + part3, usr);
+	send_reply(RPL_MOTD, " :" + part4, usr);
+	send_reply(RPL_MOTD, " :" , usr);
+	send_reply(RPL_MOTD, " :" + part5, usr);
+	send_reply(RPL_MOTD, " :" + part6, usr);
+	send_reply(RPL_MOTD, " :" + part7, usr);
+	send_reply(RPL_MOTD, " :" + part8, usr);
+	send_reply(RPL_MOTD, " :" + part9, usr);
+	send_reply(RPL_MOTD, " :" + part10, usr);
 	send_reply(RPL_ENDOFMOTD, " :End of message of the day", this->_fd_users[fd]);
 
 }
