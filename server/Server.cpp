@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:47:11 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 18:43:06 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -416,6 +416,7 @@ void Server::deleteUser( int const & fd )
 	this->_fd_users.erase( fd );
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	this->_nicks.remove( tmp_usr->getNick() );
+	this->deleteBan(tmp_usr);
 	delete tmp_usr;
 
 }
