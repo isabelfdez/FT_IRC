@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 14:00:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 15:48:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -458,7 +458,10 @@ void Server::welcome( int const & fd )
 	
 	std::string part10 = BLUE"         Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
-	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + this->_fd_users[fd]->getIp() , this->_fd_users[ fd ]);
+	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@"+ this->_fd_users[fd]->getIp() , this->_fd_users[ fd ]);
+	send_reply(RPL_YOURHOST, " :Your host is ft_irc.com, running version v:0.42",  this->_fd_users[fd]);
+	send_reply(RPL_CREATE, " :This server was creates 12:42:42 Oct 14 2021", this->_fd_users[fd]);
+	send_reply(RPL_MYINFO, " :ft_irc v:0.42 io iob", this->_fd_users[fd]);
 	send_reply(RPL_MOTDSTART, " :ft_irc.com message of the day", this->_fd_users[fd]);
 	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
 	send_reply(RPL_MOTD, " :" + part1, this->_fd_users[ fd ]);

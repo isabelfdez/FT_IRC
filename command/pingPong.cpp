@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/28 14:57:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 15:58:13 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,15 @@
 static std::string generatePing()
 {
 	char ping[13];
+	char	c;
     srand( time( NULL ) );
     for( size_t i = 0; i <= 11; i++ )
 	{
-        ping[ i ] = 33 + rand() % ( 126 - 33 );
+		c = 33 + rand() % ( 126 - 33 );
+		if ( c == ':') 
+			i--;
+		else
+			ping[ i ] = c;
 	}
 	ping[ 12 ] = '\0';
 	return static_cast<std::string>( ping );
@@ -30,7 +35,7 @@ void	Server::sendPing()
 {
 	typedef std::map<int , User *>::iterator iterator;
 	User * usr;
-	std::string ping = "PING : ";
+	std::string ping = "PING :";
 	
 	iterator start = this->_fd_users.begin();
 	iterator end = this->_fd_users.end();
@@ -59,11 +64,11 @@ void	Server::sendPing()
 				std::cout << "\r";
 				displayLog("Ping send", "", usr);
 
-			if ( usr->getTimePing() == 0)
-			{
-				send_reply("396", "ft_irc.com :is now your display host", usr);
-				send_reply("MODE", ":+xwT", usr);
-			}
+				if ( usr->getTimePing() == 0)
+				{
+					send_reply("396", " " +  usr->getIp() + " :is now your displayed host", usr);
+					send_reply("MODE", ":+xwT", usr);
+				}
 			}
 		}
 	}

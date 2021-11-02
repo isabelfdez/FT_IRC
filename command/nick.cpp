@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/10/27 20:01:52 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 17:14:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void    Server::nick_command(char * str, int & fd)
     size_t i = 0;
     while (i < parse.size() && parse[i].size() )
         i++;
-    if (!parse[0].size())
+    if (!parse.size())
         return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
     // Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)      
     else if (i > 1 && parse[1].size())

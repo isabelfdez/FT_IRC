@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 13:57:52 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 15:46:57 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,10 @@
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"
-# define  RPL_LIST					"322"
+# define RPL_YOURHOST				"002"
+# define RPL_CREATE					"003"
+# define RPL_MYINFO					"004"
+# define RPL_LIST					"322"
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
 # define RPL_TOPIC					"332"
