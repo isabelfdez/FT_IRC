@@ -51,6 +51,7 @@ size_t						ft_strlen(const char *s);
 bool						ft_isspecial(char c);
 std::string					ft_toupper(std::string);
 
+char                        *trim(char *s);
 char						*ft_substr(char const *s, char c);
 void						send_message(std::string & message, int & fd, User * usr);
 void						send_message_channel(std::string & message, User * usr, Channel * chnl);

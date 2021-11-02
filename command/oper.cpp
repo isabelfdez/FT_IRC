@@ -7,7 +7,7 @@ void	Server::oper_command(char * str, int & fd)
   parse = split(str, ' ');
   if (parse.size() < 3)
     return (send_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters", fd));
-  if (this->isOper(parse[1]))
+  if (this->_fd_users[fd]->getmode('o'))
     return ;
   else if (parse[1] != this->_fd_users[fd]->getNick())
     return (send_error(ERR_USERSDONTMATCH, "OPER :Cannot change mode for other users", fd));

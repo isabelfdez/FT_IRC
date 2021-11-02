@@ -24,6 +24,7 @@ void	Server::part_command(char * str, int & fd)
 		str++;
 	if (*str == ':')
 		str++;
+    str = trim(str);
 	parse = split(str, ',');
 	if (!parse.size())
 	{

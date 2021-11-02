@@ -29,7 +29,7 @@ void    Server::mode_command(char * str, int & fd)
     {
         if (parse.size() < 3)
             return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
-        else if (!this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]) && !this->isOper(this->_fd_users[fd]->getNick()))
+        else if (!this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]) && !this->_fd_users[fd]->getmode('o'))
             return (send_error(ERR_CHANOPRIVSNEEDED, "MODE :You are not channel operator", fd));
         else if (parse[2].size() < 2)
             return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
@@ -54,7 +54,7 @@ void    Server::mode_command(char * str, int & fd)
                     return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
                 if (!this->_name_channel[parse[1]]->isUser(parse[3]))
                     return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
-                else if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])) || this->isOper(parse[3]))
+                else if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])) || getUserWithNick(parse[3])->getmode('o'))
                     return (send_error("", parse[3] + " is Operator, cannot be banned", fd));
                 else
                 {

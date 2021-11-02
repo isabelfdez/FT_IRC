@@ -30,7 +30,7 @@ void    Server::join_channel(std::string str1, int & fd)
         return (send_error(ERR_BANNEDFROMCHAN, str1 + " :Cannot join channel (+b)", fd));
     else if (this->_name_channel[str1])
     {
-        if (this->_name_channel[str1]->isInvite() && !this->_name_channel[str1]->isInvited(this->_fd_users[fd]->getNick()) && !this->isOper(this->_fd_users[fd]->getNick()))
+        if (this->_name_channel[str1]->isInvite() && !this->_name_channel[str1]->isInvited(this->_fd_users[fd]->getNick()) && !this->_fd_users[fd]->getmode('o'))
             return (send_error(ERR_INVITEONLYCHAN, str1 + " :Cannot join channel (+i)", fd));
         // User join channel
         if (this->_name_channel[str1]->isUser(this->_fd_users[fd]->getNick()))
@@ -59,13 +59,13 @@ void    Server::join_channel(std::string str1, int & fd)
 void	Server::join_command(char * str, int & fd)
 {
 	std::vector<std::string> parse;
-	// char	*tmp;
 
 	str = str + 4;
 	while (*str == ' ')
 		str++;
 	if (*str == ':')
 		str++;
+    str = trim(str);
 	parse = split(str, ',');
 	if (!parse.size())
 		return (send_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters", fd));
