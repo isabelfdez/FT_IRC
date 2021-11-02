@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 21:47:20 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 14:16:01 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,8 @@ void	Channel::sendMsgChannel( std::string msg , int fd)
 {
 	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
 	{
-		if ( (*it)->getsockfd() != fd && !(*it)->getIsSendMsg() )
+		if ( (*it)->getsockfd() != fd  )
 			send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
 	}
 }
+

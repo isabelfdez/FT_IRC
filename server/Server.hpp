@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 20:49:46 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 13:57:52 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@
 # define RPL_INVITING 				"341"
 # define RPL_NAMREPLY				"353"
 # define RPL_ENDOFNAMES				"366"
+#define  RPL_MOTD					"372"
+# define RPL_MOTDSTART				"375"
+# define RPL_ENDOFMOTD				"376"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
 

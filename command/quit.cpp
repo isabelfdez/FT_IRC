@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/01 22:20:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 14:16:58 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,4 @@ void Server::quit_command(int fd, char *buffer)
 	displayLog("Quit success", "", usr);
 	
 	this->deleteUser( fd );
-}
+} 

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 22:50:21 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/02 14:00:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
 	
 	if (!find_command(command, this->_commands))
-		return send_error(ERR_UNKNOWNCOMMAND, command, fd);
+		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", fd);
 	if (!this->_fd_users[fd]->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
@@ -442,19 +442,12 @@ void		Server::reStartSendMsg()
 	}
 }
 
-
-
-/* / ____/   / / / /   /   | /_  __/         / // /  |__ \          / ____/ /_  __/          /  _/   / __ \  / ____/
- / /       / /_/ /   / /| |  / /           / // /_  __/ /         / /_      / /             / /    / /_/ / / /     
-/ /___    / __  /   / ___ | / /           /__  __/ / __/         / __/     / /            _/ /    / _, _/ / /___   
-\____/   /_/ /_/   /_/  |_|/_/              /_/   /____/        /_/       /_/      ______/___/   /_/ |_|  \____/   
-                                                                                  /_____/                           */
 void Server::welcome( int const & fd )
 {
-	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/         / // /  |__ \\ "WHITE;
-	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /           / // /_  __/ / "WHITE;
-	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /           /__  __/ / __/      "WHITE;
-	std::string part4 = BLUE"         \\____/   /_/ /_/   /_/  |_|/_/              /_/   /____/ "WHITE;
+	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/     " RED"    / // /  |__ \\ "WHITE;
+	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /        " RED"   / // /_  __/ / "WHITE;
+	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /         " RED"  /__  __/ / __/      "WHITE;
+	std::string part4 = BLUE"         \\____/   /_/ /_/   /_/  |_|/_/         " RED"     /_/   /____/ "WHITE;
 	std::string part5 = GREEN"                      / ____/ /_  __/     /  _/   / __ \\  / ____/ "WHITE;
 	std::string part6 = GREEN"                     / /_      / /        / /    / /_/ / / /      "WHITE;
 	std::string part7 = GREEN"                    / __/     / /       _/ /    / _, _/ / /___   "WHITE;
@@ -465,21 +458,20 @@ void Server::welcome( int const & fd )
 	
 	std::string part10 = BLUE"         Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
 	
-	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@ft_irc.com\n", this->_fd_users[ fd ]);
-	send_reply("372", " :" + part1, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part2, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part3, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part4, this->_fd_users[ fd ]);
-	send_reply("372", " :" , this->_fd_users[ fd ]);
-	send_reply("372", " :" + part5, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part6, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part7, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part8, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part9, this->_fd_users[ fd ]);
-	send_reply("372", " :" + part10, this->_fd_users[ fd ]);
-
-
-
-	
+	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + this->_fd_users[fd]->getIp() , this->_fd_users[ fd ]);
+	send_reply(RPL_MOTDSTART, " :ft_irc.com message of the day", this->_fd_users[fd]);
+	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part1, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part2, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part3, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part4, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part5, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part6, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part7, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part8, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part9, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" + part10, this->_fd_users[ fd ]);
+	send_reply(RPL_ENDOFMOTD, " :End of message of the day", this->_fd_users[fd]);
 
 }
