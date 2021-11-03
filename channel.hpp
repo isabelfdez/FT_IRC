@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 21:45:58 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 18:58:49 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ class Channel
 		
 
 		std::string			userList();
-		std::string			userListNames();
 
 
 		// Setters

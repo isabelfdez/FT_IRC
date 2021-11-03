@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/02 23:33:59 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 21:41:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,11 @@ void Server::list_command( char *buffer, int fd)
 		channel = this->_name_channel[ token[i] ];
 		if ( channel )
 		{
-			if ( !channel->isInvite() ) // comment
-			{
+			// if ( !channel->isInvite() ) // comment
+			// {
 				 message = " " + channel->getName() + " " + std::to_string(channel->getNumUser())	 + " : " + channel->getTopic();
 				 send_reply(RPL_LIST, message, usr);
-			}
+			// }
 		}
 	}
 	send_reply(RPL_LISTEND, " :End of channel list", usr);
