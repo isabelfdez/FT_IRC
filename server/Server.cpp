@@ -55,7 +55,7 @@ Server::Server(): _fd_users(), _name_channel()
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
-	if ( listen (this->_listen_server_sock, 5) == -1)
+	if ( listen (this->_listen_server_sock, FD_SETSIZE) == -1)
 	{
 		perror("Listen");
 		throw Server::GlobalServerExecption();
