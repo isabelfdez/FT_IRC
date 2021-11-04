@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/03 21:39:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 17:12:22 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Server::Server(): _fd_users(), _name_channel()
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
-	if ( listen (this->_listen_server_sock, 5) == -1)
+	if ( listen (this->_listen_server_sock, FD_SETSIZE ) == -1)
 	{
 		perror("Listen");
 		throw Server::GlobalServerExecption();
