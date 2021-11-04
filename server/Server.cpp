@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 17:12:22 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 18:53:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Server::Server(): _fd_users(), _name_channel()
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
-	if ( listen (this->_listen_server_sock, FD_SETSIZE ) == -1)
+	if ( listen (this->_listen_server_sock, FD_SETSIZE) == -1)
 	{
 		perror("Listen");
 		throw Server::GlobalServerExecption();
@@ -178,6 +178,7 @@ void Server::setNumReadSock( void )
 
 void Server::attendClients()
 {
+	
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -188,7 +189,13 @@ void Server::attendClients()
 			std::cout << "\r";
 			this->getCustomerRequest( this->_list_connected_user[i]);
 		}
+
 	}
+
+	/* if (FD_ISSET ( this->_list_connected_user[i], &this->_writes ))
+	{
+			
+	} */
 }
 
 
@@ -280,35 +287,45 @@ void Server::parse_command(int fd, std::string buff, char * str)
 
 void Server::getCustomerRequest( int fd_client )
 {
-	char		buffer[512];
+	char		buffer[513];
+	std::string	tmp;
+	std::string tmp2;
 	User		*usr;
+	int 		byte;
+	size_t		pos;
 	
 	usr = this->_fd_users[ fd_client ];
-	memset(buffer, 0, sizeof(buffer));
-	int byte = recv(fd_client, buffer, 512, 0);
-	
-	if ( !byte )
-		this->deleteUser( fd_client );
-	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
+
+	tmp = usr->getBufferCmd();
+
+	while ( (byte = recv(fd_client, buffer, 512, 0)) > 0)
 	{
-		std::string buffer_cmd = usr->getBufferCmd() + buffer;
-		usr->setBufferCmd( buffer_cmd );
+		buffer[byte] = '\0';
+		tmp += buffer;
 	}
-	else
+
+	if ( tmp.length() == 0 )
+		this->deleteUser( fd_client );
+
+	while ( tmp.length() )
 	{
-		if ( usr->getBufferCmd().length() > 0 )
+		if ( (( pos = tmp.find('\r') ) != std::string::npos && tmp[pos + 1 ] == '\n') || ( pos = tmp.find('\n') ) != std::string::npos )
 		{
-			std::string buff2 ( usr->getBufferCmd() + buffer );
-			std::string buff3 ( usr->getBufferCmd() + buffer );
-			this->parse_command(fd_client, buff2 , &buff3[0] );
-			usr->setBufferCmd( "" );
+			tmp2 = tmp.substr(0, pos + 1);
+			tmp.erase(0, pos + 1);
+			if (tmp2.length() > 510 )
+				tmp2 = tmp2.substr(0, 510);
+			this->parse_command( fd_client, tmp2, &tmp2[0] );
+			usr->setBufferCmd("");
 		}
 		else
 		{
-			std::string buff2 ( buffer );
-			this->parse_command( fd_client, buff2, buffer );
+			std::string buffer_cmd = usr->getBufferCmd() + tmp;
+			usr->setBufferCmd( buffer_cmd );
+			tmp.clear();
 		}
 	}
+
 	this->reStartSendMsg();
 }
 
@@ -480,3 +497,4 @@ void Server::welcome( int const & fd )
 	send_reply(RPL_ENDOFMOTD, " :End of message of the day", this->_fd_users[fd]);
 
 }
+

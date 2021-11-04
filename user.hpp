@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 20:43:10 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 18:21:23 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class User
 		std::string					_realName;
 		std::string					_ping;
 		std::string					_buffer_cmd;
+		
 		user_modes					_modes;
 		int							_sock_fd;
 		bool						_is_registered;

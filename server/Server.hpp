@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:46:43 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 18:49:32 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include "../user.hpp"
 # include "../channel.hpp"
 # include "../utils.hpp"
+# include <deque>
 
 
 # define PORT 6667
@@ -90,10 +91,13 @@ class Server
 		struct sockaddr_in 				_addr_server;
 		struct timeval					_time_out;
 		fd_set							_reads;
-
+		fd_set							_writes;
 		int								_num_read_sock;
 		int								_listen_server_sock;
 		int								_highsock;
+
+		// std::deque<ft::pair>			_send_message;
+		
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
