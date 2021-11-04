@@ -39,10 +39,9 @@ void    Server::join_channel(std::string str1, int & fd)
         send_message_channel(s, this->_fd_users[fd], this->_name_channel[str1]);
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_USERS," " + this->_name_channel[str1]->userList(), this->_fd_users[fd]);
+        this->names_command(&this->_name_channel[str1]->getName()[0], fd);
         if (this->_name_channel[str1]->getTopic().size() > 0)
             send_reply(RPL_TOPIC, " JOIN :" + str1 + " " + this->_name_channel[str1]->getTopic(), this->_fd_users[fd]);
-        send_reply(RPL_NOTOPIC, " JOIN :" + str1, this->_fd_users[fd]);
     }
     else
     {
@@ -50,9 +49,9 @@ void    Server::join_channel(std::string str1, int & fd)
         this->_name_channel[str1] = new Channel(str1, this->_fd_users[fd]);
         this->_name_channel[str1]->addUser(this->_fd_users[fd]);
         this->_fd_users[fd]->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_NOTOPIC, " JOIN :" + str1, this->_fd_users[fd]);
-        send_reply(RPL_USERS, " :" + this->_name_channel[str1]->userList(), this->_fd_users[fd]);
-		send_reply(RPL_ENDOFNAMES	," " + this->_name_channel[str1]->getName() + " :End of /NAMES list", this->_fd_users[fd]);
+        std::string messages = "JOIN :" + str1;
+        send_message(messages, fd, this->_fd_users[fd]);
+        this->names_command(&this->_name_channel[str1]->getName()[0], fd);
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/02 19:40:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 19:13:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,6 @@ void Server::names_command(char *buffer , int fd )
 
 	flags = false;
 
-	buffer  = buffer  + 5;
-	while (*buffer  == ' ')
-		buffer ++;
-	if (*buffer == ':')
-		buffer++;
-
 	usr = this->_fd_users.at( fd );
 	std::vector<std::string> token = split(buffer, ',');
 
@@ -42,7 +36,7 @@ void Server::names_command(char *buffer , int fd )
 		{
 			if ( channel->isInvite() && channel->isUser( this->_fd_users[fd]->getNick() ) )
 			{
-				message = " * " + channel->getName() + " :" + channel->userListNames();
+				message = " * " + channel->getName() + " :" + channel->userList();
 				send_reply(RPL_NAMREPLY, message, usr);
 				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
 				flags = true;
@@ -50,7 +44,7 @@ void Server::names_command(char *buffer , int fd )
 			else if ( !channel->isInvite() )
 			{
 
-				message = " = " + channel->getName() + " :" + channel->userListNames();
+				message = " = " + channel->getName() + " :" + channel->userList();
 				send_reply(RPL_NAMREPLY, message, usr);
 				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
 				flags = true;

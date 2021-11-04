@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 19:31:25 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 21:39:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,6 +198,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	std::string	buff2;
 	size_t		pos;
 
+
+	std::cout << buff + " ****\n";
 	while (*str == ' ')
 	{
 		buff.erase(buff.begin());
@@ -264,7 +266,15 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if ( command == "LIST" || command == "list")
 			this->list_command( str, fd );
 		else if ( command == "NAMES" || command == "names")
+		{
+			str = str  + 5;
+			while (*str  == ' ')
+				str ++;
+			if (*str == ':')
+				str++;
 			this->names_command( str, fd );
+			
+		}
 	}
 }
 
@@ -436,19 +446,19 @@ void		Server::reStartSendMsg()
 void Server::welcome( int const & fd )
 {
 	User *usr = this->_fd_users[ fd ];
-	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/     " RED"    / // /  |__ \\ "WHITE;
-	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /        " RED"   / // /_  __/ / "WHITE;
-	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /         " RED"  /__  __/ / __/      "WHITE;
-	std::string part4 = BLUE"         \\____/   /_/ /_/   /_/  |_|/_/         " RED"     /_/   /____/ "WHITE;
-	std::string part5 = GREEN"                      / ____/ /_  __/     /  _/   / __ \\  / ____/ "WHITE;
-	std::string part6 = GREEN"                     / /_      / /        / /    / /_/ / / /      "WHITE;
-	std::string part7 = GREEN"                    / __/     / /       _/ /    / _, _/ / /___   "WHITE;
-	std::string part8 = GREEN"                   /_/       /_/ ______/___/   /_/ |_|  \\____/"WHITE;
-	std::string part9 = GREEN"                                /_____/                           "WHITE;
+	std::string part1 = "           / ____/   / / / /   /   | /_  __/          / // /  |__ \\ ";
+	std::string part2 = "          / /       / /_/ /   / /| |  / /            / // /_  __/ / ";
+	std::string part3 = "         / /___    / __  /   / ___ | / /            /__  __/ / __/      ";
+	std::string part4 = "         \\____/   /_/ /_/   /_/  |_|/_/               /_/   /____/ ";
+	std::string part5 = "                      / ____/ /_  __/     /  _/   / __ \\  / ____/ ";
+	std::string part6 = "                     / /_      / /        / /    / /_/ / / /      ";
+	std::string part7 = "                    / __/     / /       _/ /    / _, _/ / /___   ";
+	std::string part8 = "                   /_/       /_/ ______/___/   /_/ |_|  \\____/";
+	std::string part9 = "                                /_____/                           ";
 
 
 	
-	std::string part10 = BLUE"         Welcome: "RED + usr->getNick() + ""WHITE;
+	std::string part10 = "         Welcome: " + usr->getNick();
 	
 	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + usr->getNick() + "!" + usr->getUserName() + "@"+ this->_fd_users[fd]->getIp() , usr);
 	send_reply(RPL_YOURHOST, " :Your host is ft_irc.com, running version v:0.42",  this->_fd_users[fd]);
