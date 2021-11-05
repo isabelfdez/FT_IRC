@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 16:00:18 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:05:53 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ class Server
 		std::string						_password_oper;
 
 	public:
-		Server();
+		Server(int port);
 		~Server();
 
 		

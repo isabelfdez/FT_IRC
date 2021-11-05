@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:51:58 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:09:06 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@
 # include <string.h>
 # include <arpa/inet.h>
 # include "user.hpp"
-#include <errno.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <chrono>
-#include <iomanip>
-#include <algorithm>
+# include <errno.h>
+# include <stdio.h>
+# include <sys/time.h>
+# include <chrono>
+# include <iomanip>
+# include <algorithm>
+# include <string>
 
 
 # define YELLOW	"\033[1;33m"
@@ -46,6 +47,8 @@
 bool						find_command(std::string command, std::list<std::string> commands);
 
 int		                    ft_max(int a , int b);
+int		                    get_port(char *str);
+
 
 
 
