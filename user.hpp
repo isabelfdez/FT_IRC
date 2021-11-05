@@ -102,6 +102,7 @@ class User
 		uint64_t					_lastTime;
 		uint64_t					_time_ping;
 		bool						_passState;
+		
 
 		struct sockaddr_in 			_addr;
 

@@ -54,14 +54,25 @@ void    Server::mode_command(char * str, int & fd)
             {
                 if (parse.size() < 4)
                     return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
-                if (!this->_name_channel[parse[1]]->isUser(parse[3]))
-                    return (send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", fd));
-                else if (this->_name_channel[parse[1]]->isOp(getUserWithNick(parse[3])) || getUserWithNick(parse[3])->getmode('o'))
-                    return (send_error("", parse[3] + " is Operator, cannot be banned", fd));
+                int pos0 = (parse[3].find('!') != std::string::npos ? parse[3].find('!') : 0);
+                std::string nick = parse[3].substr(0, pos0);
+                std::cout << "nick is " << nick << '\n';
+                int pos1 = (parse[3].find('@') != std::string::npos ? parse[3].find('@') : 0);
+                std::string user = parse[3].substr(pos0 + 1, pos1 - pos0 - 1);
+                std::cout << "user is " << user << '\n';
+                int pos2 = (parse[3].find('\r') != std::string::npos ? parse[3].find('\r') : 0);
+                std::string ip = parse[3].substr(pos1 + 1, pos2 - pos1 - 1);
+                if (!this->_name_channel[parse[1]]->isUser(nick))
+                    return (send_error(ERR_USERNOTINCHANNEL, nick + " MODE :Is not in that Channel", fd));
+                else if (this->_name_channel[parse[1]]->isOp(getUserWithNick(nick)) || getUserWithNick(nick)->getmode('o'))
+                    return (send_error("", nick + " is Operator, cannot be banned", fd));
                 else
                 {
-                    this->_name_channel[parse[1]]->ban(getUserWithNick(parse[3]));
-                    send_reply("", " :you have being banned from Channel " + parse[1], getUserWithNick(parse[3]));
+                    if (getUserWithNick(nick)->getUserName() == user && ip == "127.0.0.1")
+                    {
+                        this->_name_channel[parse[1]]->ban(getUserWithNick(nick));
+                        send_reply("", " :you have being banned from Channel " + parse[1], getUserWithNick(nick));
+                    }
                 }
             }
             else if (parse[2][1] == 'i')
@@ -89,6 +100,29 @@ void    Server::mode_command(char * str, int & fd)
             {
                 this->_name_channel[parse[1]]->setInvite(false);
 		        this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " doesn't need invitation\n", fd);
+            }
+            else if (parse[2][1] == 'b')
+            {
+                if (parse.size() < 4)
+                    return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
+                int pos0 = (parse[3].find('!') != std::string::npos ? parse[3].find('!') : 0);
+                std::string nick = parse[3].substr(0, pos0);
+                std::cout << "nick is " << nick << '\n';
+                int pos1 = (parse[3].find('@') != std::string::npos ? parse[3].find('@') : 0);
+                std::string user = parse[3].substr(pos0 + 1, pos1 - pos0 - 1);
+                std::cout << "user is " << user << '\n';
+                int pos2 = (parse[3].find('\r') != std::string::npos ? parse[3].find('\r') : 0);
+                std::string ip = parse[3].substr(pos1 + 1, pos2 - pos1 - 1);
+                if (!this->_name_channel[parse[1]]->isUser(nick))
+                    return (send_error(ERR_USERNOTINCHANNEL, nick + " MODE :Is not in that Channel", fd));
+                else if (this->_name_channel[parse[1]]->isBanned(getUserWithNick(nick)))
+                {
+                    if (getUserWithNick(nick)->getUserName() == user && ip == "127.0.0.1")
+                    {
+                        this->_name_channel[parse[1]]->banOff(getUserWithNick(nick));
+                        send_reply("", " :you have being unbanned from Channel " + parse[1], getUserWithNick(nick));
+                    }
+                }
             }
         }
         else
@@ -120,7 +154,6 @@ void    Server::mode_command(char * str, int & fd)
         {
             while (parse[2][j])
             {
-                std::cout << "El caracter es " << parse[2][j] << '\n';
                 if (parse[2][j] == 'o')
                 {
                     if (!this->_fd_users[fd]->getmode('o'))
@@ -143,7 +176,6 @@ void    Server::mode_command(char * str, int & fd)
         {
             while (parse[2][j])
             {
-                std::cout << "El caracter es " << parse[2][j] << '\n';
                 if (parse[2][j] == 'o')
                 {
                     if (this->_fd_users[fd]->getmode('o'))

@@ -18,8 +18,9 @@ void    Server::nick_command(char * str, int & fd)
     std::vector<std::string> parse;
 
     std::string s;
+    User        *usr = this->_fd_users[fd];
     
-    if (!this->_fd_users[fd]->getPassState())
+    if (!usr->getPassState())
 		return send_error(ERR_NOPASSWD, "NICK :No password entered", fd);
     str = str + 4;
     while (*str == ' ')
@@ -27,29 +28,11 @@ void    Server::nick_command(char * str, int & fd)
 	if (*str && *str== ':')
 		str++;
     parse = split(str, ' ');
-    size_t i = 0;
     if (!parse.size())
         return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
     else if (parse.size() > 1)
     {
         s.assign(str);
-        s.append(" :Erroneous nickname");
-        return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
-    }
-    while (i < parse.size() && parse[i].size() )
-        i++;
-    std::cout << "el i es " << i << '\n';
-    // Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)      
-    if (i > 1 && parse[1].size())
-    {
-        i = 0;
-        while (parse[i].size())
-        {
-            s.append(parse[i]);
-            if (parse[i + 1].size())
-                s.append(" ");
-            i++;
-        }
         s.append(" :Erroneous nickname");
         return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
     }
@@ -80,8 +63,8 @@ void    Server::nick_command(char * str, int & fd)
     {
         if (ft_toupper(*it) == ft_toupper(parse[0]))
         {
-            if ((this->_fd_users[fd]->getNick().size() && (ft_toupper(*it) != ft_toupper(this->_fd_users[fd]->getNick())))
-                 || !this->_fd_users[fd]->getNick().size())
+            if ((usr->getNick().size() && (ft_toupper(*it) != ft_toupper(usr->getNick())))
+                 || !usr->getNick().size())
             {
                 s.append(parse[0]);
                 s.append(" :Nickname is already in use");
@@ -91,12 +74,12 @@ void    Server::nick_command(char * str, int & fd)
     }
     // Si hemos llegado hasta aquí, el nick recibido es válido
     // CASO 1: El usuario ya tenía nick y está solicitando un cambio
-    if (this->_fd_users[fd]->getNick().size())
+    if (usr->getNick().size())
     {
         // PASO 1: Borrar su antiguo nick de la lista de nicks
         for (std::list<std::string>::iterator it = this->_nicks.begin(); it != this->_nicks.end(); ++it)
         {
-            if ((*it) == this->_fd_users[fd]->getNick())
+            if ((*it) == usr->getNick())
                 it = this->_nicks.erase(it);
         }           
         // PASO 2: Añadir el nuevo nick a la lista de nicks
@@ -105,37 +88,37 @@ void    Server::nick_command(char * str, int & fd)
         // PASO 3: Notificar el cambio a los usuarios que compartan canal con él
         typedef std::list<Channel *>::iterator it_channel;
 
-        it_channel start = this->_fd_users[fd]->getChannels().begin();
-        it_channel end = this->_fd_users[fd]->getChannels().end();
+        it_channel start = usr->getChannels().begin();
+        it_channel end = usr->getChannels().end();
         std::string s;
         for (; start != end ; ++start)
         {
             s.assign("NICK :");
             s.append(parse[0]);
-            send_message_channel_block(s, this->_fd_users[fd], *start);
+            send_message_channel_block(s, usr, *start);
         }
 
         // PASO 4: Cambiar el nick del usuario      
-        this->_fd_users[fd]->setNick(parse[0]);
+        usr->setNick(parse[0]);
     }
     // CASO 2: El usuario se asigna un nick por primera vez
-    else if (!this->_fd_users[fd]->getNick().size())
+    else if (!usr->getNick().size())
     {
         // PASO 1: Añadir el nuevo nick a la lista de nicks
         this->_nicks.push_back(parse[0]);
         // PASO 2: Cambiar el nick del usuario      
-        this->_fd_users[fd]->setNick(parse[0]);
+        usr->setNick(parse[0]);
     }
     // Por último, miramos si esta llamada a NICK ha hecho que el usuario complete su proceso de registro
-    if (this->_fd_users[fd]->getUserName().size() > 0 && !this->_fd_users[fd]->getRegistered())
+    if (usr->getUserName().size() > 0 && !usr->getRegistered())
     {
         // Cambiamos el valor del estado de registro
-        this->_fd_users[fd]->setRegistered(true);
+        usr->setRegistered(true);
         // Añadimos el usuario a la lista de usuarios
-        this->_connected_users.push_back(this->_fd_users[fd]);
-        this->_fd_users[fd]->setTimePing(0);
+        this->_connected_users.push_back(usr);
+        usr->setTimePing(0);
   
-	    displayLog("User created", "", this->_fd_users[fd]);
+	    displayLog("User created", "", usr);
 
     }
 }
