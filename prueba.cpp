@@ -4,23 +4,26 @@
 #include <iostream>
 #include <iomanip>
 
-void displayLog( std::string const & log )
-{
-	int len = 15;
-	std::cout << std::setfill('.')  << std::setw(30) << log.substr(0,25)  ;
-	std::cout  << " IP: " <<  log.length();
-	std::cout << " Socket: " << std::endl;
-}
+template <unsigned int n>
+struct factorial {
+	enum 
+	{
+		value = n * factorial<n - 1>::value
+	};
+};
 
+template <>
+struct factorial<0> {
+	enum 
+	{
+		 value = 1 
+	};
+};
 
 int main ()
 {
-	std::string prueba = "hola mundo colombia madrid";
 
-	displayLog(prueba);
-
-	std::string prueba2 = "hola mundo";
-	displayLog(prueba2);
+	std::cout << factorial<5>::value << std::endl; 
 
 
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 16:11:01 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 02:44:20 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include "../user.hpp"
 # include "../channel.hpp"
 # include "../utils.hpp"
+# include <deque>
 
 
 # define PORT 6667
@@ -65,7 +66,10 @@
 
 // Definiciones de replys
 # define RPL_WELCOME				"001"
-# define  RPL_LIST					"322"
+# define RPL_YOURHOST				"002"
+# define RPL_CREATE					"003"
+# define RPL_MYINFO					"004"
+# define RPL_LIST					"322"
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
 # define RPL_TOPIC					"332"
@@ -87,17 +91,19 @@ class Server
 		struct sockaddr_in 				_addr_server;
 		struct timeval					_time_out;
 		fd_set							_reads;
-
+		fd_set							_writes;
 		int								_num_read_sock;
 		int								_listen_server_sock;
 		int								_highsock;
+
+		std::deque<User *>				_send_message;
+		
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
 
 		std::list<std::string>			_nicks;
 		std::list<User *>				_connected_users;
-		std::list<User *>				_opers;
 		std::string						_password_oper;
 
 	public:
@@ -118,7 +124,7 @@ class Server
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 
-		
+		bool			isAnswerUser( User *usr );
 		void			setNumReadSock( void );
 		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
@@ -129,7 +135,6 @@ class Server
 		size_t			getNumUser( void )		const;//krios-fu
 		User			*getUserWithNick(std::string);
 		bool			isUsr(std::string);
-		bool			isOper(std::string);
 		bool			isChannel(std::string);
 
 		void			deleteChannel( std::string );
@@ -166,6 +171,13 @@ class Server
 		void			welcome( int const & fd );
 		void			reStartSendMsg();
 
+		void						send_message(std::string & message, int & fd, User * usr);
+		void						send_message_channel(std::string & message, User * usr, Channel * chnl);
+		void						send_message_channel_block(std::string & message, User * usr, Channel * chnl);
+		void						send_error(std::string error, std::string str, int fd);
+		void						send_reply(std::string replay, std::string str, User * usr);
+		void						sendRequest(User *user);
+		void						deleteDequeUser ( User *user );
 
 };
 

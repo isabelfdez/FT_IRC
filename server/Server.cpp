@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 18:42:08 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 12:47:10 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Server::Server(): _fd_users(), _name_channel()
 	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
+	FD_ZERO(&this->_writes);
 	this->_listen_server_sock = 0;
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
@@ -55,7 +56,7 @@ Server::Server(): _fd_users(), _name_channel()
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
-	if ( listen (this->_listen_server_sock, 5) == -1)
+	if ( listen (this->_listen_server_sock, FD_SETSIZE) == -1)
 	{
 		perror("Listen");
 		throw Server::GlobalServerExecption();
@@ -112,7 +113,13 @@ Server::~Server()
 
 void Server::build_select_list( void )
 {
+	typedef std::deque<User *>::iterator it_user;
+	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
 	FD_ZERO( &this->_reads );
+	FD_ZERO( &this->_writes );
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -123,6 +130,12 @@ void Server::build_select_list( void )
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
+	}
+	for (; start != end; ++start)
+	{
+		FD_SET( (*start)->getsockfd(), &this->_writes);
+		std::cout << "[[[ build deque FD_SET ]] \n";
+		
 	}
 }
 
@@ -173,11 +186,23 @@ void Server::setNumReadSock( void )
 {
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
-	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, (fd_set *) 0, (fd_set *) 0 , &this->_time_out);
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
 }
 
 void Server::attendClients()
 {
+	typedef std::deque<User *>::iterator it_user;
+	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
+	for (; start != end; ++start )
+	{
+		std::cout << "[ 42  ]  " + (*start)->getNick() << std::endl;
+		if ( FD_ISSET( (*start)->getsockfd(), &this->_writes) )
+			this->sendRequest( *start );
+	}
+
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -188,7 +213,15 @@ void Server::attendClients()
 			std::cout << "\r";
 			this->getCustomerRequest( this->_list_connected_user[i]);
 		}
+
 	}
+
+
+
+	/* if (FD_ISSET ( this->_list_connected_user[i], &this->_writes ))
+	{
+			
+	} */
 }
 
 
@@ -197,6 +230,7 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	std::string	command;
 	std::string	buff2;
 	size_t		pos;
+
 
 	while (*str == ' ')
 	{
@@ -264,52 +298,62 @@ void Server::parse_command(int fd, std::string buff, char * str)
 		else if ( command == "LIST" || command == "list")
 			this->list_command( str, fd );
 		else if ( command == "NAMES" || command == "names")
+		{
+			str = str  + 5;
+			while (*str  == ' ')
+				str ++;
+			if (*str == ':')
+				str++;
 			this->names_command( str, fd );
+			
+		}
 	}
 }
 
 void Server::getCustomerRequest( int fd_client )
 {
-	char		buffer[512];
+	char		buffer[513];
+	std::string	tmp;
+	std::string tmp2;
 	User		*usr;
+	int 		byte;
+	size_t		pos;
 	
 	usr = this->_fd_users[ fd_client ];
-	memset(buffer, 0, sizeof(buffer));
-	int byte = recv(fd_client, buffer, 512, 0);
-	
-	if ( !byte )
-		this->deleteUser( fd_client );
-	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
+
+	tmp = usr->getBufferCmd();
+
+	while ( (byte = recv(fd_client, buffer, 512, 0)) > 0)
 	{
-		std::string buffer_cmd = usr->getBufferCmd() + buffer;
-		usr->setBufferCmd( buffer_cmd );
+		buffer[byte] = '\0';
+		tmp += buffer;
 	}
-	else
+
+	if ( tmp.length() == 0 )
+		this->deleteUser( fd_client );
+
+	while ( tmp.length() )
 	{
-		if ( usr->getBufferCmd().length() > 0 )
+		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
-			std::string buff2 ( usr->getBufferCmd() + buffer );
-			std::string buff3 ( usr->getBufferCmd() + buffer );
-			this->parse_command(fd_client, buff2 , &buff3[0] );
-			usr->setBufferCmd( "" );
+			// std::cout << "\n[["+ tmp +"]]\n";
+			tmp2 = tmp.substr(0, pos + 1);
+		    tmp.erase(0, pos + 1);
+
+			if (tmp2.length() > 510 )
+				tmp2 = tmp2.substr(0, 510);
+			this->parse_command( fd_client, tmp2, &tmp2[0] );
+			usr->setBufferCmd("");
 		}
 		else
 		{
-			std::string buff2 ( buffer );
-			this->parse_command( fd_client, buff2, buffer );
+			std::string buffer_cmd = usr->getBufferCmd() + tmp;
+			usr->setBufferCmd( buffer_cmd );
+			tmp.clear();
 		}
 	}
-	this->reStartSendMsg();
-}
 
-bool			Server::isOper(std::string usr)
-{
-	for (std::list<User*>::iterator it = _opers.begin(); it != _opers.end(); it++)
-	{
-		if ((*it)->getNick() == usr)
-			return true;
-	}
-	return false;
+	this->reStartSendMsg();
 }
 
 bool			Server::isUsr(std::string usr)
@@ -406,7 +450,11 @@ void Server::deleteUser( int const & fd )
 	
 	for (; channel != end; ++channel )
 	{
-		(*channel)->deleteUser( tmp_usr );
+		if ((*channel)->deleteUser( tmp_usr ))
+		{
+			std::string messages = "has left the channel " + (*channel)->getName();
+			send_message_channel( messages , tmp_usr, (*channel));
+		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
@@ -417,8 +465,8 @@ void Server::deleteUser( int const & fd )
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	this->_nicks.remove( tmp_usr->getNick() );
 	this->deleteBan(tmp_usr);
+	this->deleteDequeUser(tmp_usr);
 	delete tmp_usr;
-
 }
 
 void	Server::deleteBan( User *user)
@@ -443,36 +491,43 @@ void		Server::reStartSendMsg()
 	}
 }
 
+
+
 void Server::welcome( int const & fd )
 {
-	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/     " RED"    / // /  |__ \\ "WHITE;
-	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /        " RED"   / // /_  __/ / "WHITE;
-	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /         " RED"  /__  __/ / __/      "WHITE;
-	std::string part4 = BLUE"         \\____/   /_/ /_/   /_/  |_|/_/         " RED"     /_/   /____/ "WHITE;
-	std::string part5 = GREEN"                      / ____/ /_  __/     /  _/   / __ \\  / ____/ "WHITE;
-	std::string part6 = GREEN"                     / /_      / /        / /    / /_/ / / /      "WHITE;
-	std::string part7 = GREEN"                    / __/     / /       _/ /    / _, _/ / /___   "WHITE;
-	std::string part8 = GREEN"                   /_/       /_/ ______/___/   /_/ |_|  \\____/"WHITE;
-	std::string part9 = GREEN"                                /_____/                           "WHITE;
+	User *usr = this->_fd_users[ fd ];
+	std::string part1 = "           / ____/   / / / /   /   | /_  __/          / // /  |__ \\ ";
+	std::string part2 = "          / /       / /_/ /   / /| |  / /            / // /_  __/ / ";
+	std::string part3 = "         / /___    / __  /   / ___ | / /            /__  __/ / __/      ";
+	std::string part4 = "         \\____/   /_/ /_/   /_/  |_|/_/               /_/   /____/ ";
+	std::string part5 = "                      / ____/ /_  __/     /  _/   / __ \\  / ____/ ";
+	std::string part6 = "                     / /_      / /        / /    / /_/ / / /      ";
+	std::string part7 = "                    / __/     / /       _/ /    / _, _/ / /___   ";
+	std::string part8 = "                   /_/       /_/ ______/___/   /_/ |_|  \\____/";
+	std::string part9 = "                                /_____/                           ";
 
 
 	
-	std::string part10 = BLUE"         Welcome: "RED + this->_fd_users[fd]->getNick() + ""WHITE;
+	std::string part10 = "         Welcome: " + usr->getNick();
 	
-	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + this->_fd_users[fd]->getNick() + "!" + this->_fd_users[fd]->getUserName() + "@" + this->_fd_users[fd]->getIp() , this->_fd_users[ fd ]);
+	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + usr->getNick() + "!" + usr->getUserName() + "@"+ this->_fd_users[fd]->getIp() , usr);
+	send_reply(RPL_YOURHOST, " :Your host is ft_irc.com, running version v:0.42",  this->_fd_users[fd]);
+	send_reply(RPL_CREATE, " :This server was creates 12:42:42 Oct 14 2021", this->_fd_users[fd]);
+	send_reply(RPL_MYINFO, " :ft_irc v:0.42 io iobl", this->_fd_users[fd]);
 	send_reply(RPL_MOTDSTART, " :ft_irc.com message of the day", this->_fd_users[fd]);
-	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part1, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part2, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part3, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part4, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" , this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part5, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part6, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part7, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part8, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part9, this->_fd_users[ fd ]);
-	send_reply(RPL_MOTD, " :" + part10, this->_fd_users[ fd ]);
+	send_reply(RPL_MOTD, " :" , usr);
+	send_reply(RPL_MOTD, " :" + part1, usr);
+	send_reply(RPL_MOTD, " :" + part2, usr);
+	send_reply(RPL_MOTD, " :" + part3, usr);
+	send_reply(RPL_MOTD, " :" + part4, usr);
+	send_reply(RPL_MOTD, " :" , usr);
+	send_reply(RPL_MOTD, " :" + part5, usr);
+	send_reply(RPL_MOTD, " :" + part6, usr);
+	send_reply(RPL_MOTD, " :" + part7, usr);
+	send_reply(RPL_MOTD, " :" + part8, usr);
+	send_reply(RPL_MOTD, " :" + part9, usr);
+	send_reply(RPL_MOTD, " :" + part10, usr);
 	send_reply(RPL_ENDOFMOTD, " :End of message of the day", this->_fd_users[fd]);
 
 }
+

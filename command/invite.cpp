@@ -32,7 +32,7 @@ void	Server::invite_command(char * str, int & fd)
 		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], this->_fd_users[fd]);
 		return ;
 	}
-	else if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[parse[2]]->isOp(this->_fd_users[fd]))
+	else if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[parse[2]]->isOp(this->_fd_users[fd]))
         return (send_error(ERR_CHANOPRIVSNEEDED, parse[2] + " :You are not a channel operator", fd));
 	else
 	{

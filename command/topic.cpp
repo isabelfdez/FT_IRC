@@ -18,7 +18,7 @@ void	Server::topic_command(char * str, int & fd)
 		return (send_error(ERR_NEEDMOREPARAMS, "TOPIC :Not enough parameters", fd));
 	if (!this->_name_channel.count(parse[1]))
 		return (send_error(ERR_NOSUCHCHANNEL, parse[1] + " :No such channel", fd));
-	if (!this->isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]))
+	if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]))
 		return (send_error(ERR_CHANOPRIVSNEEDED, parse[2] + " :You are not a channel operator", fd));
 	else if (message.size() == 0)
 	{

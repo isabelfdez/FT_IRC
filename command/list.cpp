@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/10/31 23:20:17 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 21:41:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,12 @@ void Server::list_command( char *buffer, int fd)
 		for (; start != end ; ++start )
 		{
 			channel = start->second;
-			message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :" + channel->getTopic();
-			send_reply(RPL_LIST, message, usr);
+			if ( channel->isInvite() )
+			{
+				message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :" + channel->getTopic();
+				send_reply(RPL_LIST, message, usr);
+				
+			}
 		}
 	}
 	for (size_t i = 0; i < token.size(); i++)
@@ -49,8 +53,11 @@ void Server::list_command( char *buffer, int fd)
 		channel = this->_name_channel[ token[i] ];
 		if ( channel )
 		{
-			 message = " " + channel->getName() + " " + std::to_string(channel->getNumUser())	 + " : " + channel->getTopic();
-			 send_reply(RPL_LIST, message, usr);
+			// if ( !channel->isInvite() ) // comment
+			// {
+				 message = " " + channel->getName() + " " + std::to_string(channel->getNumUser())	 + " : " + channel->getTopic();
+				 send_reply(RPL_LIST, message, usr);
+			// }
 		}
 	}
 	send_reply(RPL_LISTEND, " :End of channel list", usr);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:33:40 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 15:16:49 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/04 23:24:30 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,17 @@ void	Server::kick_command(char *str, int & fd)
     {
         if (!isChannel(v_channels.front()))
                 return (send_error(ERR_NOSUCHCHANNEL, v_channels.front() + " :No such channel", fd));
-        if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[v_channels.front()]->isOp(this->_fd_users[fd]))
+        if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[v_channels.front()]->isOp(this->_fd_users[fd]))
             return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", fd));
         for (it1 = v_users.begin(); it1 != v_users.end(); it1++)
         {
             if (this->_name_channel[v_channels.front()]->isUser(*it1))
             {
-                this->_name_channel[v_channels.front()]->deleteUser(getUserWithNick(*it1));
+                if (this->_name_channel[v_channels.front()]->deleteUser(getUserWithNick(*it1)))
+                   {
+                        std::string messages = "has left the channel " + this->_name_channel[v_channels.front()]->getName();
+			            send_message_channel( messages , getUserWithNick(*it1), this->_name_channel[v_channels.front()]);
+                   }
                 send_reply("", " KICK: you have being kicked from channel " + v_channels.front() + " " + message, getUserWithNick(*it1));
                 getUserWithNick(*it1)->deleteChannel(this->_name_channel[v_channels.front()]);
                 if (this->_name_channel[v_channels.front()]->getUsers().size() < 1)
@@ -72,11 +76,17 @@ void	Server::kick_command(char *str, int & fd)
         {
             if (!isChannel(*it2))
                 return (send_error(ERR_NOSUCHCHANNEL, (*it2) + " :No such channel", fd));
-            if (!isOper(this->_fd_users[fd]->getNick()) && !this->_name_channel[(*it2)]->isOp(this->_fd_users[fd]))
+            if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[(*it2)]->isOp(this->_fd_users[fd]))
                 return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", fd));
             if (this->_name_channel[(*it2)]->isUser(*it1))
             {
-                this->_name_channel[(*it2)]->deleteUser(getUserWithNick(*it1));
+                if (this->_name_channel[(*it2)]->deleteUser(getUserWithNick(*it1)))
+                {
+                    std::string messages = "has left the channel " + this->_name_channel[*it2]->getName();
+			        send_message_channel( messages , getUserWithNick(*it1), this->_name_channel[*it2]);
+                }
+
+                
                 send_reply("", " :You have being kicked from channel " + v_channels.front() + " " + message, getUserWithNick(*it1));
                 getUserWithNick(*it1)->deleteChannel(this->_name_channel[(*it2)]);
                 if (this->_name_channel[(*it2)]->getUsers().size() < 1)
