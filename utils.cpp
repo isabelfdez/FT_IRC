@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 17:25:36 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:59:37 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,23 @@ static int		ft_atoi(const char *str)
 
 int		get_port(char *str)
 {
+	int ret;
+
 	if (ft_strlen(str) > 10)
-		return (0);
+	{
+		std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+		return (6667);
+	}
 	else
-		return (ft_atoi(str));
+	{
+		ret = ft_atoi(str);
+		if (ret < 1 || ret > 65535)
+		{
+			std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+			return (6667);
+		}
+		return (ret);
+	}
 }
 
 static int	ft_countwords(char const *s, char c)

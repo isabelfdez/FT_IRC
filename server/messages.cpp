@@ -19,7 +19,6 @@ void    Server::send_message(std::string & _message, int & fd, User * usr)
 
 	if ( !this->isAnswerUser( dest ) )
 		this->_send_message.push_back( dest );
-    // send(fd, mask.c_str(), mask.length(), 0);
 }
 
 void    Server::send_message_channel(std::string & message, User * usr, Channel * chnl)
@@ -30,7 +29,6 @@ void    Server::send_message_channel(std::string & message, User * usr, Channel 
 
 	it_user start = chnl->getUsers().begin();
 	it_user end = chnl->getUsers().end();
-    //str.append(usr->getMask());
     mask.append(":");
     mask.append(usr->getNick());
     mask.append("!");
@@ -49,10 +47,7 @@ void    Server::send_message_channel(std::string & message, User * usr, Channel 
 			if ( !this->isAnswerUser( (*start) ) )
 				this->_send_message.push_back( (*start) );
 		}
-			
-			// send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
 	}
-    // chnl->sendMsgChannel(mask, usr->getsockfd());
 }
 
 void    Server::send_message_channel_block(std::string & message, User * usr, Channel * chnl)
@@ -63,7 +58,6 @@ void    Server::send_message_channel_block(std::string & message, User * usr, Ch
 	it_user start = chnl->getUsers().begin();
 	it_user end = chnl->getUsers().end();
 
-    //str.append(usr->getMask());
     mask.append(":");
     mask.append(usr->getNick());
     mask.append("!");
@@ -83,9 +77,7 @@ void    Server::send_message_channel_block(std::string & message, User * usr, Ch
 				this->_send_message.push_back( (*start) );
 			(*start)->setIsSendMsg( true );
 		}
-			// send((*it)->getsockfd(), msg.c_str(), msg.length(), 0);
 	}
-    // chnl->sendMsgChannelBlock(mask, usr->getsockfd());
 }
 
 void	Server::send_reply(std::string reply, std::string str, User * usr)

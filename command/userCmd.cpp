@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   userCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/05 15:15:51 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 18:10:29 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,14 @@ void	Server::user_command( int fd, char *buffer )
 		return send_error(ERR_USERNAMEINVALID, " USER :Your username is not valid", fd);
 	usr->setUserName(token[0]);
 	usr->setmode(token[1][0], true);
-	usr->setRealName(token[3]);
+	if ( token[3][0] == ':')
+	{
+		std::string aux = buffer;
+		aux = aux.substr(aux.find(':') + 1, aux.length());
+		usr->setRealName(aux);
+	}
+	else
+		usr->setRealName(token[3]);
 	if ( usr->getNick().size() > 0 && !usr->getRegistered() )
 	{
 		usr->setRegistered(true);

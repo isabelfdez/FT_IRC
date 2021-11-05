@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 17:17:20 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 19:29:47 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,11 +134,7 @@ void Server::build_select_list( void )
 		}
 	}
 	for (; start != end; ++start)
-	{
 		FD_SET( (*start)->getsockfd(), &this->_writes);
-		std::cout << "[[[ build deque FD_SET ]] \n";
-		
-	}
 }
 
 
@@ -205,11 +201,8 @@ void Server::attendClients()
 	it_user end = this->_send_message.end();
 	
 	for (; start != end; ++start )
-	{
-		std::cout << "[ 42  ]  " + (*start)->getNick() << std::endl;
 		if ( FD_ISSET( (*start)->getsockfd(), &this->_writes) )
 			this->sendRequest( *start );
-	}
 
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
@@ -223,13 +216,6 @@ void Server::attendClients()
 		}
 
 	}
-
-
-
-	/* if (FD_ISSET ( this->_list_connected_user[i], &this->_writes ))
-	{
-			
-	} */
 }
 
 
@@ -347,13 +333,15 @@ void Server::getCustomerRequest( int fd_client )
 	{
 		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
-			// std::cout << "\n[["+ tmp +"]]\n";
 			tmp2 = tmp.substr(0, pos + 1);
-		    tmp.erase(0, pos + 1);
+			tmp.erase(0, pos + 1);
 
 			if (tmp2.length() > 510 )
 				tmp2 = tmp2.substr(0, 510);
-			this->parse_command( fd_client, tmp2, &tmp2[0] );
+			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
+			{
+				this->parse_command( fd_client, tmp2, &tmp2[0] );
+			}
 			usr->setBufferCmd("");
 		}
 		else

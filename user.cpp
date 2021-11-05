@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:04:27 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 19:22:03 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,7 @@ std::string				User::getChannelsString()
 	std::string s;
 
 	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
-	{
 		s += (*it)->getName() + ",";
-	}
-		std::cout << s << "\n";
 	return (s);
 }
 
@@ -159,11 +156,9 @@ void	User::setRealName(std::string const &  realName) { this->_realName = realNa
 
 void	User::setAnswer(std::string const & answer)
 {
-	std::cout << "[[[ setAnswer ]] \n";
 
 	this->_answer.push_back( answer );
 }
- 
 
 void	User::setBufferCmd( std::string const & buffer_cmd )
 {

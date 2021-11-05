@@ -4,7 +4,6 @@
 #include <csignal>
 
 Server					*svr;
-// ESTA VARAIBLE GLOBAL SE USA?
 // HAY QUE COMPROBAR QUE EL RANGO DEL PUERTO ES BUENO
 
 void signal_kill ( int number )
