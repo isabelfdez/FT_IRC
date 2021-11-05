@@ -39,7 +39,8 @@ int main (int argc, char **argv)
 	int i = 1;
 	try 
 	{
-		Server server;
+		int port = get_port(argv[1]);
+		Server server(port);
 
 		svr = &server;
 		if (argc == 3)

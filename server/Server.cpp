@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:41:06 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:17:20 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void setnonblocking(int sock)
 	return;
 }
 
-Server::Server(): _fd_users(), _name_channel()
+Server::Server(int port): _fd_users(), _name_channel()
 {
 	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
@@ -47,7 +47,7 @@ Server::Server(): _fd_users(), _name_channel()
 	setnonblocking( this->_listen_server_sock );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
 	memset( (char *) &this->_addr_server, 0 , sizeof(this->_addr_server) );
-	this->_addr_server.sin_port = htons(PORT);
+	this->_addr_server.sin_port = htons(port);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
 	setsockopt(this->_listen_server_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));

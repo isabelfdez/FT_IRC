@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:16:47 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:34:23 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,25 @@ void    Server::nick_command(char * str, int & fd)
     str = str + 4;
     while (*str == ' ')
 		str++;
-	if (*str== ':')
+	if (*str && *str== ':')
 		str++;
     parse = split(str, ' ');
     size_t i = 0;
-    while (i < parse.size() && parse[i].size() )
-        i++;
     if (!parse.size())
         return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
+    else if (parse.size() > 1)
+    {
+        s.assign(str);
+        s.append(" :Erroneous nickname");
+        return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
+    }
+    while (i < parse.size() && parse[i].size() )
+        i++;
+    std::cout << "el i es " << i << '\n';
     // Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)      
-    else if (i > 1 && parse[1].size())
+    if (i > 1 && parse[1].size())
     {
         i = 0;
-
         while (parse[i].size())
         {
             s.append(parse[i]);
