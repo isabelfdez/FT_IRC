@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 18:49:32 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 02:44:20 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ class Server
 		int								_listen_server_sock;
 		int								_highsock;
 
-		// std::deque<ft::pair>			_send_message;
+		std::deque<User *>				_send_message;
 		
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
@@ -124,7 +124,7 @@ class Server
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 
-		
+		bool			isAnswerUser( User *usr );
 		void			setNumReadSock( void );
 		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
@@ -171,6 +171,13 @@ class Server
 		void			welcome( int const & fd );
 		void			reStartSendMsg();
 
+		void						send_message(std::string & message, int & fd, User * usr);
+		void						send_message_channel(std::string & message, User * usr, Channel * chnl);
+		void						send_message_channel_block(std::string & message, User * usr, Channel * chnl);
+		void						send_error(std::string error, std::string str, int fd);
+		void						send_reply(std::string replay, std::string str, User * usr);
+		void						sendRequest(User *user);
+		void						deleteDequeUser ( User *user );
 
 };
 

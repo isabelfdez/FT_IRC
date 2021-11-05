@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 18:21:23 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 22:19:24 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <netinet/in.h>
 # include "channel.hpp"
 #include <arpa/inet.h>
+#include <deque>
 
 # define MAX_CHANNELS 10
 
@@ -91,7 +92,7 @@ class User
 		std::string					_realName;
 		std::string					_ping;
 		std::string					_buffer_cmd;
-		
+		std::deque<std::string>		_answer;
 		user_modes					_modes;
 		int							_sock_fd;
 		bool						_is_registered;
@@ -125,6 +126,7 @@ class User
 		std::string					getIp(  ) const ;
 		std::string	const &			getBufferCmd() const;
 		bool const &				getIsSendMsg() const;
+		std::string 				getAnswer();
 		
 
 		// Setters
@@ -139,6 +141,7 @@ class User
 		void						setTimePing( uint64_t const & time );
 		void						setBufferCmd( std::string const & buffer_cmd );
 		void						setIsSendMsg(bool const & status);
+		void						setAnswer(std::string const & answer);
 		// Overload
 		bool						operator==(User & obj);
 

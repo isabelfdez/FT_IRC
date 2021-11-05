@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 {
     int sock = 0; long valread;
     struct sockaddr_in serv_addr;
-    char *hello = "Hello from client";
+    char *hello = "USER : kevin * * * \r\n NICK :qwerty\r\n";
     char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -39,7 +39,15 @@ int main(int argc, char const *argv[])
     }
     send(sock , hello , strlen(hello) , 0 );
     printf("Hello message sent\n");
-    valread = read( sock , buffer, 1024);
+     valread = read( sock , buffer, 1024);
+
+    buffer[1]='O';
+    send(sock ,buffer , strlen(buffer) , 0 );
+
+    char *hello2 = "PRIVMSG lol: hola mundo \r\n PRIVMSG lol: qwerty\r\nPRIVMSG lol: Contrary to popular belief,\r\n";
+    send(sock ,hello2 , strlen(hello2) , 0 );
+
+    for(;;);
     printf("%s\n",buffer );
     return 0;
 }

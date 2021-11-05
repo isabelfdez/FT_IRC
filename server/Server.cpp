@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 18:53:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 03:15:52 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Server::Server(): _fd_users(), _name_channel()
 	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
+	FD_ZERO(&this->_writes);
 	this->_listen_server_sock = 0;
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
@@ -112,7 +113,13 @@ Server::~Server()
 
 void Server::build_select_list( void )
 {
+	typedef std::deque<User *>::iterator it_user;
+	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
 	FD_ZERO( &this->_reads );
+	FD_ZERO( &this->_writes );
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -123,6 +130,12 @@ void Server::build_select_list( void )
 			if (this->_list_connected_user[i] > this->_highsock )
 				this->_highsock = this->_list_connected_user[i];
 		}
+	}
+	for (; start != end; ++start)
+	{
+		FD_SET( (*start)->getsockfd(), &this->_writes);
+		std::cout << "[[[ build deque FD_SET ]] \n";
+		
 	}
 }
 
@@ -173,12 +186,23 @@ void Server::setNumReadSock( void )
 {
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
-	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, (fd_set *) 0, (fd_set *) 0 , &this->_time_out);
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
 }
 
 void Server::attendClients()
 {
+	typedef std::deque<User *>::iterator it_user;
 	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
+	for (; start != end; ++start )
+	{
+		std::cout << "[ 42  ]  " + (*start)->getNick() << std::endl;
+		if ( FD_ISSET( (*start)->getsockfd(), &this->_writes) )
+			this->sendRequest( *start );
+	}
+
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -191,6 +215,8 @@ void Server::attendClients()
 		}
 
 	}
+
+
 
 	/* if (FD_ISSET ( this->_list_connected_user[i], &this->_writes ))
 	{
@@ -206,7 +232,6 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	size_t		pos;
 
 
-	std::cout << buff + " ****\n";
 	while (*str == ' ')
 	{
 		buff.erase(buff.begin());
@@ -309,10 +334,12 @@ void Server::getCustomerRequest( int fd_client )
 
 	while ( tmp.length() )
 	{
-		if ( (( pos = tmp.find('\r') ) != std::string::npos && tmp[pos + 1 ] == '\n') || ( pos = tmp.find('\n') ) != std::string::npos )
+		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
+			// std::cout << "\n[["+ tmp +"]]\n";
 			tmp2 = tmp.substr(0, pos + 1);
-			tmp.erase(0, pos + 1);
+		    tmp.erase(0, pos + 1);
+
 			if (tmp2.length() > 510 )
 				tmp2 = tmp2.substr(0, 510);
 			this->parse_command( fd_client, tmp2, &tmp2[0] );
@@ -423,7 +450,11 @@ void Server::deleteUser( int const & fd )
 	
 	for (; channel != end; ++channel )
 	{
-		(*channel)->deleteUser( tmp_usr );
+		if ((*channel)->deleteUser( tmp_usr ))
+		{
+			std::string messages = "has left the channel " + (*channel)->getName();
+			send_message_channel( messages , tmp_usr, (*channel));
+		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
@@ -434,8 +465,8 @@ void Server::deleteUser( int const & fd )
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	this->_nicks.remove( tmp_usr->getNick() );
 	this->deleteBan(tmp_usr);
+	this->deleteDequeUser(tmp_usr);
 	delete tmp_usr;
-
 }
 
 void	Server::deleteBan( User *user)
@@ -459,6 +490,8 @@ void		Server::reStartSendMsg()
 		usr->setIsSendMsg( false );
 	}
 }
+
+
 
 void Server::welcome( int const & fd )
 {

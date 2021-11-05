@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 20:48:14 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 01:12:17 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,20 @@ uint64_t const & User::getTimePing() const { return this->_time_ping; }
 std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
 bool const & User::getIsSendMsg() const { return this->_is_send_msg; }
 
+std::string User::getAnswer()
+{
+	std::string tmp;
+
+	if ( this->_answer.size() > 0)
+	{
+		tmp = this->_answer[0];
+		this->_answer.pop_front();
+	}
+	
+	return tmp;
+}
+
+
 //std::string const & User::getMask() const { return this->_mask; }
 
 
@@ -133,6 +147,14 @@ void	User::setmode(char mode, bool state)
 void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
+
+void	User::setAnswer(std::string const & answer)
+{
+	std::cout << "[[[ setAnswer ]] \n";
+
+	this->_answer.push_back( answer );
+}
+ 
 
 void	User::setBufferCmd( std::string const & buffer_cmd )
 {

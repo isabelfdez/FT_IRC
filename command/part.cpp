@@ -6,7 +6,12 @@ void	Server::part_channel(std::string str1, int & fd)
 {
 	if (this->_name_channel.count(str1))
 	{
-		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
+		if (this->_name_channel[str1]->deleteUser(this->_fd_users[fd]))
+		{
+			std::string messages = "has left the channel " + this->_name_channel[str1]->getName();
+			send_message_channel( messages , this->_fd_users[fd], this->_name_channel[str1]);
+		}
+
 		this->_fd_users[fd]->deleteChannel(this->_name_channel[str1]);
 		if (!this->_name_channel[str1]->getUsers().size())
 			deleteChannel(str1);

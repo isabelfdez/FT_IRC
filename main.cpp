@@ -3,7 +3,8 @@
 #include "channel.hpp"
 #include <csignal>
 
-Server *svr;
+Server					*svr;
+
 
 void signal_kill ( int number )
 {

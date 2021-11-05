@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/03 20:19:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 00:19:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,7 @@ void	Channel::pushInvite(User * user)
 
 void    Channel::setOpOff(std::string user, User * usr)
 {
+	(void)usr;
 	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
 	{
 		if (user == (*it)->getNick())
@@ -162,7 +163,8 @@ void    Channel::setOpOff(std::string user, User * usr)
 			if (!this->_operators.size())
 			{
 				this->_operators.push_back(*(this->_users.begin()));
-				send_reply("", " :You are now Channel Operator", usr);
+				// (*this->_users.begin())->setAnswer(" :You are now Channel Operator");
+				// send_reply("", " :You are now Channel Operator", usr);
 			}
 			return;
 		}
@@ -180,7 +182,7 @@ bool	Channel::operator==(Channel & obj)
 
 // Other functions
 
-void	Channel::deleteUser(User * user)
+bool	Channel::deleteUser(User * user)
 {
 	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
@@ -198,11 +200,10 @@ void	Channel::deleteUser(User * user)
 					break ;
 				}
 			}
-			s = "has left the channel " + this->_name;
-			send_message_channel(s, user, this);
-			return ;
+			return true;
 		}
 	}
+	 return false;
 }
 
 void	Channel::addUser(User * user)

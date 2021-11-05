@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 22:55:43 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 22:28:51 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,76 +20,9 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
-void    send_message(std::string & message, int & fd, User * usr)
-{
-    std::string mask;
 
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    send(fd, mask.c_str(), mask.length(), 0);
-}
 
-void    send_message_channel(std::string & message, User * usr, Channel * chnl)
-{
-    std::string mask;
 
-    //str.append(usr->getMask());
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    chnl->sendMsgChannel(mask, usr->getsockfd());
-}
-
-void    send_message_channel_block(std::string & message, User * usr, Channel * chnl)
-{
-    std::string mask;
-
-    //str.append(usr->getMask());
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    chnl->sendMsgChannelBlock(mask, usr->getsockfd());
-}
-
-void	send_reply(std::string reply, std::string str, User * usr)
-{
-	std::string message;
-
-	message.assign(":ft_irc.com ");
-	message.append(reply);
-	message.append(" " + usr->getNick());
-	message.append(str);
-	message.append("\n");
-	send(usr->getsockfd(), message.c_str(), message.length(), 0);
-
-}
-
-void	send_error(std::string error, std::string str, int fd)
-{
-	std::string message;
-	message.assign(":ft_irc.com ");
-	message.append(error);
-	message.append(" * ");
-	message.append(str);
-	message.append("\n");
-	send(fd, message.c_str(), message.length(), 0);
-}
 
 static int	ft_countwords(char const *s, char c)
 {

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/03 18:58:49 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 23:16:57 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class Channel
 		// Overload
 
 		// Other functions
-		void				deleteUser(User * user);
+		bool				deleteUser(User * user);
 		void				addUser(User * user);
 		//overload para no enviar el mensaje al emisor :) by krios-fu
 		bool				operator==(Channel & obj);
