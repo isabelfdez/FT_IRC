@@ -18,6 +18,8 @@ void    Server::nick_command(char * str, int & fd)
     std::vector<std::string> parse;
 
     std::string s;
+
+    std::cout << str << std::endl;
     
     if (!this->_fd_users[fd]->getPassState())
 		return send_error(ERR_NOPASSWD, "NICK :No password entered", fd);

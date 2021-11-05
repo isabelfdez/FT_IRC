@@ -143,6 +143,18 @@ void	Channel::banOff(User * user)
 	}
 }
 
+void	Channel::inviteOff(User * user)
+{
+	for (std::list<User*>::iterator it = _invites.begin(); it != _invites.end(); it++)
+	{
+		if (user->getNick() == (*it)->getNick())
+		{
+			_invites.erase(it);
+			return;
+		}
+	}
+}
+
 void	Channel::setTopic(std::string topic) { this->_topic = topic; }
 
 void	Channel::setInvite(bool set) { this->_invite = set; }

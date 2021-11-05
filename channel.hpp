@@ -60,6 +60,7 @@ class Channel
 
 		// Setters
 		void				banOff(User * user);
+		void				inviteOff(User * user);
 		void				ban(User *);
 		void				setName(std::string const & name);
 		void    			setOp(User * user);

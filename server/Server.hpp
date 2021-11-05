@@ -147,6 +147,8 @@ class Server
 		void			deleteChannel( std::string );
 		void			deleteUser( int const & fd );
 		void			deleteBan( User *);
+		void			deleteInvite( User *user);
+
 		void			close_fd( int fd );
 		void			close_all_fd();
 

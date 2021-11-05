@@ -478,6 +478,7 @@ void Server::deleteUser( int const & fd )
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	this->_nicks.remove( tmp_usr->getNick() );
 	this->deleteBan(tmp_usr);
+	this->deleteInvite(tmp_usr);
 	this->deleteDequeUser(tmp_usr);
 	delete tmp_usr;
 }
@@ -487,6 +488,14 @@ void	Server::deleteBan( User *user)
 	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
 	{
 		(*(it->second)).banOff(user);
+	}
+}
+
+void	Server::deleteInvite( User *user)
+{
+	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
+	{
+		(*(it->second)).inviteOff(user);
 	}
 }
 
