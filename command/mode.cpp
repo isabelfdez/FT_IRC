@@ -6,23 +6,25 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 17:16:44 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:16:45 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 14:02:03 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../server/Server.hpp"
 
-// HAY QUE VER SI EL MODO ES VALIDO
+// HAY QUE HACER EL MODE SIN PARAMETROS (QUE ME DIGA QUE MODES TENGO)
+// SE PUEDE DESBANNEAR A ALGUIEN?
 
 void    Server::mode_command(char * str, int & fd)
 {
     std::vector<std::string> parse;
     std::string s;
     size_t  i = 0;
+    int     j = 1;
 
     parse = split(str, ' ');
     i = parse.size();
-    if (i < 3)
+    if (i < 2)
         return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
     // CANAL
     if (isChannel(parse[1]))
@@ -97,46 +99,73 @@ void    Server::mode_command(char * str, int & fd)
     // USUARIO
     else if (isUsr(parse[1]))
     {
-        if (parse.size() < 3)
-            return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
-        else if (this->_fd_users[fd]->getNick() != parse[1])
+        if (this->_fd_users[fd]->getNick() != parse[1])
             return (send_error(ERR_USERSDONTMATCH, "MODE :Cannot change mode for other users", fd));
+        if (parse.size() == 2)
+        {
+            std::string str;
+            if (this->_fd_users[fd]->getmode('o') || this->_fd_users[fd]->getmode('i'))
+            {
+                str.assign("+");
+                if (this->_fd_users[fd]->getmode('o'))
+                    str.append("o");
+                if (this->_fd_users[fd]->getmode('i'))
+                    str.append("i");
+            }
+            return (send_reply(RPL_UMODEIS, " MODE :" + str, this->_fd_users[fd]));
+        }
         else if (parse[2].size() < 2)
             return (send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", fd));
         else if (parse[2][0] == '+')
         {
-            if (parse[2][1] == 'o')
+            while (parse[2][j])
             {
-                if (!this->_fd_users[fd]->getmode('o'))
-                    return (send_error(ERR_NOPRIVILEGES, "MODE :Permission Denied- You're not an IRC operator", fd));
-            }
-            else if (parse[2][1] == 'i' && !this->_fd_users[fd]->getmode('i'))
-            {
-                s.assign("MODE ");
-                s.append(this->_fd_users[fd]->getNick());
-                s.append(" :+i");
-                this->_fd_users[fd]->setmode('i', true);
-                send_message(s, fd, this->_fd_users[fd]);
+                std::cout << "El caracter es " << parse[2][j] << '\n';
+                if (parse[2][j] == 'o')
+                {
+                    if (!this->_fd_users[fd]->getmode('o'))
+                        send_error(ERR_NOPRIVILEGES, "MODE :Permission Denied- You're not an IRC operator", fd);
+                }
+                else if (parse[2][j] == 'i' && !this->_fd_users[fd]->getmode('i'))
+                {
+                    s.assign("MODE ");
+                    s.append(this->_fd_users[fd]->getNick());
+                    s.append(" :+i");
+                    this->_fd_users[fd]->setmode('i', true);
+                    send_message(s, fd, this->_fd_users[fd]);
+                }
+                else if (parse[2][j] != 'o' && parse[2][j] != 'i')
+                    send_error(ERR_UMODEUNKNOWNFLAG, "MODE :Unknown MODE flag", fd);
+                j++;
             }
         }
         else if (parse[2][0] == '-')
         {
-            if (parse[2][1] == 'o')
+            while (parse[2][j])
             {
-                if (this->_fd_users[fd]->getmode('o'))
+                std::cout << "El caracter es " << parse[2][j] << '\n';
+                if (parse[2][j] == 'o')
                 {
-                    this->_fd_users[fd]->setmode('o', false);
-                    return (send_reply("", " :you are no longer Channel Operator", getUserWithNick(parse[1])));                    
+                    if (this->_fd_users[fd]->getmode('o'))
+                    {
+                        s.assign("MODE ");
+                        s.append(this->_fd_users[fd]->getNick());
+                        s.append(" :-o");
+                        this->_fd_users[fd]->setmode('o', false);
+                        send_message(s, fd, this->_fd_users[fd]);
+                    }
                 }
-
-            }
-            else if (parse[2][1] == 'i' && this->_fd_users[fd]->getmode('i'))
-            {
-                s.assign("MODE ");
-                s.append(this->_fd_users[fd]->getNick());
-                s.append(" :-i");
-                send_message(s, fd, this->_fd_users[fd]);
-                this->_fd_users[fd]->setmode('i', false);
+                else if (parse[2][j] == 'i' && this->_fd_users[fd]->getmode('i'))
+                {
+                    s.assign("MODE ");
+                    s.append(this->_fd_users[fd]->getNick());
+                    s.append(" :-i");
+                    send_message(s, fd, this->_fd_users[fd]);
+                    this->_fd_users[fd]->setmode('i', false);
+                }
+                else if (parse[2][j] != 'o' && parse[2][j] != 'i')
+                    send_error(ERR_UMODEUNKNOWNFLAG, "MODE :Unknown MODE flag", fd);
+                j++;
             }
         }
         else

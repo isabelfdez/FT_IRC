@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 12:47:10 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:41:06 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("list");
 	this->_commands.push_back("NAMES");
 	this->_commands.push_back("names");
+	this->_commands.push_back("PASS");
+	this->_commands.push_back("pass");
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -161,6 +163,10 @@ void Server::join_new_connection()
 		{
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User( connection, addr_client );
+			if (!this->getPassword().size())
+				this->_fd_users[connection]->setPassState(1);
+			else
+				this->_fd_users[connection]->setPassState(0);
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			std::cout << "\r";
 			displayLog("Connection accepted", "", this->_fd_users[connection]);
@@ -188,6 +194,8 @@ void Server::setNumReadSock( void )
 	this->_time_out.tv_usec = 0;
 	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
 }
+
+void Server::setPassword(std::string pass) { this->_password = pass; }
 
 void Server::attendClients()
 {
@@ -256,9 +264,10 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	if (!this->_fd_users[fd]->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
-		// USER o NICK, y no puede llamar a USER varias veces seguidas
+		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
 		if (command != "USER" && command != "NICK" &&
-			command != "user" && command != "nick")
+			command != "user" && command != "nick" &&
+			command != "PASS" && command != "pass")
 			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
 		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
@@ -266,6 +275,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->user_command(fd, str);
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
+		else if (command == "PASS" || command == "pass")
+			this->pass_command(str, fd);
 	}
 	else if ( this->_fd_users[fd]->getRegistered() )
 	{
@@ -305,8 +316,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			if (*str == ':')
 				str++;
 			this->names_command( str, fd );
-			
 		}
+		
 	}
 }
 
@@ -355,6 +366,8 @@ void Server::getCustomerRequest( int fd_client )
 
 	this->reStartSendMsg();
 }
+
+std::string Server::getPassword(void) const { return (this->_password); }
 
 bool			Server::isUsr(std::string usr)
 {

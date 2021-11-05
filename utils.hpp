@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 23:10:08 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:51:58 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@
 
 
 bool						find_command(std::string command, std::list<std::string> commands);
+
+int		                    ft_max(int a , int b);
+
 
 
 char						**ft_split(char const *s, char c);

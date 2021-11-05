@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 18:45:16 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:16:47 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ void    Server::nick_command(char * str, int & fd)
     std::vector<std::string> parse;
 
     std::string s;
-
+    
+    if (!this->_fd_users[fd]->getPassState())
+		return send_error(ERR_NOPASSWD, "NICK :No password entered", fd);
     str = str + 4;
     while (*str == ' ')
 		str++;

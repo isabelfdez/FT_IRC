@@ -4,7 +4,8 @@
 #include <csignal>
 
 Server					*svr;
-
+// ESTA VARAIBLE GLOBAL SE USA?
+// HAY QUE COMPROBAR QUE EL RANGO DEL PUERTO ES BUENO
 
 void signal_kill ( int number )
 {
@@ -15,14 +16,34 @@ void signal_kill ( int number )
 		exit(EXIT_FAILURE);
 	}
 }
-int main ()
+int main (int argc, char **argv)
 {
+	if (argc < 2 || argc > 3)
+	{
+		std::cout << "Incorrect number of arguments\n";
+		std::cout << "A correct input must contain the following parameters\n";
+		std::cout << "./ircserv <port> or ./ircserv <port> <password>\n";
+		return (0);
+	}
+	std::string port;
+	std::string password;
+	if (argc == 3)
+	{
+		password = argv[2];
+		if (password.size() > 20)
+		{
+			std::cout << "Password is too long\n";
+			return (0);
+		}
+	}
 	int i = 1;
 	try 
 	{
 		Server server;
 
 		svr = &server;
+		if (argc == 3)
+			server.setPassword(password);
 		while (42)
 		{
 			signal( SIGINT, signal_kill );

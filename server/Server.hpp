@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 02:44:20 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 16:00:18 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,13 @@
 # include <deque>
 
 
-# define PORT 6667
+# define PORT 49141
 
 
 // Definiciones de errores
 
 # define ERR_SINTAX                 "001"
+# define ERR_NOPASSWD				"002"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_TOOMANYCHANNELS		"405"
@@ -64,11 +65,13 @@
 # define ERR_UMODEUNKNOWNFLAG		"501"
 # define ERR_USERSDONTMATCH			"502"
 
-// Definiciones de replys
+// Definiciones de replies
+
 # define RPL_WELCOME				"001"
 # define RPL_YOURHOST				"002"
 # define RPL_CREATE					"003"
 # define RPL_MYINFO					"004"
+# define RPL_UMODEIS				"221"
 # define RPL_LIST					"322"
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
@@ -76,7 +79,7 @@
 # define RPL_INVITING 				"341"
 # define RPL_NAMREPLY				"353"
 # define RPL_ENDOFNAMES				"366"
-#define  RPL_MOTD					"372"
+# define RPL_MOTD					"372"
 # define RPL_MOTDSTART				"375"
 # define RPL_ENDOFMOTD				"376"
 # define RPL_USERS					"393"
@@ -87,6 +90,7 @@ class Server
 {
 	private:
 		// std::map< size_t , int >	_list_connected_users;
+		std::string						_password;
 		int								_list_connected_user[FD_SETSIZE];
 		struct sockaddr_in 				_addr_server;
 		struct timeval					_time_out;
@@ -124,8 +128,8 @@ class Server
 		void			replyCustomerRequest( int & id_client, int i);
 		void			parse_command(int fd, std::string buff, char * str);
 
-		bool			isAnswerUser( User *usr );
 		void			setNumReadSock( void );
+		void			setPassword(std::string);
 		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
@@ -133,7 +137,10 @@ class Server
 		size_t			getNumChannel( void ) 	const;//krios-fu
 		size_t			getNumConnections ()	const;
 		size_t			getNumUser( void )		const;//krios-fu
+		std::string		getPassword(void)		const;
 		User			*getUserWithNick(std::string);
+	
+		bool			isAnswerUser( User *usr );
 		bool			isUsr(std::string);
 		bool			isChannel(std::string);
 
@@ -161,6 +168,7 @@ class Server
 		void			invite_command(char * str, int & fd);
 		void			topic_command(char * str, int & fd);
 		void 			names_command( char *str, int fd);
+		void			pass_command(char * str, int & fd);
 
 
 
@@ -171,13 +179,13 @@ class Server
 		void			welcome( int const & fd );
 		void			reStartSendMsg();
 
-		void						send_message(std::string & message, int & fd, User * usr);
-		void						send_message_channel(std::string & message, User * usr, Channel * chnl);
-		void						send_message_channel_block(std::string & message, User * usr, Channel * chnl);
-		void						send_error(std::string error, std::string str, int fd);
-		void						send_reply(std::string replay, std::string str, User * usr);
-		void						sendRequest(User *user);
-		void						deleteDequeUser ( User *user );
+		void			send_message(std::string & message, int & fd, User * usr);
+		void			send_message_channel(std::string & message, User * usr, Channel * chnl);
+		void			send_message_channel_block(std::string & message, User * usr, Channel * chnl);
+		void			send_error(std::string error, std::string str, int fd);
+		void			send_reply(std::string replay, std::string str, User * usr);
+		void			sendRequest(User *user);
+		void			deleteDequeUser ( User *user );
 
 };
 

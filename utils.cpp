@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 22:28:51 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:51:39 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,13 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
-
+int		ft_max(int a , int b)
+{
+	if (a > b)
+		return (a);
+	else
+		return (b);
+}
 
 
 

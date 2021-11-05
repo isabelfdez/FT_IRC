@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 01:12:17 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:04:27 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ std::string User::getAnswer()
 	return tmp;
 }
 
+bool	User::getPassState() const { return (this->_passState); }
+
 
 //std::string const & User::getMask() const { return this->_mask; }
 
@@ -127,18 +129,25 @@ void	User::setmode(char mode, bool state)
 	{
 		case 'a':
 			(this->_modes.a = state);
+			break ;
 		case 'i':
             (this->_modes.i = state);
+			break ;
 		case 'w':
             (this->_modes.w = state);
+			break ;
 		case 'r':
             (this->_modes.r = state);
+			break ;
 		case 'o':
             (this->_modes.small_o = state);
+			break ;
 		case 'O':
             (this->_modes.big_o = state);
+			break ;
 		case 's':
             (this->_modes.s = state);
+			break ;
 		default:
 			break ;
 	} 
@@ -163,7 +172,7 @@ void	User::setBufferCmd( std::string const & buffer_cmd )
 
 void	User::setIsSendMsg( bool const & status ) { this->_is_send_msg = status ; }
 
-
+void	User::setPassState(bool status) { this->_passState = status; }
 
 
 // Overloads
@@ -179,13 +188,13 @@ bool	User::operator==(User & obj)
 
 void	User::init_modes()
 {
-	this->_modes.a = 0;
-	this->_modes.i = 0;
-	this->_modes.w = 0;
-	this->_modes.r = 0;
-	this->_modes.small_o = 0;
-	this->_modes.big_o = 0;
-	this->_modes.s = 0;
+	this->_modes.a = false;
+	this->_modes.i = false;
+	this->_modes.w = false;
+	this->_modes.r = false;
+	this->_modes.small_o = false;
+	this->_modes.big_o = false;
+	this->_modes.s = false;
 }
 
 void	User::deleteChannel(Channel * channel)
