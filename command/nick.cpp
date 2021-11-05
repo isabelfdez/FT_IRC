@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 18:45:16 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:53:34 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,20 @@ void    Server::nick_command(char * str, int & fd)
     std::vector<std::string> parse;
 
     std::string s;
-
+    
+    if (!this->_fd_users[fd]->getPassState())
+		return send_error(ERR_NOPASSWD, "NICK :No password entered", fd);
     str = str + 4;
     while (*str == ' ')
 		str++;
-	if (*str== ':')
+	if (*str && *str== ':')
 		str++;
     parse = split(str, ' ');
-    size_t i = 0;
-    while (i < parse.size() && parse[i].size() )
-        i++;
     if (!parse.size())
         return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", fd));
-    // Comprobamos que el nick que nos pasan el válido (de acuerdo con el RFC)      
-    else if (i > 1 && parse[1].size())
+    else if (parse.size() > 1)
     {
-        i = 0;
-
-        while (parse[i].size())
-        {
-            s.append(parse[i]);
-            if (parse[i + 1].size())
-                s.append(" ");
-            i++;
-        }
+        s.assign(str);
         s.append(" :Erroneous nickname");
         return (send_error(ERR_ERRONEUSNICKNAME, s, fd));
     }

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/05 17:55:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 18:10:29 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	Server::user_command( int fd, char *buffer )
 	std::vector<std::string> token = split(buffer, ' ');
 
 	User * usr = this->_fd_users.at(fd);
+	if (!usr->getPassState())
+		return send_error(ERR_NOPASSWD, "USER :No password entered", fd);
 	if ( token.size() < 4 )
 		return send_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters", fd);
 	if ( usr->getRegistered() )
@@ -39,7 +41,6 @@ void	Server::user_command( int fd, char *buffer )
 	}
 	else
 		usr->setRealName(token[3]);
-		std::cout << usr->getRealName() << std::endl;
 	if ( usr->getNick().size() > 0 && !usr->getRegistered() )
 	{
 		usr->setRegistered(true);

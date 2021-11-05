@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 22:19:24 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 15:03:18 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ class User
 		bool						_is_send_msg;
 		uint64_t					_lastTime;
 		uint64_t					_time_ping;
+		bool						_passState;
 
 		struct sockaddr_in 			_addr;
 
@@ -127,6 +128,7 @@ class User
 		std::string	const &			getBufferCmd() const;
 		bool const &				getIsSendMsg() const;
 		std::string 				getAnswer();
+		bool						getPassState()	const;
 		
 
 		// Setters
@@ -142,6 +144,8 @@ class User
 		void						setBufferCmd( std::string const & buffer_cmd );
 		void						setIsSendMsg(bool const & status);
 		void						setAnswer(std::string const & answer);
+		void						setPassState(bool state);
+		
 		// Overload
 		bool						operator==(User & obj);
 

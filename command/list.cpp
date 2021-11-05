@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/03 21:41:26 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 19:07:00 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void Server::list_command( char *buffer, int fd)
 	typedef std::map<std::string ,Channel *>::iterator		it_channel;
 	Channel			*channel;
 	std::string		message;
-	size_t			pos;
 	User			*usr;
 
 	buffer  = buffer  + 4;
@@ -37,28 +36,10 @@ void Server::list_command( char *buffer, int fd)
 		for (; start != end ; ++start )
 		{
 			channel = start->second;
-			if ( channel->isInvite() )
-			{
-				message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :" + channel->getTopic();
-				send_reply(RPL_LIST, message, usr);
-				
-			}
+			message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :" + channel->getTopic();
+			send_reply(RPL_LIST, message, usr);
 		}
 	}
-	for (size_t i = 0; i < token.size(); i++)
-	{
-		pos = token[i].find(' ');
-		if ( pos != std::string::npos )
-			token[i] = token[i].substr(0, pos);
-		channel = this->_name_channel[ token[i] ];
-		if ( channel )
-		{
-			// if ( !channel->isInvite() ) // comment
-			// {
-				 message = " " + channel->getName() + " " + std::to_string(channel->getNumUser())	 + " : " + channel->getTopic();
-				 send_reply(RPL_LIST, message, usr);
-			// }
-		}
-	}
+	
 	send_reply(RPL_LISTEND, " :End of channel list", usr);
 }

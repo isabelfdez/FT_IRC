@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 22:28:51 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 17:59:37 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,50 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	return (false);
 }
 
+int		ft_max(int a , int b)
+{
+	if (a > b)
+		return (a);
+	else
+		return (b);
+}
+
+static int		ft_atoi(const char *str)
+{
+	int		i;
+	int		nb;
+
+	i = 0;
+	nb = 0;
+	while ('0' <= str[i] && str[i] <= '9')
+	{
+		nb = nb * 10 + (str[i] - '0');
+		i++;
+	}
+	return (nb);
+}
 
 
+int		get_port(char *str)
+{
+	int ret;
 
+	if (ft_strlen(str) > 10)
+	{
+		std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+		return (6667);
+	}
+	else
+	{
+		ret = ft_atoi(str);
+		if (ret < 1 || ret > 65535)
+		{
+			std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+			return (6667);
+		}
+		return (ret);
+	}
+}
 
 static int	ft_countwords(char const *s, char c)
 {

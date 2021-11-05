@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 03:15:52 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/05 19:29:47 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void setnonblocking(int sock)
 	return;
 }
 
-Server::Server(): _fd_users(), _name_channel()
+Server::Server(int port): _fd_users(), _name_channel()
 {
 	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
@@ -47,7 +47,7 @@ Server::Server(): _fd_users(), _name_channel()
 	setnonblocking( this->_listen_server_sock );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
 	memset( (char *) &this->_addr_server, 0 , sizeof(this->_addr_server) );
-	this->_addr_server.sin_port = htons(PORT);
+	this->_addr_server.sin_port = htons(port);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
 	setsockopt(this->_listen_server_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
@@ -93,6 +93,8 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("list");
 	this->_commands.push_back("NAMES");
 	this->_commands.push_back("names");
+	this->_commands.push_back("PASS");
+	this->_commands.push_back("pass");
 
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
@@ -132,11 +134,7 @@ void Server::build_select_list( void )
 		}
 	}
 	for (; start != end; ++start)
-	{
 		FD_SET( (*start)->getsockfd(), &this->_writes);
-		std::cout << "[[[ build deque FD_SET ]] \n";
-		
-	}
 }
 
 
@@ -161,6 +159,10 @@ void Server::join_new_connection()
 		{
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User( connection, addr_client );
+			if (!this->getPassword().size())
+				this->_fd_users[connection]->setPassState(1);
+			else
+				this->_fd_users[connection]->setPassState(0);
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			std::cout << "\r";
 			displayLog("Connection accepted", "", this->_fd_users[connection]);
@@ -189,6 +191,8 @@ void Server::setNumReadSock( void )
 	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
 }
 
+void Server::setPassword(std::string pass) { this->_password = pass; }
+
 void Server::attendClients()
 {
 	typedef std::deque<User *>::iterator it_user;
@@ -197,11 +201,8 @@ void Server::attendClients()
 	it_user end = this->_send_message.end();
 	
 	for (; start != end; ++start )
-	{
-		std::cout << "[ 42  ]  " + (*start)->getNick() << std::endl;
 		if ( FD_ISSET( (*start)->getsockfd(), &this->_writes) )
 			this->sendRequest( *start );
-	}
 
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
@@ -215,13 +216,6 @@ void Server::attendClients()
 		}
 
 	}
-
-
-
-	/* if (FD_ISSET ( this->_list_connected_user[i], &this->_writes ))
-	{
-			
-	} */
 }
 
 
@@ -256,9 +250,10 @@ void Server::parse_command(int fd, std::string buff, char * str)
 	if (!this->_fd_users[fd]->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
-		// USER o NICK, y no puede llamar a USER varias veces seguidas
+		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
 		if (command != "USER" && command != "NICK" &&
-			command != "user" && command != "nick")
+			command != "user" && command != "nick" &&
+			command != "PASS" && command != "pass")
 			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
 		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
@@ -266,6 +261,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			this->user_command(fd, str);
 		else if (command == "NICK" || command == "nick")
 			this->nick_command(str, fd);
+		else if (command == "PASS" || command == "pass")
+			this->pass_command(str, fd);
 	}
 	else if ( this->_fd_users[fd]->getRegistered() )
 	{
@@ -305,8 +302,8 @@ void Server::parse_command(int fd, std::string buff, char * str)
 			if (*str == ':')
 				str++;
 			this->names_command( str, fd );
-			
 		}
+		
 	}
 }
 
@@ -336,13 +333,15 @@ void Server::getCustomerRequest( int fd_client )
 	{
 		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
-			// std::cout << "\n[["+ tmp +"]]\n";
 			tmp2 = tmp.substr(0, pos + 1);
-		    tmp.erase(0, pos + 1);
+			tmp.erase(0, pos + 1);
 
 			if (tmp2.length() > 510 )
 				tmp2 = tmp2.substr(0, 510);
-			this->parse_command( fd_client, tmp2, &tmp2[0] );
+			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
+			{
+				this->parse_command( fd_client, tmp2, &tmp2[0] );
+			}
 			usr->setBufferCmd("");
 		}
 		else
@@ -355,6 +354,8 @@ void Server::getCustomerRequest( int fd_client )
 
 	this->reStartSendMsg();
 }
+
+std::string Server::getPassword(void) const { return (this->_password); }
 
 bool			Server::isUsr(std::string usr)
 {
