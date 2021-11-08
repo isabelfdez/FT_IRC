@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 16:20:48 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:59:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@
 # define RPL_ENDOFMOTD				"376"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
+
+typedef std::map<std::string ,Channel *>::iterator		map_channel_it;
 
 
 class Server

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/02 14:16:58 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:50:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,14 @@
 #include "../utils.hpp"
 
 //:Andres---pintor!HZ6hWkIW3@hCU.585.rEvd2U.virtual QUIT :Signed off
-void Server::quit_command(int fd, char *buffer)
+void Server::quit_command(std::vector<std::string> const & parse, User *usr)
 {
 	typedef std::list<Channel *>::iterator iteratorChannel;
-	char *tmp2;
-	User *usr = this->_fd_users.at(fd);
+
 
 	send_reply("ERROR :Closing link: ", "[Signed off]", usr);
 
-	if ( ( tmp2 = strchr( buffer, '\r' ) ) || ( tmp2 = strchr( buffer, '\n' ) ) )
-	 	*tmp2 = 0;
-	std::string msg_quit_users = buffer;
+	std::string msg_quit_users = parse[1];
 
 	iteratorChannel channel =usr->getChannels().begin();
 	iteratorChannel end = usr->getChannels().end();
@@ -35,5 +32,5 @@ void Server::quit_command(int fd, char *buffer)
 
 	displayLog("Quit success", "", usr);
 	
-	this->deleteUser( fd );
+	this->deleteUser( usr->getsockfd() );
 } 

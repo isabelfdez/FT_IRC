@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 16:18:42 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:07:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ void Server::parse_command(int fd, std::string buffer)
 	User *user = this->_fd_users[fd];
 
 
-	std::vector<std::string> parse = split( buffer );
+	std::vector<std::string> parse = parser( buffer );
 
 
 	command = ft_toupper(parse[0]);

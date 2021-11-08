@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 16:20:23 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:52:00 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,13 @@ void	Server::sendPing()
 	}
 }
 
-void	Server::pong_command( int fd, char *buffer)
+void	Server::pong_command( std::vector<std::string> const & parse, User *usr )
 {
-	User *usr = this->_fd_users[fd];
-	buffer  = buffer  + 4;
-	while (*buffer  == ' ')
-		buffer ++;
-	if (*buffer == ':')
-		buffer++;
-	std::vector<std::string> token = split( buffer, ' ' );
-	if ( token[0] == usr ->getPing() )
+
+	if ( parse.size()  > 1 && parse[1] == usr ->getPing() )
 	{
-		if (this->_fd_users[fd]->getTimePing() == 0)
-			this->welcome( fd );
+		if (usr->getTimePing() == 0)
+			this->welcome( usr->getsockfd() );
 		usr ->setPingStatus( false );
 		usr ->setTimePing( 120000 );
 		std::cout << "\r";
@@ -95,6 +89,6 @@ void	Server::pong_command( int fd, char *buffer)
 	else
 	{
 		send_reply("ERROR :Closing link:", " [Incorrect ping reply for registration]", usr);
-		this->deleteUser( fd );
+		this->deleteUser( usr->getsockfd() );
 	}
 }
