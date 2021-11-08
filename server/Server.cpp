@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 15:51:01 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:18:42 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,6 @@ void Server::parse_command(int fd, std::string buffer)
 {
 	std::string	command;
 	std::string	buff2;
-	size_t		pos;
 
 	User *user = this->_fd_users[fd];
 
@@ -223,57 +222,57 @@ void Server::parse_command(int fd, std::string buffer)
 	displayLog("Attend client", " CMD: " + command, user);
 	
 	if (!find_command(command, this->_commands))
-		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", fd);
+		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", user);
 	if (!user->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
 		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
 		if ( command != "USER" && command != "NICK" && command != "PASS" )
 			send_error(ERR_NOTREGISTERED, ":You have not registered", user);
-		else if ( (command == "USER" || command == "user") && user->getUserName().size() > 0)
+		else if ( (command == "USER") && user->getUserName().size() > 0)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
-		else if (command == "USER" || command == "user")
+		else if (command == "USER" )
 			this->user_command(parse, user);
-		else if (command == "NICK" || command == "nick")
-			this->nick_command(parse, user);
-		else if (command == "PASS" || command == "pass")
-			this->pass_command(parse, user);
+		// else if (command == "NICK" )
+		// 	this->nick_command(parse, user);
+		// else if (command == "PASS" )
+		// 	this->pass_command(parse, user);
 	}
-	else if ( user->getRegistered() )
-	{
-		if ((command == "USER" || command == "user"))
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
-		else if ( command == "NICK" )
-			this->nick_command(parse, user);
-		else if ( command == "JOIN" )
-			join_command(parse, user);
-		else if ( command == "PRIVMSG" )
-			this->privmsg_command(parse, user);
-		else if ( command == "NOTICE" )
-            this->notice_command(parse, user);
-		else if ( command == "PART" )
-			part_comman(parse, user);
-		else if ( command == "QUIT" )
-			this->quit_command(parse, user);
-		else if ( command == "PONG" )
-			this->pong_command(parse, user);
-		else if ( command == "MODE" )
-			this->mode_command(parse, user);
-		else if ( command == "OPER" )
-			this->oper_command(parse, user);
-		else if ( command == "KICK" )
-			this->kick_command(parse, user);
-		else if ( command == "INVITE" )
-			this->invite_command(parse, user);
-		else if ( command == "TOPIC" )
-			this->topic_command(parse, user);
-		else if ( command == "LIST" )
-			this->list_command(parse, user);
-		else if ( command == "NAMES" )
-			this->names_command(parse, user);
-		else if ( command == "who" )
-			this->names_command(parse, user);
-	}
+	// else if ( user->getRegistered() )
+	// {
+	// 	if ((command == "USER" || command == "user"))
+	// 		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
+	// 	else if ( command == "NICK" )
+	// 		this->nick_command(parse, user);
+	// 	else if ( command == "JOIN" )
+	// 		join_command(parse, user);
+	// 	else if ( command == "PRIVMSG" )
+	// 		this->privmsg_command(parse, user);
+	// 	else if ( command == "NOTICE" )
+    //         this->notice_command(parse, user);
+	// 	else if ( command == "PART" )
+	// 		part_comman(parse, user);
+	// 	else if ( command == "QUIT" )
+	// 		this->quit_command(parse, user);
+	// 	else if ( command == "PONG" )
+	// 		this->pong_command(parse, user);
+	// 	else if ( command == "MODE" )
+	// 		this->mode_command(parse, user);
+	// 	else if ( command == "OPER" )
+	// 		this->oper_command(parse, user);
+	// 	else if ( command == "KICK" )
+	// 		this->kick_command(parse, user);
+	// 	else if ( command == "INVITE" )
+	// 		this->invite_command(parse, user);
+	// 	else if ( command == "TOPIC" )
+	// 		this->topic_command(parse, user);
+	// 	else if ( command == "LIST" )
+	// 		this->list_command(parse, user);
+	// 	else if ( command == "NAMES" )
+	// 		this->names_command(parse, user);
+	// 	else if ( command == "who" )
+	// 		this->names_command(parse, user);
+	// }
 }
 
 void Server::getCustomerRequest( int fd_client )
@@ -509,4 +508,3 @@ void Server::welcome( int const & fd )
 	send_reply(RPL_ENDOFMOTD, " :End of message of the day", this->_fd_users[fd]);
 
 }
-
