@@ -52,7 +52,6 @@ int		                    get_port(char *str);
 
 
 
-char						**ft_split(char const *s, char c);
 int							ft_isalpha(int c);
 int							ft_isalnum(int c);
 size_t						ft_strlen(const char *s);
@@ -62,7 +61,8 @@ std::string					ft_toupper(std::string);
 char                        *trim(char *s);
 char						*ft_substr(char const *s, char c);
 
-std::vector<std::string>	split(std::string buffer);
+std::vector<std::string>	parser(std::string buffer);
+std::vector<std::string>    split(std::string buffer, char c);
 uint64_t					getTime(void);
 void						displayTimestamp( void );
 void						displayLog(std::string const & log, std::string const & cmd , User *usr );

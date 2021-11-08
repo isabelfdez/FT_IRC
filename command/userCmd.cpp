@@ -12,7 +12,7 @@
 
 #include "../server/Server.hpp"
 
-void	Server::user_command(std::vector<std::string> parse, User *usr)
+void	Server::user_command(std::vector<std::string> const &parse, User *usr)
 {
 	std::vector<std::string> token = parse;
 
