@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:05 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 17:09:06 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/08 14:47:55 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ std::string					ft_toupper(std::string);
 char                        *trim(char *s);
 char						*ft_substr(char const *s, char c);
 
-std::vector<std::string>	split(char * buff, char c);
+std::vector<std::string>	split(std::string buffer);
 uint64_t					getTime(void);
 void						displayTimestamp( void );
 void						displayLog(std::string const & log, std::string const & cmd , User *usr );

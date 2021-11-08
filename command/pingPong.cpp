@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pingPong.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/05 17:42:59 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/08 13:43:40 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	Server::sendPing()
 				if ( usr->getTimePing() == 0)
 				{
 					send_reply("396", " " +  usr->getIp() + " :is now your displayed host", usr);
-					send_reply("MODE", ": ", usr);
+					send_reply("MODE", ((usr->getmode('i')) ? " :i" : ":") , usr);
 				}
 			}
 		}

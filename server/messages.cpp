@@ -98,9 +98,9 @@ void	Server::send_reply(std::string reply, std::string str, User * usr)
 
 }
 
-void	Server::send_error(std::string error, std::string str, int fd)
+void	Server::send_error(std::string error, std::string str, User *dest)
 {
-	User		*dest  = this->_fd_users[ fd ];
+	// User		*dest  = this->_fd_users[ fd ];
 	std::string message;
 	message.assign(":ft_irc.com ");
 	message.append(error);

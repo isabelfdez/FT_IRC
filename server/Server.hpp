@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 17:05:53 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/08 15:53:32 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ class Server
 		void			join_new_connection();
 		void			getCustomerRequest( int  id_client );
 		void			replyCustomerRequest( int & id_client, int i);
-		void			parse_command(int fd, std::string buff, char * str);
+		void			parse_command(int fd, std::string buff);
 
 		void			setNumReadSock( void );
 		void			setPassword(std::string);
@@ -153,24 +153,24 @@ class Server
 		void			close_all_fd();
 
 		// Comandos
-		void			nick_command( char * str, int & fd );
-		void			privmsg_command(std::string & command, int & fd);
-		void			notice_command(std::string & command, int & fd);
-		void			user_command( int fd, char *buffer );
-		void			quit_command(int fd, char *buffer);
-		void			join_command(char * str, int & fd);
-		void			join_channel(std::string str, int & fd);
-		void			part_command(char * str, int & fd);
-		void			part_channel(std::string str, int & fd);
-		void			pong_command( int fd, char *buffer );
-		void			mode_command(char * str, int & fd);
-		void			oper_command(char * str, int & fd);
-		void			kick_command(char * str, int & fd);
-		void 			list_command( char *str, int fd);
-		void			invite_command(char * str, int & fd);
-		void			topic_command(char * str, int & fd);
-		void 			names_command( char *str, int fd);
-		void			pass_command(char * str, int & fd);
+		void			nick_command    (std::vector<std::string> parse, User *usr);
+		void			privmsg_command (std::vector<std::string> parse, User *usr);
+		void			notice_command  (std::vector<std::string> parse, User *usr);
+		void			user_command    (std::vector<std::string> parse, User *usr);
+		void			quit_command    (std::vector<std::string> parse, User *usr);
+		void			join_command    (std::vector<std::string> parse, User *usr);
+		void			join_channel    (std::vector<std::string> parse, User *usr);
+		void			part_command    (std::vector<std::string> parse, User *usr);
+		void			part_channel    (std::vector<std::string> parse, User *usr);
+		void			pong_command    (std::vector<std::string> parse, User *usr);
+		void			mode_command    (std::vector<std::string> parse, User *usr);
+		void			oper_command    (std::vector<std::string> parse, User *usr);
+		void			kick_command    (std::vector<std::string> parse, User *usr);
+		void 			list_command    (std::vector<std::string> parse, User *usr);
+		void			invite_command  (std::vector<std::string> parse, User *usr);
+		void			topic_command   (std::vector<std::string> parse, User *usr);
+		void 			names_command   (std::vector<std::string> parse, User *usr);
+		void			pass_command    (std::vector<std::string> parse, User *usr);
 
 
 
@@ -184,7 +184,7 @@ class Server
 		void			send_message(std::string & message, int & fd, User * usr);
 		void			send_message_channel(std::string & message, User * usr, Channel * chnl);
 		void			send_message_channel_block(std::string & message, User * usr, Channel * chnl);
-		void			send_error(std::string error, std::string str, int fd);
+		void			send_error(std::string error, std::string str, User *dest);
 		void			send_reply(std::string replay, std::string str, User * usr);
 		void			sendRequest(User *user);
 		void			deleteDequeUser ( User *user );

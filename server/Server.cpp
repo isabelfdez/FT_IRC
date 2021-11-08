@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 19:29:47 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 15:51:01 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,33 +69,18 @@ Server::Server(int port): _fd_users(), _name_channel()
 	this->_commands.push_back("NOTICE");
 	this->_commands.push_back("PART");
 	this->_commands.push_back("QUIT");
-	this->_commands.push_back("user");
-	this->_commands.push_back("nick");
-	this->_commands.push_back("join");
-	this->_commands.push_back("privmsg");
-	this->_commands.push_back("notice");
-	this->_commands.push_back("part");
-	this->_commands.push_back("quit");
 	this->_commands.push_back("PONG");
-	this->_commands.push_back("pong");
 	this->_commands.push_back("MODE");
-	this->_commands.push_back("mode");
 	this->_commands.push_back("OPER");
-	this->_commands.push_back("oper");
 	this->_commands.push_back("KICK");
-	this->_commands.push_back("kick");
 	this->_commands.push_back("INVITE");
-	this->_commands.push_back("invite");
 	this->_commands.push_back("TOPIC");
-	this->_commands.push_back("topic");
-	this->_password_oper = "abracadabra";
 	this->_commands.push_back("LIST");
-	this->_commands.push_back("list");
 	this->_commands.push_back("NAMES");
-	this->_commands.push_back("names");
 	this->_commands.push_back("PASS");
-	this->_commands.push_back("pass");
+	this->_commands.push_back("WHO");
 
+	this->_password_oper = "abracadabra";
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
@@ -219,91 +204,75 @@ void Server::attendClients()
 }
 
 
-void Server::parse_command(int fd, std::string buff, char * str)
+void Server::parse_command(int fd, std::string buffer)
 {
 	std::string	command;
 	std::string	buff2;
 	size_t		pos;
 
+	User *user = this->_fd_users[fd];
 
-	while (*str == ' ')
-	{
-		buff.erase(buff.begin());
-		str++;
-	}
 
-	if ( (pos = buff.find('\r')) != std::string::npos || (pos = buff.find('\n')) != std::string::npos )
-		buff2 = buff.substr(0, pos);
-	else
-		buff2 = buff;
+	std::vector<std::string> parse = split( buffer );
 
-	pos = buff2.find(' ');
-	if ( pos != std::string::npos )
-		command = buff2.substr(0, pos);
-	else
-		command = buff2;
 
-	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
+	command = ft_toupper(parse[0]);
+
+
+
+	displayLog("Attend client", " CMD: " + command, user);
 	
 	if (!find_command(command, this->_commands))
 		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", fd);
-	if (!this->_fd_users[fd]->getRegistered())
+	if (!user->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
 		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
-		if (command != "USER" && command != "NICK" &&
-			command != "user" && command != "nick" &&
-			command != "PASS" && command != "pass")
-			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
-		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
+		if ( command != "USER" && command != "NICK" && command != "PASS" )
+			send_error(ERR_NOTREGISTERED, ":You have not registered", user);
+		else if ( (command == "USER" || command == "user") && user->getUserName().size() > 0)
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
 		else if (command == "USER" || command == "user")
-			this->user_command(fd, str);
+			this->user_command(parse, user);
 		else if (command == "NICK" || command == "nick")
-			this->nick_command(str, fd);
+			this->nick_command(parse, user);
 		else if (command == "PASS" || command == "pass")
-			this->pass_command(str, fd);
+			this->pass_command(parse, user);
 	}
-	else if ( this->_fd_users[fd]->getRegistered() )
+	else if ( user->getRegistered() )
 	{
 		if ((command == "USER" || command == "user"))
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-		else if (command == "NICK" || command == "nick")
-			this->nick_command(str, fd);
-		else if (command == "JOIN" || command == "join")
-			join_command(str, fd);
-		else if (command == "PRIVMSG" || command == "privmsg")
-			this->privmsg_command(buff2, fd);
-		else if (command == "NOTICE" || command == "notice")
-            this->notice_command(buff2, fd);
-		else if (command == "PART" || command == "part")
-			part_command(str, fd);
-		else if (command == "QUIT" || command == "quit")
-			this->quit_command(fd, str);
-		else if ( command == "PONG" || command == "pong")
-			this->pong_command(fd, str);
-		else if ( command == "MODE" || command == "mode")
-			this->mode_command(str, fd);
-		else if ( command == "OPER" || command == "oper")
-			this->oper_command(str, fd);
-		else if ( command == "KICK" || command == "kick")
-			this->kick_command(str, fd);
-		else if ( command == "INVITE" || command == "invite")
-			this->invite_command(str, fd);
-		else if ( command == "TOPIC" || command == "topic")
-			this->topic_command(str, fd);
-		else if ( command == "LIST" || command == "list")
-			this->list_command( str, fd );
-		else if ( command == "NAMES" || command == "names")
-		{
-			str = str  + 5;
-			while (*str  == ' ')
-				str ++;
-			if (*str == ':')
-				str++;
-			this->names_command( str, fd );
-		}
-		
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
+		else if ( command == "NICK" )
+			this->nick_command(parse, user);
+		else if ( command == "JOIN" )
+			join_command(parse, user);
+		else if ( command == "PRIVMSG" )
+			this->privmsg_command(parse, user);
+		else if ( command == "NOTICE" )
+            this->notice_command(parse, user);
+		else if ( command == "PART" )
+			part_comman(parse, user);
+		else if ( command == "QUIT" )
+			this->quit_command(parse, user);
+		else if ( command == "PONG" )
+			this->pong_command(parse, user);
+		else if ( command == "MODE" )
+			this->mode_command(parse, user);
+		else if ( command == "OPER" )
+			this->oper_command(parse, user);
+		else if ( command == "KICK" )
+			this->kick_command(parse, user);
+		else if ( command == "INVITE" )
+			this->invite_command(parse, user);
+		else if ( command == "TOPIC" )
+			this->topic_command(parse, user);
+		else if ( command == "LIST" )
+			this->list_command(parse, user);
+		else if ( command == "NAMES" )
+			this->names_command(parse, user);
+		else if ( command == "who" )
+			this->names_command(parse, user);
 	}
 }
 
@@ -340,7 +309,7 @@ void Server::getCustomerRequest( int fd_client )
 				tmp2 = tmp2.substr(0, 510);
 			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
 			{
-				this->parse_command( fd_client, tmp2, &tmp2[0] );
+				this->parse_command( fd_client, tmp2);
 			}
 			usr->setBufferCmd("");
 		}

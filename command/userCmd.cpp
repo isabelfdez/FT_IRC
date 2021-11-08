@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/05 18:10:29 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 13:56:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ void	Server::user_command( int fd, char *buffer )
 	if ( !ft_isalnum( token[0][0] ) )
 		return send_error(ERR_USERNAMEINVALID, " USER :Your username is not valid", fd);
 	usr->setUserName(token[0]);
-	usr->setmode(token[1][0], true);
+	
+	if ( std::atoi(token[1].c_str() ) & 0b1000 )
+		usr->setmode('i', true);
+	
 	if ( token[3][0] == ':')
 	{
 		std::string aux = buffer;
