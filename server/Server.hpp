@@ -191,7 +191,7 @@ class Server
 		void			welcome( int const & fd );
 		void			reStartSendMsg();
 
-		void			send_message(std::string & message, int & fd, User * usr);
+		void			send_message(std::string message, User * dest, User * usr);
 		void			send_message_channel(std::string & message, User * usr, Channel * chnl);
 		void			send_message_channel_block(std::string message, User * usr, Channel * chnl);
 		void			send_error(std::string error, std::string str, User *dest);

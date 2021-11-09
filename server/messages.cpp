@@ -1,10 +1,10 @@
 
 #include "Server.hpp"
 
-void    Server::send_message(std::string & _message, int & fd, User * usr)
+void    Server::send_message(std::string _message, User * dest, User * usr)
 {
     std::string message;
-	User		*dest  = this->_fd_users[ fd ];
+
 
     message.append(usr->getMask());
     message.append(" ");

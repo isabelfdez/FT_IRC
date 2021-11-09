@@ -22,7 +22,7 @@ void    Server::join_channel(std::string str1, User *usr)
 
         if (chann->getIsFull())
             return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", usr));
-        if (chann->isBanned(usr))
+        if (chann->isBanned(usr->getMask()))
             return (send_error(ERR_BANNEDFROMCHAN, str1 + " :Cannot join channel (+b)", usr));
         if (chann->isInvite() && !chann->isInvited(usr->getNick()) && !usr->getmode('o'))
             return (send_error(ERR_INVITEONLYCHAN, str1 + " :Cannot join channel (+i)", usr));

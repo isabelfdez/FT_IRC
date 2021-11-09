@@ -256,8 +256,8 @@ void Server::parse_command(int fd, std::string buffer)
 		this->quit_command(parse, user);
 		else if ( command == "PONG" )
 			this->pong_command(parse, user);
-	// 	else if ( command == "MODE" )
-	// 		this->mode_command(parse, user);
+	else if ( command == "MODE" )
+		this->mode_command(parse, user);
 	// 	else if ( command == "OPER" )
 	// 		this->oper_command(parse, user);
 	// 	else if ( command == "KICK" )

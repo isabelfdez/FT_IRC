@@ -49,7 +49,7 @@ bool				Channel::isInvited(std::string user)
 	return (false);
 }
 
-std::list<User *> & Channel::getBanned() 
+std::list<std::string> & Channel::getBanned() 
 {
 	return (this->_banned);
 }
@@ -66,11 +66,13 @@ bool	Channel::isOp(User * user)
 	return (false);
 }
 
-bool	Channel::isBanned(User * user)
+bool	Channel::isBanned(std::string mask)
 {
-	for (std::list<User *>::iterator it = this->_banned.begin(); it != this->_banned.end(); it++)
+	list_str_it start = _banned.begin();
+	list_str_it end = _banned.end();
+	for (; start != end; start++)
 	{
-		if ((*it)->getNick() == user->getNick())
+		if (*start == mask)
 			return (true);
 	}
 	return (false);
@@ -130,19 +132,20 @@ void    Channel::setOp(User * user)
     this->_operators.push_back(user);
 }
 
-void	Channel::ban(User * user)
+void	Channel::ban(std::string mask)
 {
-	this->_banned.push_back(user);
-	this->deleteUser(user);
+	this->_banned.push_back(mask);
 }
 
-void	Channel::banOff(User * user)
+void	Channel::banOff(std::string mask)
 {
-	for (std::list<User*>::iterator it = _banned.begin(); it != _banned.end(); it++)
+	list_str_it start = _banned.begin();
+	list_str_it end = _banned.end();
+	for (; start != end; start++)
 	{
-		if (user->getNick() == (*it)->getNick())
+		if (*start == mask)
 		{
-			_banned.erase(it);
+			_banned.erase(start);
 			return;
 		}
 	}
@@ -204,8 +207,7 @@ std::string	Channel::showModes()
 	std::string s;
 	if (this->isInvite() == true)
 		s += "i";
-	if (this->_topic.size())
-		s += "t";
+	s += "t";
 	return s;
 }
 

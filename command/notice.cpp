@@ -55,10 +55,7 @@ void	Server::notice_command( std::vector<std::string> const & parse, User *usr )
 			message.append("NOTICE " + dest + " :" + tmp);
 	}
 	if (dest_user_b)
-	{
-		int fd_dst = usr_dest->getsockfd();
-		return send_message( message, fd_dst, usr );
-	}
+		return send_message( message, usr_dest, usr );
 	if (dest_chnl_b)
 		return send_message_channel( message, usr, chnl_dest ) ;
 }

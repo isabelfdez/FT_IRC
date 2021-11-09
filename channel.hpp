@@ -19,13 +19,16 @@
 
 # define MAX_USERS 50
 
+
 class Channel;
 class User;
+
+typedef std::list<std::string>::iterator list_str_it;
 
 class Channel
 {
 	private:
-		std::list<User *>	_banned;
+		std::list<std::string>	_banned;
 		std::string			_name;
 		std::string			_topic;
 		std::list<User *>	_users;
@@ -41,27 +44,27 @@ class Channel
 		~Channel();
 
 		// Getters
-		std::string			getName() const;
-		std::list<User *>&	getUsers();
-		std::list<User *>&	getBanned();
-		std::string			getTopic();
-		bool				getIsFull() const;
-		bool				isOp(User * user);
-		bool				isBanned(User * user);
-		bool    			isInvited(std::string user);
-		bool    			isUser(std::string user);
-		bool				isInvite();
-		User    			*getUser(std::string user);
-		size_t 				getNumUser() const ;
+		std::string					getName() const;
+		std::list<User *>&			getUsers();
+		std::list<std::string>&		getBanned();
+		std::string					getTopic();
+		bool						getIsFull() const;
+		bool						isOp(User * user);
+		bool						isBanned(std::string mask);
+		bool    					isInvited(std::string user);
+		bool    					isUser(std::string user);
+		bool						isInvite();
+		User    					*getUser(std::string user);
+		size_t 						getNumUser() const ;
 		
 
 		std::string			userList();
 
 
 		// Setters
-		void				banOff(User * user);
+		void				banOff(std::string mask);
 		void				inviteOff(User * user);
-		void				ban(User *);
+		void				ban(std::string mask);
 		void				setName(std::string const & name);
 		void    			setOp(User * user);
 		void				setOpOff(std::string user, User * usr);
