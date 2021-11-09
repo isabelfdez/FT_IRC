@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 17:12:07 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:31:53 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ std::vector<std::string> parser( std::string buffer )
 	if ( (pos = buffer.find(':')) != std::string::npos )
 	{
 		middle = buffer.substr(0, pos);
-		trailing = buffer.substr(pos, buffer.length() - pos );
+		trailing = buffer.substr(pos + 1, buffer.length() - pos );
 	}
 	else
 		middle = buffer;
