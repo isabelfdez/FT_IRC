@@ -181,6 +181,16 @@ bool	User::operator==(User & obj)
 
 // Other functions
 
+std::string	User::showModes()
+{
+	std::string s;
+	if (this->_modes.small_o = true)
+		s += "o";
+	if (this->_modes.i = true)
+		s += "i";
+	return s;
+}
+
 void	User::init_modes()
 {
 	this->_modes.a = false;
