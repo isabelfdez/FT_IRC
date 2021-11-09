@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 15:29:45 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:12:07 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,3 +78,4 @@ std::vector<std::string> split( std::string buffer, char c )
 	
 	return matrix;
 }
+

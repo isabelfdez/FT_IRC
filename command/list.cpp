@@ -6,32 +6,25 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/05 19:07:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:17:07 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../server/Server.hpp"
 
-void Server::list_command( char *buffer, int fd)
+void Server::list_command( std::vector<std::string> const & parse, User *usr )
 {
-	typedef std::map<std::string ,Channel *>::iterator		it_channel;
 	Channel			*channel;
 	std::string		message;
 	User			*usr;
 
-	buffer  = buffer  + 4;
-	while (*buffer  == ' ')
-		buffer ++;
-	if (*buffer == ':')
-		buffer++;
 
-	usr = this->_fd_users.at( fd );
-	std::vector<std::string> token = split(buffer, ',');
+	std::vector<std::string> token = split(parse[0], ',');
 
 	if ( token.size() <= 0 )
 	{
-		it_channel start = this->_name_channel.begin();
-		it_channel end = this->_name_channel.end();
+		map_channel_it start = this->_name_channel.begin();
+		map_channel_it end = this->_name_channel.end();
 
 		for (; start != end ; ++start )
 		{

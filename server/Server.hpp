@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 16:20:48 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:59:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@
 typedef std::list<std::string>::iterator list_str_it;
 typedef std::list<User *>::iterator list_user_it;
 typedef std::vector<std::string>::iterator vector_str_it;
+typedef std::map<std::string ,Channel *>::iterator		map_channel_it;
 
 
 class Server
