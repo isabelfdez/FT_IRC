@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 17:18:55 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 15:52:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:26:04 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,110 +17,55 @@
 void	Server::privmsg_command( std::vector<std::string> const & parse, User *usr )
 {
 
-	std::string nick_dest = parse[1];
+	list_user_it	start_usr = this->_connected_users.begin();
+	list_user_it	end_usr = this->_connected_users.end();
+	User			*usr_dest;
+	Channel			*chnl_dest;
+	std::string		dest = parse[1];
+	std::string		message;
+	bool			dest_user_b, dest_chnl_b;
 
+	dest_user_b = false;
+	dest_chnl_b = false;
 	
 
+	if ( parse.size() < 1 )
+		return send_error(ERR_NORECIPIENT, ":No recipient given (PRIVMSG)", usr);
 	
-	std::string 				delimiter = " ";
-	size_t						pos = 0;
-	std::string 				token;
-	int							deliver_fd;
-	std::list<User *>::iterator it;
-	std::string					s;
-	std::string					message;
-
-
-	if ((pos = command.find(delimiter)) == std::string::npos)
+	for (; start_usr != end_usr ; ++start_usr )
 	{
-		s.assign(":No recipient given (PRIVMSG)");
-		return (send_error(ERR_NORECIPIENT, s, fd));
-	}
-	command.erase(0, pos + delimiter.length());
-	while (command.begin() != command.end() && *(command.begin()) == ' ')
-		command.erase(0, 1);
-	if (command.begin() == command.end())
-	{
-		s.assign(":No recipient given (PRIVMSG)");
-		return (send_error(ERR_NORECIPIENT, s, fd));
-	}
-	if ((pos = command.find(delimiter)) == std::string::npos)
-	{
-		if (!(*(command.begin()) == ':'))
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		else
+		if ( ft_toupper( (*start_usr)->getNick() ) == ft_toupper(dest) )
 		{
-			s.assign(":No recipient given (PRIVMSG)");
-			return (send_error(ERR_NOTEXTTOSEND, s, fd));
-		}
-	}
-	token = command.substr(0, pos);
-	while (command.begin() != command.end() && *(command.begin()) == ' ')
-		command.erase(0, 1);
-	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
-	{
-		if (ft_toupper((*it)->getNick()) == ft_toupper(token))
-		{
-			deliver_fd = (*it)->getsockfd();
+			usr_dest = *start_usr;
+			dest_user_b = true;
 			break ;
 		}
 	}
-	// Si hemos encontrado el nick, mandamos el mensaje
-	if (it != this->_connected_users.end())
-	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		if (!(*(command.begin()) == ':'))
-		{
-			if (!ft_isspecial(*(command.begin())) && !ft_isalpha(*(command.begin())))
-			{
-				s.assign(" : Incorrect sintax.");
-				return (send_error(ERR_SINTAX, s, fd));
-			}
-			s.assign(" : Too many recipients.");
-			return (send_error(ERR_TOOMANYTARGETS, s, fd));
-		}
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		message.append("PRIVMSG " + token + " :" + command);
-		return (send_message(message, deliver_fd, this->_fd_users[fd]));
-	}
-	// Ahora vamos al caso de mandar un mensaje a un todo un canal
-	// Mandamos un error si no hemos encontrado el token ni en los nicks ni en los channels
-	if (this->_name_channel.find(token) == this->_name_channel.end())
-	{
-		s.assign(token);
-		s.append(" :No such nick/channel");
-		return (send_error(ERR_NOSUCHNICK, s, fd));
 
-	}
-	else
+	if( this->_name_channel.count(dest) > 0 )
 	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		if (!(*(command.begin()) == ':'))
-		{
-			if (!ft_isspecial(*(command.begin())) && !ft_isalpha(*(command.begin())))
-			{
-				s.assign(" : Incorrect sintax.");
-				return (send_error(ERR_SINTAX, s, fd));
-			}
-			s.assign(" : Too many recipients.");
-			return (send_error(ERR_TOOMANYTARGETS, s, fd));
-		}
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return (send_error(ERR_NOTEXTTOSEND, ":No text to send", fd));
-		message.append("PRIVMSG " + token + " :" + command);
-		return (send_message_channel(message, this->_fd_users[fd], this->_name_channel[token]));
+		dest_chnl_b = true;
+		chnl_dest =  this->_name_channel.at(dest);
 	}
+	if ( !dest_user_b && !dest_chnl_b )
+		return (send_error( ERR_NOSUCHNICK, " :No such nick/channel", usr ) );
+		
+
+	{
+		std::string tmp;
+		for (size_t i = 2; i < parse.size(); i++ )
+		{
+			tmp.append( parse[i] );
+			if ( i < ( parse.size() - 1) )
+				tmp.append(" ");
+		}
+			message.append("PRIVMSG " + dest + " :" + tmp);
+	}
+	if (dest_user_b)
+	{
+		int fd_dst = usr_dest->getsockfd();
+		return (send_message(message, fd_dst, usr));
+	}
+	if (dest_chnl_b)
+		return (send_message_channel(message, usr, chnl_dest));
 }

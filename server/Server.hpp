@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 16:59:18 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 15:57:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@
 # define RPL_YOUREOPER				"381"
 
 typedef std::map<std::string ,Channel *>::iterator		map_channel_it;
+typedef std::list<std::string>::iterator				list_str_it;
+typedef std::list<User *>::iterator						list_user_it;
+typedef std::vector<std::string>::iterator				vector_str_it;
 
 
 class Server
@@ -116,7 +119,9 @@ class Server
 		Server(int port);
 		~Server();
 
-		
+
+
+
 		class GlobalServerExecption : public std::exception
 		{
 			public:
@@ -160,10 +165,10 @@ class Server
 		void			notice_command  (std::vector<std::string> const& parse, User *usr);
 		void			user_command    (std::vector<std::string> const& parse, User *usr);
 		void			quit_command    (std::vector<std::string> const& parse, User *usr);
-		void			join_command    (std::vector<std::string> const& parse, User *usr);
-		void			join_channel    (std::vector<std::string> const& parse, User *usr);
-		void			part_command    (std::vector<std::string> const& parse, User *usr);
-		void			part_channel    (std::vector<std::string> const& parse, User *usr);
+		void			join_command    (std::vector<std::string> parse, User *usr);
+		void			join_channel	(std::string str1, User *usr);
+		void			part_command    (std::vector<std::string> parse, User *usr);
+		void			part_channel    (std::string str1, User *usr);
 		void			pong_command    (std::vector<std::string> const& parse, User *usr);
 		void			mode_command    (std::vector<std::string> const& parse, User *usr);
 		void			oper_command    (std::vector<std::string> const& parse, User *usr);
@@ -185,7 +190,7 @@ class Server
 
 		void			send_message(std::string & message, int & fd, User * usr);
 		void			send_message_channel(std::string & message, User * usr, Channel * chnl);
-		void			send_message_channel_block(std::string & message, User * usr, Channel * chnl);
+		void			send_message_channel_block(std::string message, User * usr, Channel * chnl);
 		void			send_error(std::string error, std::string str, User *dest);
 		void			send_reply(std::string replay, std::string str, User * usr);
 		void			sendRequest(User *user);

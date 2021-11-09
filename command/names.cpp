@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 16:58:17 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:38:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 
 void Server::names_command( std::vector<std::string> const & parse, User *usr )
 {
-	std::string		message;
-	Channel			*channel;
-	User			*usr;
-	bool			flags;
+	std::vector<std::string>	token;
+	std::string					message;
+	Channel						*channel;
+	User						*usr;
+	bool						flags;
 
 	flags = false;
 
-	for( size_t i = 0; i < parse.size(); i++ )
+	if( parse.size() > 1 )
+		token = split(parse[1], ',');
+	
+	for( size_t i = 0; i < token.size(); i++ )
 	{
-		channel = this->_name_channel[ parse[i] ];
+		channel = this->_name_channel[ token[i] ];
 		if ( channel )
 		{
 				message = " = " + channel->getName() + " :" + channel->userList();
@@ -33,6 +37,6 @@ void Server::names_command( std::vector<std::string> const & parse, User *usr )
 				flags = true;
 		}
 	}
-	if ( !flags )
+	if( !flags )
 		send_reply(RPL_ENDOFNAMES	, " :End of /NAMES list", usr);
 }

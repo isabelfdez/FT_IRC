@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:57:22 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 16:51:28 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 15:55:35 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	Server::user_command(std::vector<std::string> const & parse, User *usr)
 	usr->setRealName(parse[4]);
 	if ( usr->getNick().size() > 0 && !usr->getRegistered() )
 	{
+		std::cout << "hola2\n";
 		usr->setRegistered(true);
 		usr->setTimePing(0);
 		this->_connected_users.push_back( usr );
