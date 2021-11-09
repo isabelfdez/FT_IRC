@@ -166,8 +166,8 @@ class Server
 		void			quit_command    (std::vector<std::string> const& parse, User *usr);
 		void			join_command    (std::vector<std::string> parse, User *usr);
 		void			join_channel	(std::string str1, User *usr);
-		void			part_command    (std::vector<std::string> const& parse, User *usr);
-		void			part_channel    (std::vector<std::string> const& parse, User *usr);
+		void			part_command    (std::vector<std::string> parse, User *usr);
+		void			part_channel    (std::string str1, User *usr);
 		void			pong_command    (std::vector<std::string> const& parse, User *usr);
 		void			mode_command    (std::vector<std::string> const& parse, User *usr);
 		void			oper_command    (std::vector<std::string> const& parse, User *usr);

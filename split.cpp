@@ -29,7 +29,7 @@ std::vector<std::string> parser( std::string buffer )
 
 	
 	if ( (pos = buffer.find('\r')  ) != std::string::npos || (pos = buffer.find('\r')  ) != std::string::npos )
-		buffer[ pos - 1] = '\0';
+		buffer[ pos ] = '\0';
 	buffer  =  &(*delimiterAdvance<std::string::iterator>(buffer.begin(), buffer.end(), ' '));
 	if ( buffer[0] == ':' )
 		if ( (pos  = buffer.find(' ')) != std::string::npos )

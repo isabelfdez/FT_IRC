@@ -35,7 +35,7 @@ int main (int argc, char **argv)
 			return (0);
 		}
 	}
-	int i = 1;
+	//int i = 1;
 	try 
 	{
 		int port = get_port(argv[1]);
@@ -50,36 +50,36 @@ int main (int argc, char **argv)
 			//server.sendPing( );
 			server.build_select_list();
 			server.setNumReadSock();
-			 if ( server.getNumReadSock() < 0 )
+			if ( server.getNumReadSock() < 0 )
 			 	throw Server::GlobalServerExecption();
 			if ( server.getNumReadSock() == 0)
 			{
 				std::cout << "\r";
 				displayTimestamp();
-				std::cout
-					<< " : Connections : " << server.getNumConnections()
-					<< " Users: " << server.getNumUser()
-					<< " Channel: " << server.getNumChannel();
-					if ( i == 5)
-						i = 1;
-					 switch (i)
-					 {
-					 	case 1:
-					 		std::cout << YELLOW" / "WHITE ;
-					 		break;
-					 	case 2:
-					 		std::cout << YELLOW" - "WHITE ;
-					 		break;
-					 	case 3:
-					 	std::cout << YELLOW" \\ "WHITE;
-					 		break;
-					 	case 4:
-					 		std::cout << YELLOW" | "WHITE;
-					 		break;
-					 	default:
-					 		break;
-					 }
-				i++;
+				// std::cout
+				// 	<< " : Connections : " << server.getNumConnections()
+				// 	<< " Users: " << server.getNumUser()
+				// 	<< " Channel: " << server.getNumChannel();
+					// if ( i == 5)
+					// 	i = 1;
+					//  switch (i)
+					//  {
+					//  	case 1:
+					//  		std::cout << YELLOW" / "WHITE ;
+					//  		break;
+					//  	case 2:
+					//  		std::cout << YELLOW" - "WHITE ;
+					//  		break;
+					//  	case 3:
+					//  	std::cout << YELLOW" \\ "WHITE;
+					//  		break;
+					//  	case 4:
+					//  		std::cout << YELLOW" | "WHITE;
+					//  		break;
+					//  	default:
+					//  		break;
+					//}
+				//i++;
 				fflush(stdout);
 			}
 			else

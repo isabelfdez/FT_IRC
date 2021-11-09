@@ -18,7 +18,6 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
     std::string s;
     std::string nick = usr->getNick();
 
-    
     if (!usr->getPassState())
         return send_error(ERR_NOPASSWD, "NICK :No password entered", usr);
     if (parse.size() < 1)
@@ -28,6 +27,7 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
     int j = 0;
     while (parse[1][j])
     {
+        std::cout << "adios\n";
         if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
             return (send_error(ERR_ERRONEUSNICKNAME, parse[1] + " :Erroneous nickname", usr));
         j++;
@@ -71,6 +71,7 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
     // CASO 2: El usuario se asigna un nick por primera vez
     else if (!nick.size())
     {
+        std::cout << "nick : " << parse[1] << std::endl;
         // PASO 1: Añadir el nuevo nick a la lista de nicks
         this->_nicks.push_back(parse[1]);
         // PASO 2: Cambiar el nick del usuario

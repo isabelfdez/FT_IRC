@@ -212,7 +212,7 @@ void Server::parse_command(int fd, std::string buffer)
 	User *user = this->_fd_users[fd];
 
 
-	std::vector<std::string> parse = split( buffer );
+	std::vector<std::string> parse = parser( buffer );
 
 
 	command = ft_toupper(parse[0]);
@@ -233,25 +233,25 @@ void Server::parse_command(int fd, std::string buffer)
 			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
 		else if (command == "USER" )
 			this->user_command(parse, user);
-		// else if (command == "NICK" )
-		// 	this->nick_command(parse, user);
+		else if (command == "NICK" )
+		 	this->nick_command(parse, user);
 		// else if (command == "PASS" )
 		// 	this->pass_command(parse, user);
 	}
-	// else if ( user->getRegistered() )
-	// {
-	// 	if ((command == "USER" || command == "user"))
-	// 		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
-	// 	else if ( command == "NICK" )
-	// 		this->nick_command(parse, user);
-	// 	else if ( command == "JOIN" )
-	// 		join_command(parse, user);
+	else if ( user->getRegistered() )
+	{
+	if ((command == "USER" || command == "user"))
+		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
+	else if ( command == "NICK" )
+		this->nick_command(parse, user);
+	else if ( command == "JOIN" )
+		join_command(parse, user);
 	// 	else if ( command == "PRIVMSG" )
 	// 		this->privmsg_command(parse, user);
 	// 	else if ( command == "NOTICE" )
     //         this->notice_command(parse, user);
-	// 	else if ( command == "PART" )
-	// 		part_comman(parse, user);
+	else if ( command == "PART" )
+		part_command(parse, user);
 	// 	else if ( command == "QUIT" )
 	// 		this->quit_command(parse, user);
 	// 	else if ( command == "PONG" )
@@ -272,7 +272,7 @@ void Server::parse_command(int fd, std::string buffer)
 	// 		this->names_command(parse, user);
 	// 	else if ( command == "who" )
 	// 		this->names_command(parse, user);
-	// }
+	}
 }
 
 void Server::getCustomerRequest( int fd_client )

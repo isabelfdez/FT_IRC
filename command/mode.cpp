@@ -15,6 +15,28 @@
 // HAY QUE HACER EL MODE SIN PARAMETROS (QUE ME DIGA QUE MODES TENGO)
 // SE PUEDE DESBANNEAR A ALGUIEN?
 
+void    mode_user(std::vector<std::string> vector, User * usr)
+{
+
+}
+
+void    mode_chann(std::vector<std::string> vector, User * usr)
+{
+
+}
+
+void    Server::mode_command(std::vector<std::string> const & parse, User * usr)
+{
+    if (parse.size() < 2)
+        return (showModes(usr));
+    else if (isChannel(parse[1]))
+        mode_chann(parse, usr);
+    else if (isUsr(parse[1]))
+        mode_user(parse, usr);
+    else
+        return (send_error("", "MODE :Not a Channel or a User", usr));
+}
+
 void    Server::mode_command(char * str, int & fd)
 {
     std::vector<std::string> parse;
