@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 17:18:55 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:27:14 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/09 15:52:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,14 @@
 #include "../server/Server.hpp"
 #include "../utils.hpp"
 
-void	Server::privmsg_command(std::string & command, int & fd)
+void	Server::privmsg_command( std::vector<std::string> const & parse, User *usr )
 {
+
+	std::string nick_dest = parse[1];
+
+	
+
+	
 	std::string 				delimiter = " ";
 	size_t						pos = 0;
 	std::string 				token;
