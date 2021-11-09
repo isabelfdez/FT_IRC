@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 17:16:44 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 14:02:03 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/09 20:27:19 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
 void    Server::mode_command(std::vector<std::string> const & parse, User * usr)
 {
     if (parse.size() < 2)
-        return (send_reply(RPL_UMODEIS, "Your user mode are :+" + usr->showModes(usr),  usr));
+        return (send_reply(RPL_UMODEIS, "Your user mode are :+" + usr->showModes(),  usr));
     else if (isChannel(parse[1]))
         mode_chann(parse, usr);
     else if (isUsr(parse[1]))

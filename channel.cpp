@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 20:19:14 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 21:09:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,8 @@ std::string	Channel::userList()
 		else
 			s.append("+");
 		s.append((*start)->getNick());
-		s.append(" ");
+		if (*start)
+			s.append(" ");
 	}
 	return (s);
 }

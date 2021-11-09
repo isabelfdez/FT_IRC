@@ -19,6 +19,8 @@ void    Server::join_channel(std::string str1, User *usr)
 	{
 		Channel *chann = this->_name_channel[str1];
 		std::vector<std::string> tmp_name;
+		tmp_name.push_back("NAME");
+		tmp_name.push_back(str1);
 
         if (chann->getIsFull())
             return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", usr));
@@ -33,7 +35,7 @@ void    Server::join_channel(std::string str1, User *usr)
         send_message_channel(s, usr, chann);
         chann->addUser(usr);
         usr->addChannel(chann);
-        //this->names_command(, usr);
+        this->names_command(tmp_name, usr);
         if (chann->getTopic().size() > 0)
             send_reply(RPL_TOPIC, " JOIN :" + str1 + " " + chann->getTopic(), usr);
         else
@@ -52,11 +54,15 @@ void    Server::join_channel(std::string str1, User *usr)
             j++;
         }
         // Create and join channel
+		std::vector<std::string> tmp_name;
+		tmp_name.push_back("NAME");
+		tmp_name.push_back(str1);
         this->_name_channel[str1] = new Channel(str1, usr);
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
         send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
-        //this->names_command(&this->_name_channel[str1]->getName()[0], fd);
+        this->names_command(tmp_name, usr);
+
     }
 }
 
