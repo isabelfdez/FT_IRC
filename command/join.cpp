@@ -32,7 +32,7 @@ void    Server::join_channel(std::string str1, User *usr)
         send_message_channel(s, usr, chann);
         chann->addUser(usr);
         usr->addChannel(chann);
-        //this->names_command(&chann->getName()[0], usr);     FALTA EL NAMES
+        //this->names_command(, usr);
         if (chann->getTopic().size() > 0)
             send_reply(RPL_TOPIC, " JOIN :" + str1 + " " + chann->getTopic(), usr);
         else
@@ -55,7 +55,7 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
         send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
-        //this->names_command(&this->_name_channel[str1]->getName()[0], fd);    ACCCCOOOOOOORRRRDDDAAAAAAAAAAAAAAAAARRRRSEEEEEEEEEEEEEEEEE!!!
+        //this->names_command(&this->_name_channel[str1]->getName()[0], fd);
     }
 }
 
