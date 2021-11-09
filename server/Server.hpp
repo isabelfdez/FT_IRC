@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:46:43 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/03 01:34:27 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ class Server
 		struct sockaddr_in 				_addr_server;
 		struct timeval					_time_out;
 		fd_set							_reads;
+		fd_set							_write;
 
 		int								_num_read_sock;
 		int								_listen_server_sock;
