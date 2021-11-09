@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 19:44:58 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 20:25:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,16 @@ bool	User::operator==(User & obj)
 }
 
 // Other functions
+
+std::string	User::showModes()
+{
+	std::string s;
+	if (this->_modes.small_o == true)
+		s += "o";
+	if (this->_modes.i == true)
+		s += "i";
+	return s;
+}
 
 void	User::init_modes()
 {

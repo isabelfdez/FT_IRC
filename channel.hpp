@@ -73,6 +73,7 @@ class Channel
 		// Overload
 
 		// Other functions
+		std::string			showModes();
 		bool				deleteUser(User * user);
 		void				addUser(User * user);
 		//overload para no enviar el mensaje al emisor :) by krios-fu

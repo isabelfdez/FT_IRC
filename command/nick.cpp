@@ -27,7 +27,6 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
     int j = 0;
     while (parse[1][j])
     {
-        std::cout << "adios\n";
         if (!ft_isalnum(parse[1][j]) && !ft_isspecial(parse[1][j]) && parse[1][j] != '-')
             return (send_error(ERR_ERRONEUSNICKNAME, parse[1] + " :Erroneous nickname", usr));
         j++;

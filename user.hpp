@@ -154,6 +154,7 @@ class User
 		bool						operator==(User & obj);
 
 		// Other functions
+		std::string					showModes();
 		void						init_modes();
 		void						deleteChannel(Channel * channel);
 		void						addChannel(Channel * channel);

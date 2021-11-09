@@ -199,6 +199,16 @@ bool	Channel::operator==(Channel & obj)
 
 // Other functions
 
+std::string	Channel::showModes()
+{
+	std::string s;
+	if (this->isInvite() == true)
+		s += "i";
+	if (this->_topic.size())
+		s += "t";
+	return s;
+}
+
 bool	Channel::deleteUser(User * user)
 {
 	std::string s;
