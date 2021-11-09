@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 17:53:34 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/09 19:43:40 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
         // Añadimos el usuario a la lista de usuarios
         this->_connected_users.push_back(usr);
         usr->setTimePing(0);
+        usr->setMask();
   
         displayLog("User created", "", usr);
 

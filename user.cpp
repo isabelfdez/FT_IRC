@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 19:22:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 19:44:58 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ std::string User::getAnswer()
 
 bool	User::getPassState() const { return (this->_passState); }
 
+std::string const & User::getMask() const { return this->_mask; }
+
 
 //std::string const & User::getMask() const { return this->_mask; }
 
@@ -168,6 +170,16 @@ void	User::setBufferCmd( std::string const & buffer_cmd )
 void	User::setIsSendMsg( bool const & status ) { this->_is_send_msg = status ; }
 
 void	User::setPassState(bool status) { this->_passState = status; }
+
+void	User::setMask( void )
+{
+	std::string mask;
+	if ( !this->_mask.length() )
+	{
+		mask = ":" + this->getNick() + "!" + this->getUserName() + "@" + this->getIp();
+		this->_mask = mask;
+	}
+}
 
 
 // Overloads

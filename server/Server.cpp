@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:51:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 19:18:53 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,10 +252,10 @@ void Server::parse_command(int fd, std::string buffer)
         this->notice_command(parse, user);
 	else if ( command == "PART" )
 		part_command(parse, user);
-	// 	else if ( command == "QUIT" )
-	// 		this->quit_command(parse, user);
-	// 	else if ( command == "PONG" )
-	// 		this->pong_command(parse, user);
+	else if ( command == "QUIT" )
+		this->quit_command(parse, user);
+		else if ( command == "PONG" )
+			this->pong_command(parse, user);
 	// 	else if ( command == "MODE" )
 	// 		this->mode_command(parse, user);
 	// 	else if ( command == "OPER" )

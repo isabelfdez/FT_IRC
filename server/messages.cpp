@@ -6,11 +6,7 @@ void    Server::send_message(std::string & _message, int & fd, User * usr)
     std::string message;
 	User		*dest  = this->_fd_users[ fd ];
 
-    message.append(":");
-    message.append(usr->getNick());
-    message.append("!");
-    message.append(usr->getUserName());
-    message.append("@" + usr->getIp());
+    message.append(usr->getMask());
     message.append(" ");
     message.append( _message );
     message.append("\n");
@@ -29,11 +25,7 @@ void    Server::send_message_channel(std::string & message, User * usr, Channel 
 
 	it_user start = chnl->getUsers().begin();
 	it_user end = chnl->getUsers().end();
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
+    mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
     mask.append("\n");
@@ -58,14 +50,10 @@ void    Server::send_message_channel_block(std::string message, User * usr, Chan
 	it_user start = chnl->getUsers().begin();
 	it_user end = chnl->getUsers().end();
 
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
+    mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
-    mask.append("\n");
+    mask.append("\r\n");
 
 
 	for ( ; start != end ; ++start)

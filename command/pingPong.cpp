@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/08 16:52:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:58:01 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	Server::sendPing()
 void	Server::pong_command( std::vector<std::string> const & parse, User *usr )
 {
 
-	if ( parse.size()  > 1 && parse[1] == usr ->getPing() )
+	if ( parse.size() > 1 && parse[1] == usr ->getPing() )
 	{
 		if (usr->getTimePing() == 0)
 			this->welcome( usr->getsockfd() );

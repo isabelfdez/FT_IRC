@@ -47,7 +47,7 @@ int main (int argc, char **argv)
 		while (42)
 		{
 			signal( SIGINT, signal_kill );
-			//server.sendPing( );
+			server.sendPing( );
 			server.build_select_list();
 			server.setNumReadSock();
 			if ( server.getNumReadSock() < 0 )

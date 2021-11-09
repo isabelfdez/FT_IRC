@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/05 15:03:18 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/09 19:23:44 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ class User
 		std::string					_realName;
 		std::string					_ping;
 		std::string					_buffer_cmd;
+		std::string					_mask;
 		std::deque<std::string>		_answer;
 		user_modes					_modes;
 		int							_sock_fd;
@@ -130,6 +131,7 @@ class User
 		bool const &				getIsSendMsg() const;
 		std::string 				getAnswer();
 		bool						getPassState()	const;
+		std::string const & 		getMask() const;
 		
 
 		// Setters
@@ -146,6 +148,7 @@ class User
 		void						setIsSendMsg(bool const & status);
 		void						setAnswer(std::string const & answer);
 		void						setPassState(bool state);
+		void						setMask( void );
 		
 		// Overload
 		bool						operator==(User & obj);
