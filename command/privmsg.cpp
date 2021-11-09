@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 17:18:55 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:26:04 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:50:50 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ void	Server::privmsg_command( std::vector<std::string> const & parse, User *usr 
 		chnl_dest =  this->_name_channel.at(dest);
 	}
 	if ( !dest_user_b && !dest_chnl_b )
-		return (send_error( ERR_NOSUCHNICK, " :No such nick/channel", usr ) );
-		
+		return send_error( ERR_NOSUCHNICK, " :No such nick/channel", usr );
 
 	{
 		std::string tmp;
@@ -61,11 +60,12 @@ void	Server::privmsg_command( std::vector<std::string> const & parse, User *usr 
 		}
 			message.append("PRIVMSG " + dest + " :" + tmp);
 	}
+
 	if (dest_user_b)
 	{
 		int fd_dst = usr_dest->getsockfd();
-		return (send_message(message, fd_dst, usr));
+		return send_message( message, fd_dst, usr );
 	}
 	if (dest_chnl_b)
-		return (send_message_channel(message, usr, chnl_dest));
+		return send_message_channel( message, usr, chnl_dest );
 }

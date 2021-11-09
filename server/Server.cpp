@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:43:29 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:51:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,10 +246,10 @@ void Server::parse_command(int fd, std::string buffer)
 		this->nick_command(parse, user);
 	else if ( command == "JOIN" )
 		join_command(parse, user);
-	 	else if ( command == "PRIVMSG" )
-	 		this->privmsg_command(parse, user);
-	// 	else if ( command == "NOTICE" )
-    //         this->notice_command(parse, user);
+	else if ( command == "PRIVMSG" )
+		this->privmsg_command(parse, user);
+	else if ( command == "NOTICE" )
+        this->notice_command(parse, user);
 	else if ( command == "PART" )
 		part_command(parse, user);
 	// 	else if ( command == "QUIT" )
