@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:28:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:43:29 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,8 +268,8 @@ void Server::parse_command(int fd, std::string buffer)
 	// 		this->topic_command(parse, user);
 	// 	else if ( command == "LIST" )
 	// 		this->list_command(parse, user);
-	// 	else if ( command == "NAMES" )
-	// 		this->names_command(parse, user);
+		else if ( command == "NAMES" )
+	 		this->names_command(parse, user);
 	// 	else if ( command == "who" )
 	// 		this->names_command(parse, user);
 	}
