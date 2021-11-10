@@ -3,82 +3,62 @@
 /*                                                        :::      ::::::::   */
 /*   notice.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 17:17:03 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 17:17:04 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/09 18:50:15 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../server/Server.hpp"
 #include "../utils.hpp"
 
-void	Server::notice_command(std::string & command, int & fd)
+void	Server::notice_command( std::vector<std::string> const & parse, User *usr )
 {
-	std::string 				delimiter = " ";
-	size_t						pos = 0;
-	std::string 				token;
-	int							deliver_fd;
-	std::list<User *>::iterator it;
-	std::string					s;
-	std::string					message;
+	
+	list_user_it	start_usr = this->_connected_users.begin();
+	list_user_it	end_usr = this->_connected_users.end();
+	User			*usr_dest;
+	Channel			*chnl_dest;
+	std::string		dest = parse[1];
+	std::string		message;
+	bool			dest_user_b, dest_chnl_b;
 
+	dest_user_b = false;
+	dest_chnl_b = false;
+	
 
-	if ((pos = command.find(delimiter)) == std::string::npos)
-        return ;
-	command.erase(0, pos + delimiter.length());
-	while (command.begin() != command.end() && *(command.begin()) == ' ')
-		command.erase(0, 1);
-	if (command.begin() == command.end())
-	    return ;
-	if ((pos = command.find(delimiter)) == std::string::npos)
-        return ;
-	token = command.substr(0, pos);
-	while (command.begin() != command.end() && *(command.begin()) == ' ')
-		command.erase(0, 1);
-	for (it = this->_connected_users.begin(); it != this->_connected_users.end(); ++it)
+	for (; start_usr != end_usr ; ++start_usr )
 	{
-		if ((*it)->getNick() == token)
+		if ( ft_toupper( (*start_usr)->getNick() ) == ft_toupper(dest) )
 		{
-			deliver_fd = (*it)->getsockfd();
+			usr_dest = *start_usr;
+			dest_user_b = true;
 			break ;
 		}
 	}
-	// Si hemos encontrado el nick, mandamos el mensaje
-	if (it != this->_connected_users.end())
+
+	if( this->_name_channel.count(dest) > 0 )
 	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-            return ;
-		if (!(*(command.begin()) == ':'))
-		    return ;
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return ;
-		message.append("NOTICE " + token + " :" + command);
-		return (send_message(message, deliver_fd, this->_fd_users[fd]));
+		dest_chnl_b = true;
+		chnl_dest =  this->_name_channel.at(dest);
 	}
-	// Ahora vamos al caso de mandar un mensaje a un todo un canal
-	// Mandamos un error si no hemos encontrado el token ni en los nicks ni en los channels
-	if (this->_name_channel.find(token) == this->_name_channel.end())
-	    return ;
-	else
+
 	{
-		command.erase(0, pos + delimiter.length());
-		while (command.begin() != command.end() && *(command.begin()) == ' ')
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return ;
-		if (!(*(command.begin()) == ':'))
-		    return ;
-		else
-			command.erase(0, 1);
-		if (command.begin() == command.end())
-			return ;
-		message.append("NOTICE " + token + " :" + command);
-		return (send_message_channel(message, this->_fd_users[fd], this->_name_channel[token]));
+		std::string tmp;
+		for (size_t i = 2; i < parse.size(); i++ )
+		{
+			tmp.append( parse[i] );
+			if ( i < ( parse.size() - 1) )
+				tmp.append(" ");
+		}
+			message.append("NOTICE " + dest + " :" + tmp);
 	}
+	if (dest_user_b)
+	{
+		int fd_dst = usr_dest->getsockfd();
+		return send_message( message, fd_dst, usr );
+	}
+	if (dest_chnl_b)
+		return send_message_channel( message, usr, chnl_dest ) ;
 }

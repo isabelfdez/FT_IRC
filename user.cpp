@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 20:48:14 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 20:25:28 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,7 @@ std::string				User::getChannelsString()
 	std::string s;
 
 	for (std::list<Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
-	{
 		s += (*it)->getName() + ",";
-	}
-		std::cout << s << "\n";
 	return (s);
 }
 
@@ -88,6 +85,24 @@ uint64_t const & User::getLastTime() const { return this->_lastTime; }
 uint64_t const & User::getTimePing() const { return this->_time_ping; }
 std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
 bool const & User::getIsSendMsg() const { return this->_is_send_msg; }
+
+std::string User::getAnswer()
+{
+	std::string tmp;
+
+	if ( this->_answer.size() > 0)
+	{
+		tmp = this->_answer[0];
+		this->_answer.pop_front();
+	}
+	
+	return tmp;
+}
+
+bool	User::getPassState() const { return (this->_passState); }
+
+std::string const & User::getMask() const { return this->_mask; }
+
 
 //std::string const & User::getMask() const { return this->_mask; }
 
@@ -113,18 +128,25 @@ void	User::setmode(char mode, bool state)
 	{
 		case 'a':
 			(this->_modes.a = state);
+			break ;
 		case 'i':
             (this->_modes.i = state);
+			break ;
 		case 'w':
             (this->_modes.w = state);
+			break ;
 		case 'r':
             (this->_modes.r = state);
+			break ;
 		case 'o':
             (this->_modes.small_o = state);
+			break ;
 		case 'O':
             (this->_modes.big_o = state);
+			break ;
 		case 's':
             (this->_modes.s = state);
+			break ;
 		default:
 			break ;
 	} 
@@ -134,6 +156,12 @@ void	User::setRegistered(bool status) { this->_is_registered = status; }
 
 void	User::setRealName(std::string const &  realName) { this->_realName = realName; }
 
+void	User::setAnswer(std::string const & answer)
+{
+
+	this->_answer.push_back( answer );
+}
+
 void	User::setBufferCmd( std::string const & buffer_cmd )
 {
 	this->_buffer_cmd = buffer_cmd;
@@ -141,7 +169,17 @@ void	User::setBufferCmd( std::string const & buffer_cmd )
 
 void	User::setIsSendMsg( bool const & status ) { this->_is_send_msg = status ; }
 
+void	User::setPassState(bool status) { this->_passState = status; }
 
+void	User::setMask( void )
+{
+	std::string mask;
+	if ( !this->_mask.length() )
+	{
+		mask = ":" + this->getNick() + "!" + this->getUserName() + "@" + this->getIp();
+		this->_mask = mask;
+	}
+}
 
 
 // Overloads
@@ -155,15 +193,25 @@ bool	User::operator==(User & obj)
 
 // Other functions
 
+std::string	User::showModes()
+{
+	std::string s;
+	if (this->_modes.small_o == true)
+		s += "o";
+	if (this->_modes.i == true)
+		s += "i";
+	return s;
+}
+
 void	User::init_modes()
 {
-	this->_modes.a = 0;
-	this->_modes.i = 0;
-	this->_modes.w = 0;
-	this->_modes.r = 0;
-	this->_modes.small_o = 0;
-	this->_modes.big_o = 0;
-	this->_modes.s = 0;
+	this->_modes.a = false;
+	this->_modes.i = false;
+	this->_modes.w = false;
+	this->_modes.r = false;
+	this->_modes.small_o = false;
+	this->_modes.big_o = false;
+	this->_modes.s = false;
 }
 
 void	User::deleteChannel(Channel * channel)

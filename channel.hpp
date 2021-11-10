@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 21:45:58 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/04 23:16:57 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ class Channel
 		
 
 		std::string			userList();
-		std::string			userListNames();
 
 
 		// Setters
 		void				banOff(User * user);
+		void				inviteOff(User * user);
 		void				ban(User *);
 		void				setName(std::string const & name);
 		void    			setOp(User * user);
@@ -73,7 +73,8 @@ class Channel
 		// Overload
 
 		// Other functions
-		void				deleteUser(User * user);
+		std::string			showModes();
+		bool				deleteUser(User * user);
 		void				addUser(User * user);
 		//overload para no enviar el mensaje al emisor :) by krios-fu
 		bool				operator==(Channel & obj);

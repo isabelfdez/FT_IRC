@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/01 22:55:43 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/08 15:36:03 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,131 +14,62 @@
 
 bool	find_command(std::string command, std::list<std::string> commands)
 {
-	for (std::list<std::string>::iterator it = commands.begin(); it != commands.end(); ++it)
-		if (*it == command) // Esto no se si esta bien
+	typedef std::list<std::string>::iterator it_list;
+
+	it_list start = commands.begin();
+	it_list end = commands.end();
+
+	for (; start != end ; ++start)
+		if (*start == command) // Esto no se si esta bien
 			return (true);
 	return (false);
 }
 
-void    send_message(std::string & message, int & fd, User * usr)
+int		ft_max(int a , int b)
 {
-    std::string mask;
-
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    send(fd, mask.c_str(), mask.length(), 0);
+	if (a > b)
+		return (a);
+	else
+		return (b);
 }
 
-void    send_message_channel(std::string & message, User * usr, Channel * chnl)
-{
-    std::string mask;
-
-    //str.append(usr->getMask());
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    chnl->sendMsgChannel(mask, usr->getsockfd());
-}
-
-void    send_message_channel_block(std::string & message, User * usr, Channel * chnl)
-{
-    std::string mask;
-
-    //str.append(usr->getMask());
-    mask.append(":");
-    mask.append(usr->getNick());
-    mask.append("!");
-    mask.append(usr->getUserName());
-    mask.append("@" + usr->getIp());
-    mask.append(" ");
-    mask.append(message);
-    mask.append("\n");
-    chnl->sendMsgChannelBlock(mask, usr->getsockfd());
-}
-
-void	send_reply(std::string reply, std::string str, User * usr)
-{
-	std::string message;
-
-	message.assign(":ft_irc.com ");
-	message.append(reply);
-	message.append(" " + usr->getNick());
-	message.append(str);
-	message.append("\n");
-	send(usr->getsockfd(), message.c_str(), message.length(), 0);
-
-}
-
-void	send_error(std::string error, std::string str, int fd)
-{
-	std::string message;
-	message.assign(":ft_irc.com ");
-	message.append(error);
-	message.append(" * ");
-	message.append(str);
-	message.append("\n");
-	send(fd, message.c_str(), message.length(), 0);
-}
-
-static int	ft_countwords(char const *s, char c)
+static int		ft_atoi(const char *str)
 {
 	int		i;
-	int		counter;
+	int		nb;
 
-	counter = 0;
 	i = 0;
-	while (s[i])
+	nb = 0;
+	while ('0' <= str[i] && str[i] <= '9')
 	{
-		if (s[i] == c)
+		nb = nb * 10 + (str[i] - '0');
+		i++;
+	}
+	return (nb);
+}
+
+
+int		get_port(char *str)
+{
+	int ret;
+
+	if (ft_strlen(str) > 10)
+	{
+		std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+		return (6667);
+	}
+	else
+	{
+		ret = ft_atoi(str);
+		if (ret < 1 || ret > 65535)
 		{
-			i++;
-			continue ;
+			std::cout << "Port rank not valid; default port (6667) will be used instead\n";
+			return (6667);
 		}
-		counter++;
-		while (s[i] && s[i] != c)
-			i++;
+		return (ret);
 	}
-	return (counter);
 }
 
-static int	ft_size(char const *s, char c, int j)
-{
-	int		counter;
-
-	counter = 0;
-	while (s[j] == c)
-		j++;
-	while (s[j] && s[j] != c)
-	{
-		counter++;
-		j++;
-	}
-	return (counter + 1);
-}
-
-static int	ft_cpyword(char const *s, char c, int j, char *str)
-{
-	int		i;
-
-	i = 0;
-	while (s[j] == c)
-		j++;
-	while (s[j] && s[j] != c)
-		str[i++] = s[j++];
-	str[i] = 0;
-	return (j);
-}
 
 char *ltrim(char *s)
 {
@@ -159,30 +90,6 @@ char *trim(char *s)
     return rtrim(ltrim(s)); 
 }
 
-char		**ft_split(char const *s, char c)
-{
-	int		i;
-	int		j;
-	int		words;
-	char	**tab;
-
-	j = 0;
-	if (!s)
-		return (NULL);
-	i = ft_countwords(s, c);
-	if (!(tab = (char **)malloc(sizeof(char *) * (i + 1))))
-		return (NULL);
-	tab[i] = NULL;
-	words = i;
-	i = 0;
-	while (i < words)
-	{
-		tab[i] = (char *)malloc(sizeof(char) * ft_size(s, c, j));
-		j = ft_cpyword(s, c, j, tab[i]);
-		i++;
-	}
-	return (tab);
-}
 
 int		ft_isalpha(int c)
 {
@@ -270,15 +177,15 @@ void displayLog(std::string const & log, std::string const & cmd , User *usr )
 
 void displayTimestamp( void )
 {
-	time_t now = time(0);
+	// time_t now = time(0);
 
-	tm ltm = *localtime(&now);
-	std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
-			  << std::setw(2) << ltm.tm_mon + 1
-			  << std::setw(2) << ltm.tm_mday << "_"
-			  << std::setw(2) << ltm.tm_hour
-			  << std::setw(2) << ltm.tm_min
-			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
+	// tm ltm = *localtime(&now);
+	// std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
+	// 		  << std::setw(2) << ltm.tm_mon + 1
+	// 		  << std::setw(2) << ltm.tm_mday << "_"
+	// 		  << std::setw(2) << ltm.tm_hour
+	// 		  << std::setw(2) << ltm.tm_min
+	// 		  << std::setw(2) << ltm.tm_sec << "] "WHITE;
 }
 
 std::string		ft_toupper(std::string str)

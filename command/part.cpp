@@ -2,34 +2,35 @@
 #include "../server/Server.hpp"
 #include "../utils.hpp"
 
-void	Server::part_channel(std::string str1, int & fd)
+void	Server::part_channel(std::string str1, User * usr)
 {
 	if (this->_name_channel.count(str1))
 	{
-		this->_name_channel[str1]->deleteUser(this->_fd_users[fd]);
-		this->_fd_users[fd]->deleteChannel(this->_name_channel[str1]);
-		if (!this->_name_channel[str1]->getUsers().size())
+		Channel *chann = this->_name_channel[str1];
+		if (chann->deleteUser(usr))
+		{
+			std::string messages = "has left the channel " + chann->getName();
+			send_message_channel( messages , usr, chann);
+		}
+
+		usr->deleteChannel(chann);
+		if (!chann->getUsers().size())
 			deleteChannel(str1);
+		send_reply("", " :channel " + str1 + " leaved", usr);
 	}
 	else
-		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", fd));
+		return (send_error(ERR_NOSUCHCHANNEL, str1 + " :No such channel", usr));
 }
 
-void	Server::part_command(char * str, int & fd)
+void	Server::part_command(std::vector<std::string> parse, User * usr)
 {
-	std::vector<std::string>	parse;
+	std::vector<std::string>	parse1;
 
-	str = str + 4;
-		while (*str == ' ')
-		str++;
-	if (*str == ':')
-		str++;
-    str = trim(str);
-	parse = split(str, ',');
-	if (!parse.size())
-	{
-		return (send_error(ERR_NEEDMOREPARAMS, "PART :Not enough parameters", fd));
-	}
-	for (std::vector<std::string>::iterator it = parse.begin(); it != parse.end(); it++)
-		Server::part_channel(*it, fd);
+	parse1 = split(parse[1], ',');
+	vector_str_it start = parse1.begin();
+	vector_str_it end = parse1.end();
+	if (!parse1.size())
+		return (send_error(ERR_NEEDMOREPARAMS, "PART :Not enough parameters", usr));
+	for (; start != end; start++)
+		Server::part_channel(*start, usr);
 }

@@ -6,57 +6,36 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/02 19:40:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 01:20:59 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../server/Server.hpp"
 
 
-void Server::names_command(char *buffer , int fd )
+void Server::names_command( std::vector<std::string> const & parse, User *usr )
 {
-	std::string		message;
-	size_t			pos;
-	Channel			*channel;
-	User			*usr;
-	bool			flags;
+	std::vector<std::string>	token;
+	std::string					message;
+	Channel						*channel;
+	bool						flags;
 
 	flags = false;
 
-	buffer  = buffer  + 5;
-	while (*buffer  == ' ')
-		buffer ++;
-	if (*buffer == ':')
-		buffer++;
-
-	usr = this->_fd_users.at( fd );
-	std::vector<std::string> token = split(buffer, ',');
-
+	if( parse.size() > 1 )
+		token = split(parse[1], ',');
+	
 	for( size_t i = 0; i < token.size(); i++ )
 	{
-		pos = token[i].find(' ');
-		if ( pos != std::string::npos )
-			token[i] = token[i].substr(0, pos);
 		channel = this->_name_channel[ token[i] ];
 		if ( channel )
 		{
-			if ( channel->isInvite() && channel->isUser( this->_fd_users[fd]->getNick() ) )
-			{
-				message = " * " + channel->getName() + " :" + channel->userListNames();
+				message = " = " + channel->getName() + " :" + channel->userList();
 				send_reply(RPL_NAMREPLY, message, usr);
-				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
+				send_reply(RPL_ENDOFNAMES," " + channel->getName() + " :End of /NAMES list", usr);
 				flags = true;
-			}
-			else if ( !channel->isInvite() )
-			{
-
-				message = " = " + channel->getName() + " :" + channel->userListNames();
-				send_reply(RPL_NAMREPLY, message, usr);
-				send_reply(RPL_ENDOFNAMES	," " + channel->getName() + " :End of /NAMES list", usr);
-				flags = true;
-			}
 		}
 	}
-	if ( !flags )
+	if( !flags )
 		send_reply(RPL_ENDOFNAMES	, " :End of /NAMES list", usr);
 }

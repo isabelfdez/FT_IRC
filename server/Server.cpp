@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 19:31:25 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 02:05:48 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,12 @@ static void setnonblocking(int sock)
 	return;
 }
 
-Server::Server(): _fd_users(), _name_channel()
+Server::Server(int port): _fd_users(), _name_channel()
 {
 	int yes = 1;
 	std::cout << "Creating Server..." << std::endl;
 	FD_ZERO(&this->_reads);
+	FD_ZERO(&this->_writes);
 	this->_listen_server_sock = 0;
 	this->_highsock = 0;
 	this->_listen_server_sock = socket( AF_INET, SOCK_STREAM, 0);
@@ -46,7 +47,7 @@ Server::Server(): _fd_users(), _name_channel()
 	setnonblocking( this->_listen_server_sock );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user) );
 	memset( (char *) &this->_addr_server, 0 , sizeof(this->_addr_server) );
-	this->_addr_server.sin_port = htons(PORT);
+	this->_addr_server.sin_port = htons(port);
 	this->_addr_server.sin_family = AF_INET;
 	this->_addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
 	setsockopt(this->_listen_server_sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
@@ -55,7 +56,7 @@ Server::Server(): _fd_users(), _name_channel()
 		perror("Bind");
 		throw Server::GlobalServerExecption();
 	}
-	if ( listen (this->_listen_server_sock, 5) == -1)
+	if ( listen (this->_listen_server_sock, FD_SETSIZE) == -1)
 	{
 		perror("Listen");
 		throw Server::GlobalServerExecption();
@@ -68,31 +69,20 @@ Server::Server(): _fd_users(), _name_channel()
 	this->_commands.push_back("NOTICE");
 	this->_commands.push_back("PART");
 	this->_commands.push_back("QUIT");
-	this->_commands.push_back("user");
-	this->_commands.push_back("nick");
-	this->_commands.push_back("join");
-	this->_commands.push_back("privmsg");
-	this->_commands.push_back("notice");
-	this->_commands.push_back("part");
-	this->_commands.push_back("quit");
 	this->_commands.push_back("PONG");
-	this->_commands.push_back("pong");
 	this->_commands.push_back("MODE");
-	this->_commands.push_back("mode");
 	this->_commands.push_back("OPER");
-	this->_commands.push_back("oper");
 	this->_commands.push_back("KICK");
-	this->_commands.push_back("kick");
 	this->_commands.push_back("INVITE");
-	this->_commands.push_back("invite");
 	this->_commands.push_back("TOPIC");
-	this->_commands.push_back("topic");
-	this->_password_oper = "abracadabra";
 	this->_commands.push_back("LIST");
-	this->_commands.push_back("list");
 	this->_commands.push_back("NAMES");
-	this->_commands.push_back("names");
+	this->_commands.push_back("PASS");
+	this->_commands.push_back("WHO");
+	this->_commands.push_back("ISON");
 
+
+	this->_password_oper = "abracadabra";
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
@@ -112,7 +102,13 @@ Server::~Server()
 
 void Server::build_select_list( void )
 {
+	typedef std::deque<User *>::iterator it_user;
+	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
 	FD_ZERO( &this->_reads );
+	FD_ZERO( &this->_writes );
 	FD_SET( this->_listen_server_sock, &this->_reads );
 
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -124,6 +120,8 @@ void Server::build_select_list( void )
 				this->_highsock = this->_list_connected_user[i];
 		}
 	}
+	for (; start != end; ++start)
+		FD_SET( (*start)->getsockfd(), &this->_writes);
 }
 
 
@@ -148,6 +146,10 @@ void Server::join_new_connection()
 		{
 			this->_list_connected_user[i] = connection;
 			this->_fd_users[connection] =  new User( connection, addr_client );
+			if (!this->getPassword().size())
+				this->_fd_users[connection]->setPassState(1);
+			else
+				this->_fd_users[connection]->setPassState(0);
 			this->_fd_users[ this->_list_connected_user[i] ]->setLastTime( getTime() );
 			std::cout << "\r";
 			displayLog("Connection accepted", "", this->_fd_users[connection]);
@@ -173,11 +175,22 @@ void Server::setNumReadSock( void )
 {
 	this->_time_out.tv_sec = 1;
 	this->_time_out.tv_usec = 0;
-	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, (fd_set *) 0, (fd_set *) 0 , &this->_time_out);
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
 }
+
+void Server::setPassword(std::string pass) { this->_password = pass; }
 
 void Server::attendClients()
 {
+	typedef std::deque<User *>::iterator it_user;
+	
+	it_user start = this->_send_message.begin();
+	it_user end = this->_send_message.end();
+	
+	for (; start != end; ++start )
+		if ( FD_ISSET( (*start)->getsockfd(), &this->_writes) )
+			this->sendRequest( *start );
+
 	if( FD_ISSET(this->_listen_server_sock , &this->_reads) )
 		this->join_new_connection();
 	for (size_t i = 0; i < FD_SETSIZE; i++)
@@ -188,119 +201,133 @@ void Server::attendClients()
 			std::cout << "\r";
 			this->getCustomerRequest( this->_list_connected_user[i]);
 		}
+
 	}
 }
 
 
-void Server::parse_command(int fd, std::string buff, char * str)
+void Server::parse_command(int fd, std::string buffer)
 {
 	std::string	command;
 	std::string	buff2;
-	size_t		pos;
 
-	while (*str == ' ')
-	{
-		buff.erase(buff.begin());
-		str++;
-	}
+	User *user = this->_fd_users[fd];
 
-	if ( (pos = buff.find('\r')) != std::string::npos || (pos = buff.find('\n')) != std::string::npos )
-		buff2 = buff.substr(0, pos);
-	else
-		buff2 = buff;
 
-	pos = buff2.find(' ');
-	if ( pos != std::string::npos )
-		command = buff2.substr(0, pos);
-	else
-		command = buff2;
+	std::vector<std::string> parse = parser( buffer );
 
-	displayLog("Attend client", " CMD: " + command, this->_fd_users[fd]);
+
+	command = ft_toupper(parse[0]);
+
+
+
+	displayLog("Attend client", " CMD: " + command, user);
 	
 	if (!find_command(command, this->_commands))
-		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", fd);
-	if (!this->_fd_users[fd]->getRegistered())
+		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", user);
+	if (!user->getRegistered())
 	{
 		// Si el usuario no está registrado, solo se puede llamar a los comandos
-		// USER o NICK, y no puede llamar a USER varias veces seguidas
-		if (command != "USER" && command != "NICK" &&
-			command != "user" && command != "nick")
-			send_error(ERR_NOTREGISTERED, ":You have not registered", fd);
-		else if ((command == "USER" || command == "user") && this->_fd_users[fd]->getUserName().size() > 0)
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-		else if (command == "USER" || command == "user")
-			this->user_command(fd, str);
-		else if (command == "NICK" || command == "nick")
-			this->nick_command(str, fd);
+		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
+		if ( command != "USER" && command != "NICK" && command != "PASS" )
+			send_error(ERR_NOTREGISTERED, ":You have not registered", user);
+		else if ( (command == "USER") && user->getUserName().size() > 0)
+			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
+		else if (command == "USER" )
+			this->user_command(parse, user);
+		else if (command == "NICK" )
+		 	this->nick_command(parse, user);
+		// else if (command == "PASS" )
+		// 	this->pass_command(parse, user);
 	}
-	else if ( this->_fd_users[fd]->getRegistered() )
+	else if ( user->getRegistered() )
 	{
-		if ((command == "USER" || command == "user"))
-			send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", fd);
-		else if (command == "NICK" || command == "nick")
-			this->nick_command(str, fd);
-		else if (command == "JOIN" || command == "join")
-			join_command(str, fd);
-		else if (command == "PRIVMSG" || command == "privmsg")
-			this->privmsg_command(buff2, fd);
-		else if (command == "NOTICE" || command == "notice")
-            this->notice_command(buff2, fd);
-		else if (command == "PART" || command == "part")
-			part_command(str, fd);
-		else if (command == "QUIT" || command == "quit")
-			this->quit_command(fd, str);
-		else if ( command == "PONG" || command == "pong")
-			this->pong_command(fd, str);
-		else if ( command == "MODE" || command == "mode")
-			this->mode_command(str, fd);
-		else if ( command == "OPER" || command == "oper")
-			this->oper_command(str, fd);
-		else if ( command == "KICK" || command == "kick")
-			this->kick_command(str, fd);
-		else if ( command == "INVITE" || command == "invite")
-			this->invite_command(str, fd);
-		else if ( command == "TOPIC" || command == "topic")
-			this->topic_command(str, fd);
-		else if ( command == "LIST" || command == "list")
-			this->list_command( str, fd );
-		else if ( command == "NAMES" || command == "names")
-			this->names_command( str, fd );
+	if ((command == "USER" || command == "user"))
+		send_error(ERR_ALREADYREGISTRED, ":Unauthorized command (already registered)", user);
+	else if ( command == "NICK" )
+		this->nick_command(parse, user);
+	else if ( command == "JOIN" )
+		join_command(parse, user);
+	else if ( command == "PRIVMSG" )
+		this->privmsg_command(parse, user);
+	else if ( command == "NOTICE" )
+        this->notice_command(parse, user);
+	else if ( command == "PART" )
+		part_command(parse, user);
+	else if ( command == "QUIT" )
+		this->quit_command(parse, user);
+		else if ( command == "PONG" )
+			this->pong_command(parse, user);
+	// 	else if ( command == "MODE" )
+	// 		this->mode_command(parse, user);
+	// 	else if ( command == "OPER" )
+	// 		this->oper_command(parse, user);
+	// 	else if ( command == "KICK" )
+	// 		this->kick_command(parse, user);
+	// 	else if ( command == "INVITE" )
+	// 		this->invite_command(parse, user);
+	// 	else if ( command == "TOPIC" )
+	// 		this->topic_command(parse, user);
+		else if ( command == "LIST" )
+			this->list_command(parse, user);
+		else if ( command == "NAMES" )
+	 		this->names_command(parse, user);
+		else if ( command == "WHO" )
+			this->names_command(parse, user);
+		else if ( command == "ISON" )
+			this->ison_command(parse, user);
 	}
 }
 
 void Server::getCustomerRequest( int fd_client )
 {
-	char		buffer[512];
+	char		buffer[513];
+	std::string	tmp;
+	std::string tmp2;
 	User		*usr;
+	int 		byte;
+	size_t		pos;
 	
 	usr = this->_fd_users[ fd_client ];
-	memset(buffer, 0, sizeof(buffer));
-	int byte = recv(fd_client, buffer, 512, 0);
-	
-	if ( !byte )
-		this->deleteUser( fd_client );
-	else if (  !(strchr( buffer, '\r' )) && !( strchr( buffer, '\n' )  ) )
+
+	tmp = usr->getBufferCmd();
+
+	while ( (byte = recv(fd_client, buffer, 512, 0)) > 0)
 	{
-		std::string buffer_cmd = usr->getBufferCmd() + buffer;
-		usr->setBufferCmd( buffer_cmd );
+		buffer[byte] = '\0';
+		tmp += buffer;
 	}
-	else
+
+	if ( tmp.length() == 0 )
+		this->deleteUser( fd_client );
+
+	while ( tmp.length() )
 	{
-		if ( usr->getBufferCmd().length() > 0 )
+		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
-			std::string buff2 ( usr->getBufferCmd() + buffer );
-			std::string buff3 ( usr->getBufferCmd() + buffer );
-			this->parse_command(fd_client, buff2 , &buff3[0] );
-			usr->setBufferCmd( "" );
+			tmp2 = tmp.substr(0, pos + 1);
+			tmp.erase(0, pos + 1);
+
+			if (tmp2.length() > 510 )
+				tmp2 = tmp2.substr(0, 510);
+			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
+			{
+				this->parse_command( fd_client, tmp2);
+			}
+			usr->setBufferCmd("");
 		}
 		else
 		{
-			std::string buff2 ( buffer );
-			this->parse_command( fd_client, buff2, buffer );
+			std::string buffer_cmd = usr->getBufferCmd() + tmp;
+			usr->setBufferCmd( buffer_cmd );
+			tmp.clear();
 		}
 	}
+
 	this->reStartSendMsg();
 }
+
+std::string Server::getPassword(void) const { return (this->_password); }
 
 bool			Server::isUsr(std::string usr)
 {
@@ -396,7 +423,11 @@ void Server::deleteUser( int const & fd )
 	
 	for (; channel != end; ++channel )
 	{
-		(*channel)->deleteUser( tmp_usr );
+		if ((*channel)->deleteUser( tmp_usr ))
+		{
+			// std::string messages = "has left the channel " + (*channel)->getName();
+			// send_message_channel( messages , tmp_usr, (*channel));
+		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
@@ -407,8 +438,9 @@ void Server::deleteUser( int const & fd )
 	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
 	this->_nicks.remove( tmp_usr->getNick() );
 	this->deleteBan(tmp_usr);
+	this->deleteInvite(tmp_usr);
+	this->deleteDequeUser(tmp_usr);
 	delete tmp_usr;
-
 }
 
 void	Server::deleteBan( User *user)
@@ -416,6 +448,14 @@ void	Server::deleteBan( User *user)
 	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
 	{
 		(*(it->second)).banOff(user);
+	}
+}
+
+void	Server::deleteInvite( User *user)
+{
+	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
+	{
+		(*(it->second)).inviteOff(user);
 	}
 }
 
@@ -433,22 +473,24 @@ void		Server::reStartSendMsg()
 	}
 }
 
+
+
 void Server::welcome( int const & fd )
 {
 	User *usr = this->_fd_users[ fd ];
-	std::string part1 = BLUE"           / ____/   / / / /   /   | /_  __/     " RED"    / // /  |__ \\ "WHITE;
-	std::string part2 = BLUE"          / /       / /_/ /   / /| |  / /        " RED"   / // /_  __/ / "WHITE;
-	std::string part3 = BLUE"         / /___    / __  /   / ___ | / /         " RED"  /__  __/ / __/      "WHITE;
-	std::string part4 = BLUE"         \\____/   /_/ /_/   /_/  |_|/_/         " RED"     /_/   /____/ "WHITE;
-	std::string part5 = GREEN"                      / ____/ /_  __/     /  _/   / __ \\  / ____/ "WHITE;
-	std::string part6 = GREEN"                     / /_      / /        / /    / /_/ / / /      "WHITE;
-	std::string part7 = GREEN"                    / __/     / /       _/ /    / _, _/ / /___   "WHITE;
-	std::string part8 = GREEN"                   /_/       /_/ ______/___/   /_/ |_|  \\____/"WHITE;
-	std::string part9 = GREEN"                                /_____/                           "WHITE;
+	std::string part1 = "           / ____/   / / / /   /   | /_  __/          / // /  |__ \\ ";
+	std::string part2 = "          / /       / /_/ /   / /| |  / /            / // /_  __/ / ";
+	std::string part3 = "         / /___    / __  /   / ___ | / /            /__  __/ / __/      ";
+	std::string part4 = "         \\____/   /_/ /_/   /_/  |_|/_/               /_/   /____/ ";
+	std::string part5 = "                      / ____/ /_  __/     /  _/   / __ \\  / ____/ ";
+	std::string part6 = "                     / /_      / /        / /    / /_/ / / /      ";
+	std::string part7 = "                    / __/     / /       _/ /    / _, _/ / /___   ";
+	std::string part8 = "                   /_/       /_/ ______/___/   /_/ |_|  \\____/";
+	std::string part9 = "                                /_____/                           ";
 
 
 	
-	std::string part10 = BLUE"         Welcome: "RED + usr->getNick() + ""WHITE;
+	std::string part10 = "         Welcome: " + usr->getNick();
 	
 	send_reply(RPL_WELCOME, " :Welcome to the ft_irc Network " + usr->getNick() + "!" + usr->getUserName() + "@"+ this->_fd_users[fd]->getIp() , usr);
 	send_reply(RPL_YOURHOST, " :Your host is ft_irc.com, running version v:0.42",  this->_fd_users[fd]);

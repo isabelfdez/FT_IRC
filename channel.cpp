@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/02 19:33:56 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/09 21:09:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,37 +96,28 @@ bool    Channel::isUser(std::string user)
     return (false);
 }
 
-std::string	Channel::userListNames()
-{
-	std::string	s;
 
-	for (std::list<User*>::iterator it = this->_users.begin(); it != _users.end(); it++)
-	{
-		if( !(*it)->getmode('i') )
-		{
-			if (isOp(*it))
-				s.append("@");
-			s.append((*it)->getNick());
-			s.append(" ");
-		}
-	}
-
-	return (s);
-}
 
 std::string	Channel::userList()
 {
+	typedef std::list<User*>::iterator  it_user;
 	std::string	s;
 
-	s.assign("list of users :");
-	for (std::list<User*>::iterator it = this->_users.begin(); it != _users.end(); it++)
-	{
-		if (isOp(*it))
-			s.append("@");
-		s.append((*it)->getNick());
-		s.append(" ");
-	}
+	it_user start = this->_users.begin();
+	it_user end = this->_users.end();
 
+
+	for (; start != end ; ++start )
+	{
+
+		if (isOp(*start))
+			s.append("@");
+		else
+			s.append("+");
+		s.append((*start)->getNick());
+		if (*start)
+			s.append(" ");
+	}
 	return (s);
 }
 
@@ -158,6 +149,18 @@ void	Channel::banOff(User * user)
 	}
 }
 
+void	Channel::inviteOff(User * user)
+{
+	for (std::list<User*>::iterator it = _invites.begin(); it != _invites.end(); it++)
+	{
+		if (user->getNick() == (*it)->getNick())
+		{
+			_invites.erase(it);
+			return;
+		}
+	}
+}
+
 void	Channel::setTopic(std::string topic) { this->_topic = topic; }
 
 void	Channel::setInvite(bool set) { this->_invite = set; }
@@ -169,6 +172,7 @@ void	Channel::pushInvite(User * user)
 
 void    Channel::setOpOff(std::string user, User * usr)
 {
+	(void)usr;
 	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
 	{
 		if (user == (*it)->getNick())
@@ -177,7 +181,8 @@ void    Channel::setOpOff(std::string user, User * usr)
 			if (!this->_operators.size())
 			{
 				this->_operators.push_back(*(this->_users.begin()));
-				send_reply("", " :You are now Channel Operator", usr);
+				// (*this->_users.begin())->setAnswer(" :You are now Channel Operator");
+				// send_reply("", " :You are now Channel Operator", usr);
 			}
 			return;
 		}
@@ -195,7 +200,17 @@ bool	Channel::operator==(Channel & obj)
 
 // Other functions
 
-void	Channel::deleteUser(User * user)
+std::string	Channel::showModes()
+{
+	std::string s;
+	if (this->isInvite() == true)
+		s += "i";
+	if (this->_topic.size())
+		s += "t";
+	return s;
+}
+
+bool	Channel::deleteUser(User * user)
 {
 	std::string s;
 	for (std::list<User *>::iterator it = this->_users.begin(); it != this->_users.end(); ++it)
@@ -213,11 +228,10 @@ void	Channel::deleteUser(User * user)
 					break ;
 				}
 			}
-			s = "has left the channel " + this->_name;
-			send_message_channel(s, user, this);
-			return ;
+			return true;
 		}
 	}
+	 return false;
 }
 
 void	Channel::addUser(User * user)
