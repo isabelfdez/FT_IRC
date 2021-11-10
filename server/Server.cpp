@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 20:35:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 02:05:48 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ Server::Server(int port): _fd_users(), _name_channel()
 	this->_commands.push_back("NAMES");
 	this->_commands.push_back("PASS");
 	this->_commands.push_back("WHO");
+	this->_commands.push_back("ISON");
+
 
 	this->_password_oper = "abracadabra";
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
@@ -270,8 +272,10 @@ void Server::parse_command(int fd, std::string buffer)
 			this->list_command(parse, user);
 		else if ( command == "NAMES" )
 	 		this->names_command(parse, user);
-	// 	else if ( command == "who" )
-	// 		this->names_command(parse, user);
+		else if ( command == "WHO" )
+			this->names_command(parse, user);
+		else if ( command == "ISON" )
+			this->ison_command(parse, user);
 	}
 }
 
@@ -421,8 +425,8 @@ void Server::deleteUser( int const & fd )
 	{
 		if ((*channel)->deleteUser( tmp_usr ))
 		{
-			std::string messages = "has left the channel " + (*channel)->getName();
-			send_message_channel( messages , tmp_usr, (*channel));
+			// std::string messages = "has left the channel " + (*channel)->getName();
+			// send_message_channel( messages , tmp_usr, (*channel));
 		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:54:41 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/09 20:20:57 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 02:21:22 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,18 @@ void Server::quit_command(std::vector<std::string> const & parse, User *usr)
 	send_reply("ERROR :Closing link: ", "[Signed off]", usr);
 
 	if ( parse.size() > 1 )
-		msg_quit_users = parse[1];
+		msg_quit_users = "QUIT " + parse[1];
 	else
-		msg_quit_users = "";
+		msg_quit_users = "QUIT :[Signed off]";
 
 	list_chnl_it channel = usr->getChannels().begin();
 	list_chnl_it end = usr->getChannels().end();
 
 	for (; channel != end ; ++channel )
-		send_message_channel_block(msg_quit_users, usr ,*channel);
+	{
+		send_message_channel(msg_quit_users, usr ,*channel);
+	}
 
-	displayLog("Quit success", "", usr);
+	displayLog("Quit success", " ", usr);
 	this->deleteUser( usr->getsockfd() );
 } 

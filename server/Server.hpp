@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:54:59 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 01:49:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@
 # define RPL_CREATE					"003"
 # define RPL_MYINFO					"004"
 # define RPL_UMODEIS				"221"
+# define RPL_ISON					"303"
 # define RPL_LIST					"322"
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
@@ -181,6 +182,8 @@ class Server
 		void			topic_command   (std::vector<std::string> const& parse, User *usr);
 		void 			names_command   (std::vector<std::string> const& parse, User *usr);
 		void			pass_command    (std::vector<std::string> const& parse, User *usr);
+		void			ison_command    (std::vector<std::string> const& parse, User *usr);
+
 
 
 

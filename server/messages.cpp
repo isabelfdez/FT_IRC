@@ -9,7 +9,7 @@ void    Server::send_message(std::string & _message, int & fd, User * usr)
     message.append(usr->getMask());
     message.append(" ");
     message.append( _message );
-    message.append("\n");
+    message.append("\r\n");
 
 	dest->setAnswer( message );
 
@@ -28,7 +28,7 @@ void    Server::send_message_channel(std::string & message, User * usr, Channel 
     mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
-    mask.append("\n");
+    mask.append("\r\n");
 
 
 	for ( ; start != end ; ++start)
@@ -53,7 +53,7 @@ void    Server::send_message_channel_block(std::string message, User * usr, Chan
     mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
-    mask.append("\r\n");
+    mask.append("\n");
 
 
 	for ( ; start != end ; ++start)

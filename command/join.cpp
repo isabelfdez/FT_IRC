@@ -60,8 +60,8 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1] = new Channel(str1, usr);
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
         this->names_command(tmp_name, usr);
+        send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
 
     }
 }

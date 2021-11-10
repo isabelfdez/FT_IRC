@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/09 18:31:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 02:04:22 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ std::vector<std::string> parser( std::string buffer )
 			matrix.push_back(tmp);
 		middle.erase(0, pos);
 		middle = &( *delimiterAdvance<std::string::iterator>(middle.begin(), middle.end(), ' ') );
-		if ( pos == std::string::npos )
+		if ( pos == std::string::npos && middle.begin() != middle.end())
 			break ;
 	}
 	
