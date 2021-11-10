@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/10 01:49:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 16:44:15 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ class Server
 		bool			isChannel(std::string);
 
 		void			deleteChannel( std::string );
-		void			deleteUser( int const & fd );
+		void			deleteUser( User * usr, std::string const & messages);
 		void			deleteBan( User *);
 		void			deleteInvite( User *user);
 

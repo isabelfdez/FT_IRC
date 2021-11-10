@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/31 21:18:10 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/10 01:20:59 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 18:12:20 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void Server::names_command( std::vector<std::string> const & parse, User *usr )
 		{
 				message = " = " + channel->getName() + " :" + channel->userList();
 				send_reply(RPL_NAMREPLY, message, usr);
-				send_reply(RPL_ENDOFNAMES," " + channel->getName() + " :End of /NAMES list", usr);
+				send_reply(RPL_ENDOFNAMES," " + channel->getName() + " :End of /NAMES list.", usr);
 				flags = true;
 		}
 	}

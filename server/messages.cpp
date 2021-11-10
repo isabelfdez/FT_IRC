@@ -33,12 +33,12 @@ void    Server::send_message_channel(std::string & message, User * usr, Channel 
 
 	for ( ; start != end ; ++start)
 	{
-		if ( (*start)->getsockfd() != usr->getsockfd()  )
-		{
+		// if ( (*start)->getsockfd() != usr->getsockfd()  )
+		// {
 			(*start)->setAnswer( mask );
 			if ( !this->isAnswerUser( (*start) ) )
 				this->_send_message.push_back( (*start) );
-		}
+		// }
 	}
 }
 
@@ -76,7 +76,7 @@ void	Server::send_reply(std::string reply, std::string str, User * usr)
 	message.append(reply);
 	message.append(" " + usr->getNick());
 	message.append(str);
-	message.append("\n");
+	message.append("\r\n");
 
 	usr->setAnswer( message);
 

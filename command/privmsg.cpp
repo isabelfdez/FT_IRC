@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 17:18:55 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:50:50 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 18:37:32 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,5 @@ void	Server::privmsg_command( std::vector<std::string> const & parse, User *usr 
 		return send_message( message, fd_dst, usr );
 	}
 	if (dest_chnl_b)
-		return send_message_channel( message, usr, chnl_dest );
+		return send_message_channel_block( message, usr, chnl_dest );
 }

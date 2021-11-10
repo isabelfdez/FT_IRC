@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/10 02:05:48 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 20:49:06 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ void Server::parse_command(int fd, std::string buffer)
 
 
 
-	displayLog("Attend client", " CMD: " + command, user);
+	displayLog("Attend client", " CMD: " + command , user);
 	
 	if (!find_command(command, this->_commands))
 		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", user);
@@ -299,7 +299,7 @@ void Server::getCustomerRequest( int fd_client )
 	}
 
 	if ( tmp.length() == 0 )
-		this->deleteUser( fd_client );
+		this->deleteUser( usr , "[Signed off]");
 
 	while ( tmp.length() )
 	{
@@ -412,35 +412,34 @@ void			Server::deleteChannel( std::string channel )
 	}
 }
 
-void Server::deleteUser( int const & fd )
+void Server::deleteUser( User * usr, std::string const & _messages)
 {
 	typedef std::list<Channel *>::iterator iteratorChannel;
-	User *tmp_usr;
 
-	tmp_usr = this->_fd_users[ fd ];
-	iteratorChannel channel = tmp_usr->getChannels().begin();
-	iteratorChannel end = tmp_usr->getChannels().end();
+	iteratorChannel channel = usr->getChannels().begin();
+	iteratorChannel end = usr->getChannels().end();
 	
 	for (; channel != end; ++channel )
 	{
-		if ((*channel)->deleteUser( tmp_usr ))
+		// this->part_channel((*channel)->getName(), usr );
+		if ((*channel)->deleteUser( usr ))
 		{
-			// std::string messages = "has left the channel " + (*channel)->getName();
-			// send_message_channel( messages , tmp_usr, (*channel));
+			std::string messages = "PART " + (*channel)->getName() + " :"+_messages;
+			send_message_channel( messages , usr, (*channel));
 		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
 
-	this->_connected_users.remove( tmp_usr );
-	this->close_fd( fd );
-	this->_fd_users.erase( fd );
-	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
-	this->_nicks.remove( tmp_usr->getNick() );
-	this->deleteBan(tmp_usr);
-	this->deleteInvite(tmp_usr);
-	this->deleteDequeUser(tmp_usr);
-	delete tmp_usr;
+	this->_connected_users.remove( usr );
+	this->close_fd( usr->getsockfd() );
+	this->_fd_users.erase( usr->getsockfd() );
+	displayLog("Quit success", usr->getNick(), usr);
+	this->_nicks.remove( usr->getNick() );
+	this->deleteBan( usr );
+	this->deleteInvite(usr);
+	this->deleteDequeUser(usr);
+	delete usr;
 }
 
 void	Server::deleteBan( User *user)
