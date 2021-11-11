@@ -1,37 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   User.cpp                                           :+:      :+:    :+:   */
+/*   util.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/11 00:10:18 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 18:23:06 by krios-fu         ###   ########.fr       */
+/*   Created: 2021/11/11 18:18:20 by krios-fu          #+#    #+#             */
+/*   Updated: 2021/11/11 18:19:51 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.hpp"
+#ifndef _UTIL_HPP
+# define _UTIL_HPP
 
-User::User( std::string const & nick )
-	: _nick(nick)
-{
+# include <vector>
+# include <string>
 
-}
-
-User::~User()
-{
-
-}
+std::vector<std::string> parser( std::string buffer );
+std::vector<std::string> split( std::string buffer, char c );
 
 
-std::string const & User::getBufferCmd() const { return this->_buffer_cmd; }
-
-void	User::setBufferCmd( std::string const & buffer_cmd )
-{
-	this->_buffer_cmd = buffer_cmd;
-}
-
-std::string const & User::getNick() const
-{
-	return this->_nick;
-}
+#endif

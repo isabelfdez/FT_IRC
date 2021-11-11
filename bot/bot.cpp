@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 02:46:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 18:56:02 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,19 +58,62 @@ void Bot::build_select_list( void )
 	FD_SET(this->_sock, &this->_writes);
 }
 
+
+void Bot::read()
+{
+	char		buffer[513];
+	std::string	tmp;
+	std::string tmp2;
+	User		*usr;
+	int 		byte;
+	size_t		pos;
+	
+
+	tmp = usr->getBufferCmd();
+
+	while ((byte = recv(this->getSocket(), buffer, 512,0)) > 0 )
+	{
+		buffer[byte] = '\0';
+		tmp += buffer;
+	}
+
+	// if ( tmp.length() == 0 )
+		// this->deleteUser( usr , "[Signed off]");
+
+	while ( tmp.length() )
+	{
+		if (( pos = tmp.find('\n') ) != std::string::npos )
+		{
+			tmp2 = tmp.substr(0, pos + 1);
+			tmp.erase(0, pos + 1);
+
+			if (tmp2.length() > 510 )
+				tmp2 = tmp2.substr(0, 510);
+			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
+			{
+				this->parse( tmp2 );
+			}
+			usr->setBufferCmd("");
+		}
+		else
+		{
+			std::string buffer_cmd = usr->getBufferCmd() + tmp;
+			usr->setBufferCmd( buffer_cmd );
+			tmp.clear();
+		}
+	}
+}
+
+void Bot::parse( std::string const & buffer )
+{
+	
+}
+
 void Bot::attendServer()
 {
 	if (FD_ISSET(this->_sock, &this->_reads) )
-	{	
-		int byte;
-		char buffer[513];
-		while ((byte = recv(this->getSocket(), buffer, 512,0)) > 0 )
-		{
-			buffer[byte] = '\0';
-
-			std::cout << buffer;
-		}
-		
+	{	this->read();
+		// this->parse();
 	}
 	if (FD_ISSET(this->_sock, &this->_writes) )
 	{

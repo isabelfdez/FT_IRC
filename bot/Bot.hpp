@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:15:34 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 02:10:44 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 18:38:30 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <arpa/inet.h>
 # include <string>
 # include <iostream>
+# include "User.hpp"
 
 
 class Bot 
@@ -54,6 +55,9 @@ class Bot
 	void				setNumReadSock( void );
 	void				build_select_list( void );
 	void				attendServer();
+	void 				read();
+	void 				parse(std::string const & buffer);
+
 
 	
 };
