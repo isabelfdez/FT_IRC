@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/11 15:46:15 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 17:38:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ void Server::parse_command(int fd, std::string buffer)
 
 
 
-	displayLog("Attend client", " CMD: " + command  + parse[1], user);
+	displayLog("Attend client", " CMD: " + command, user);
 	
 	if (!find_command(command, this->_commands))
 		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", user);

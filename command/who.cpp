@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 15:04:46 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 16:41:14 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 17:36:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void Server::who_command( std::vector<std::string> const & parse, User *usr )
 				if (usr_info)
 				{
 					std::string	message;
-					std::cout << "WHO " << i <<  " *\n";
 					message.append(" ");
 					message.append(channel->getName());
 					message.append(" ");

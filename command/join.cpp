@@ -34,7 +34,7 @@ void    Server::join_channel(std::string str1, User *usr)
         s = "JOIN :" + chann->getName();
         chann->addUser(usr);
         usr->addChannel(chann);
-        send_message_channel_block(s, usr, chann);
+        send_message_channel(s, usr, chann);
         if (chann->getTopic().size() > 0)
             send_reply(RPL_TOPIC, " " + str1 + " :" + chann->getTopic(), usr);
          this->names_command(tmp_name, usr);
