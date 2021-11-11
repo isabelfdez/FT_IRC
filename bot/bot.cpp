@@ -1,53 +1,100 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <arpa/inet.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bot.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
+/*   Updated: 2021/11/11 02:46:38 by krios-fu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define PORT 6667
+#include "Bot.hpp"
 
-int main(int argc, char const *argv[])
+Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
+	: _nick(nick)
 {
-    int sock = 0; long valread;
-    struct sockaddr_in serv_addr;
-    char *hello = "USER : kevin * * * \r\n NICK :qwerty\r\n";
-    char buffer[1024] = {0};
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        printf("\n Socket creation error \n");
-        return -1;
-    }
-    
-    memset(&serv_addr, '0', sizeof(serv_addr));
-    
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-    
-    // Convert IPv4 and IPv6 addresses from text to binary form
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
-    {
-        printf("\nInvalid address/ Address not supported \n");
-        return -1;
-    }
-    
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed \n");
-        return -1;
-    }
-    send(sock , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
-     valread = read( sock , buffer, 1024);
+	this->_sock = 0;
+	if ((this->_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		perror("Socket");
+		exit(EXIT_FAILURE);
+	}
+	this->_highsock = this->_sock;
+	memset(&this->_addr, 0, sizeof(this->_addr));
 
-    buffer[1]='O';
-    send(sock ,buffer , strlen(buffer) , 0 );
-
-    char *hello2 = "PRIVMSG lol: hola mundo \r\n PRIVMSG lol: qwerty\r\nPRIVMSG lol: Contrary to popular belief,\r\n";
-    send(sock ,hello2 , strlen(hello2) , 0 );
-
-    for(;;);
-    printf("%s\n",buffer );
-    return 0;
+	this->_addr.sin_family = AF_INET;
+	this->_addr.sin_port = htons(port);
+	
+	if (inet_pton(AF_INET, IP.c_str(), &this->_addr.sin_addr) <= 0)
+	{
+		perror("INET_PTON");
+		exit(EXIT_FAILURE);
+	}
+	if (connect(this->_sock, (struct sockaddr *) &this->_addr, sizeof(this->_addr)) < 0 )
+	{
+		perror("Connect");
+		exit(EXIT_FAILURE);
+	}
 }
+Bot::~Bot()
+{
+	
+}
+
+void Bot::setNumReadSock( void )
+{
+	this->_time_out.tv_sec = 30;
+	this->_time_out.tv_usec = 0;
+	this->_num_read_sock = select( (this->_highsock + 1 ), &this->_reads, &this->_writes, (fd_set *) 0 , &this->_time_out);
+}
+
+void Bot::build_select_list( void )
+{
+	FD_ZERO( &this->_reads );
+	FD_ZERO( &this->_writes );
+	FD_SET(this->_sock, &this->_reads);
+	FD_SET(this->_sock, &this->_writes);
+}
+
+void Bot::attendServer()
+{
+	if (FD_ISSET(this->_sock, &this->_reads) )
+	{	
+		int byte;
+		char buffer[513];
+		while ((byte = recv(this->getSocket(), buffer, 512,0)) > 0 )
+		{
+			buffer[byte] = '\0';
+
+			std::cout << buffer;
+		}
+		
+	}
+	if (FD_ISSET(this->_sock, &this->_writes) )
+	{
+		
+	}
+
+}
+
+int const & Bot::getSocket() const 
+{
+	return this->_sock;
+}
+int const &  Bot::getNumReadSock( void ) const
+{
+	return this->_num_read_sock;
+}
+
+fd_set	const & Bot::getWrites() const 
+{
+	return this->_writes;
+}
+
+fd_set	const & Bot::getReads() const 
+{
+	return this->_reads;
+}
+
