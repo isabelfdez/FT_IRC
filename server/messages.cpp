@@ -17,7 +17,7 @@ void    Server::send_message(std::string _message, User * dest, User * usr)
 		this->_send_message.push_back( dest );
 }
 
-void    Server::send_message_channel(std::string & message, User * usr, Channel * chnl)
+void    Server::send_message_channel(std::string message, User * usr, Channel * chnl)
 {
     std::string mask;
 	typedef std::list<User*>::iterator it_user;

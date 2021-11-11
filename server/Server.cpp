@@ -439,11 +439,11 @@ void Server::deleteUser( int const & fd )
 	delete tmp_usr;
 }
 
-void	Server::deleteBan( User *user)
+void	Server::deleteBan( User *  user)
 {
 	for (std::map<std::string, Channel *>::iterator	it = _name_channel.begin(); it != _name_channel.end(); it++)
 	{
-		(*(it->second)).banOff(user);
+		(*(it->second)).banOff(user->getMask());
 	}
 }
 

@@ -192,7 +192,7 @@ class Server
 		void			reStartSendMsg();
 
 		void			send_message(std::string message, User * dest, User * usr);
-		void			send_message_channel(std::string & message, User * usr, Channel * chnl);
+		void			send_message_channel(std::string message, User * usr, Channel * chnl);
 		void			send_message_channel_block(std::string message, User * usr, Channel * chnl);
 		void			send_error(std::string error, std::string str, User *dest);
 		void			send_reply(std::string replay, std::string str, User * usr);

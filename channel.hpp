@@ -67,7 +67,7 @@ class Channel
 		void				ban(std::string mask);
 		void				setName(std::string const & name);
 		void    			setOp(User * user);
-		void				setOpOff(std::string user, User * usr);
+		void				setOpOff(std::string nick);
 		void				setInvite(bool);
 		void				pushInvite(User * user);
 		void				setTopic(std::string topic);

@@ -99,9 +99,11 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
                 {
                     chann->ban(usr_dest->getMask());
                     if (chann->isBanned(usr_dest->getMask()))
+                    {
                         chann->deleteUser(usr_dest);
+                        send_message_channel( "has left the channel " + chann->getName() , usr, chann);
+                    }
                     send_message("You have being banned from " + parse[1], usr_dest, usr);
-                    send_reply("", " " + parse[3] + "is banned", usr);
                 }
             }
             else if (parse[2][i] == 'i')
@@ -122,23 +124,23 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
     }
     else if (parse[2][0] == '-')
     {
-        int i = 1;
+        size_t i = 1;
         while (i < parse[2].size())
         {
             if (parse[2][i] == 'o')
             {
                 if (parse.size() < 4)
                     send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", usr);
-                if (chann->isOp(getUserWithNick(parse[3])))
-                    continue;
-                else if (chann->isUser(parse[3]))
+                else if (!chann->isUser(parse[3]))
+                    send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", usr);
+                else if (chann->isOp(getUserWithNick(parse[3])))
                 {
-                    chann->setOp(getUserWithNick(parse[3]));
+                    chann->setOpOff(parse[3]);
                     send_reply("", " :" + parse[3] + " :is Channel Operator of " + parse[1], usr);
-                    send_reply("", " :you are now Channel Operator of " + parse[1], getUserWithNick(parse[3]));                    
+                    send_reply("", " :You are now Channel Operator of " + parse[1], getUserWithNick(parse[3]));   
                 }
                 else
-                    send_error(ERR_USERNOTINCHANNEL, parse[3] + "MODE :Is not in that Channel", usr);
+                    send_error("", " :" + parse[3] + " is not Channel Operator of " + parse[1], usr);
             }
             else if (parse[2][i] == 'b')
             {
@@ -146,20 +148,20 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
                     send_error(ERR_NEEDMOREPARAMS, "MODE :Not enough parameters", usr);
                 else
                 {
-                    chann->ban(getUserWithNick(parse[3])->getMask());
-                    send_message("You have being banned from " + parse[1], getUserWithNick(parse[3]), usr);
-                    send_reply("", " " + parse[3] + "is banned", usr);
+                    chann->banOff(getUserWithNick(parse[3])->getMask());
+                    send_message("You have being unbanned from " + parse[1], getUserWithNick(parse[3]), usr);
+                    send_reply("", " :" + getUserWithNick(parse[3])->getMask() + " unbanned", usr);
                 }
             }
             else if (parse[2][i] == 'i')
             {
-                if (chann->isInvite())
+                if (!chann->isInvite())
                     continue;
                 else
                 {
-                    chann->setInvite(true);
-                    chann->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " needs invitation\n", usr->getsockfd());
-                    send_reply("", ": Channel " + parse[1] + " invitation mode set", usr);
+                    chann->setInvite(false);
+                    chann->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " no needs invitation\n", usr->getsockfd());
+                    send_reply("", ": Channel " + parse[1] + " invitation mode set off", usr);
                 }
             }
             else

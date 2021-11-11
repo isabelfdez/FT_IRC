@@ -172,12 +172,11 @@ void	Channel::pushInvite(User * user)
 	this->_invites.push_back(user);
 }
 
-void    Channel::setOpOff(std::string user, User * usr)
+void    Channel::setOpOff(std::string nick)
 {
-	(void)usr;
 	for (std::list<User*>::iterator it = _operators.begin(); it != _operators.end(); it++)
 	{
-		if (user == (*it)->getNick())
+		if (nick == (*it)->getNick())
 		{
 			_operators.erase(it);
 			if (!this->_operators.size())
