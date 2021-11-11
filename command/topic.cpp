@@ -1,35 +1,27 @@
 #include "../server/Server.hpp"
 #include "../utils.hpp"
 
-void	Server::topic_command(char * str, int & fd)
+void	Server::topic_command(std::vector<std::string> const & parse, User * usr)
 {
-	std::vector<std::string>	parse;
-	std::string					message;
-	char						*tmp;
-	int i;
-
-	if ( ( tmp = strchr( str, '\r' ) ) || ( tmp = strchr( str, '\n' ) ) )
-	 	*tmp = 0;
-	if ((tmp = strchr(str, ':')))
-		message = (++tmp);
-	parse = split(str, ' ');
-	i = parse.size();
-	if (i < 2)
-		return (send_error(ERR_NEEDMOREPARAMS, "TOPIC :Not enough parameters", fd));
-	if (!this->_name_channel.count(parse[1]))
-		return (send_error(ERR_NOSUCHCHANNEL, parse[1] + " :No such channel", fd));
-	if (!this->_fd_users[fd]->getmode('o') && !this->_name_channel[parse[1]]->isOp(this->_fd_users[fd]))
-		return (send_error(ERR_CHANOPRIVSNEEDED, parse[2] + " :You are not a channel operator", fd));
-	else if (message.size() == 0)
+	if (parse.size() < 2)
+		return (send_error(ERR_NEEDMOREPARAMS, "TOPIC :Not enough parameters", usr));
+	else if (!this->isChannel(parse[1]))
+		return (send_error(ERR_NOSUCHCHANNEL, parse[1] + " :No such channel", usr));
+	Channel * chann = this->_name_channel[parse[1]];
+	if (parse.size() == 2)
+		return (send_reply(RPL_TOPIC, " TOPIC : " + chann->getTopic(), usr));
+	if (!usr->getmode('o') && !chann->isOp(usr))
+		return (send_error(ERR_CHANOPRIVSNEEDED, parse[2] + " :You are not a channel operator", usr));
+	else if (parse[2].size() == 0)
 	{
-		this->_name_channel[parse[1]]->setTopic("");
-		this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " no topic\n", fd);
-		return (send_reply(RPL_NOTOPIC, " :" + parse[1] + " :No topic is set", this->_fd_users[fd]));
+		chann->setTopic("");
+		chann->sendMsgChannel(usr->getMask() + "Channel " + parse[1] + " no topic\n", usr->getsockfd());
+		return (send_reply(RPL_NOTOPIC, " :TOPIC :No topic is set", usr));
 	}
 	else
 	{
-		this->_name_channel[parse[1]]->setTopic(message);
-		this->_name_channel[parse[1]]->sendMsgChannel(":ft_irc.com Channel " + parse[1] + " topic is : " + message + "\n", fd);
-		return (send_reply(RPL_TOPIC, " :" + parse[1] + " :" + message, this->_fd_users[fd]));
+		chann->setTopic(parse[2]);
+		chann->sendMsgChannel(usr->getMask() + " Channel " + parse[1] + " topic is : " + parse[2] + "\n", usr->getsockfd());
+		return (send_reply(RPL_TOPIC, " TOPIC :" + parse[2], usr));
 	}
 }

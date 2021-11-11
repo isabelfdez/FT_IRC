@@ -1,10 +1,10 @@
 
 #include "Server.hpp"
 
-void    Server::send_message(std::string & _message, int & fd, User * usr)
+void    Server::send_message(std::string _message, User * dest, User * usr)
 {
     std::string message;
-	User		*dest  = this->_fd_users[ fd ];
+
 
     message.append(usr->getMask());
     message.append(" ");
@@ -17,7 +17,7 @@ void    Server::send_message(std::string & _message, int & fd, User * usr)
 		this->_send_message.push_back( dest );
 }
 
-void    Server::send_message_channel(std::string & message, User * usr, Channel * chnl)
+void    Server::send_message_channel(std::string message, User * usr, Channel * chnl)
 {
     std::string mask;
 	typedef std::list<User*>::iterator it_user;
@@ -53,7 +53,7 @@ void    Server::send_message_channel_block(std::string message, User * usr, Chan
     mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
-    mask.append("\n");
+    mask.append("\r\n");
 
 
 	for ( ; start != end ; ++start)
@@ -94,7 +94,7 @@ void	Server::send_error(std::string error, std::string str, User *dest)
 	message.append(error);
 	message.append(" * ");
 	message.append(str);
-	message.append("\n");
+	message.append("\r\n");
 
 	dest->setAnswer( message );
 

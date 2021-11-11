@@ -195,7 +195,7 @@ bool	User::operator==(User & obj)
 
 std::string	User::showModes()
 {
-	std::string s;
+	std::string s = "";
 	if (this->_modes.small_o == true)
 		s += "o";
 	if (this->_modes.i == true)

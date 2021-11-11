@@ -24,7 +24,7 @@ void    Server::join_channel(std::string str1, User *usr)
 
         if (chann->getIsFull())
             return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", usr));
-        if (chann->isBanned(usr))
+        if (chann->isBanned(usr->getMask()))
             return (send_error(ERR_BANNEDFROMCHAN, str1 + " :Cannot join channel (+b)", usr));
         if (chann->isInvite() && !chann->isInvited(usr->getNick()) && !usr->getmode('o'))
             return (send_error(ERR_INVITEONLYCHAN, str1 + " :Cannot join channel (+i)", usr));
@@ -34,7 +34,7 @@ void    Server::join_channel(std::string str1, User *usr)
         s = "JOIN :" + chann->getName();
         chann->addUser(usr);
         usr->addChannel(chann);
-        send_message_channel(s, usr, chann);
+        send_message_channel_block(s, usr, chann);
         if (chann->getTopic().size() > 0)
             send_reply(RPL_TOPIC, " " + str1 + " :" + chann->getTopic(), usr);
          this->names_command(tmp_name, usr);
@@ -58,8 +58,8 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1] = new Channel(str1, usr);
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
-        s = "JOIN :" + this->_name_channel[str1]->getName();
-        send_message_channel(s, usr, this->_name_channel[str1]);
+        s = "JOIN " + this->_name_channel[str1]->getName();
+        send_message(s, usr, usr);
         this->names_command(tmp_name, usr);
 
     }
