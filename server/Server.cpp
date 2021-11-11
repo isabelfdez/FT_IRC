@@ -264,8 +264,8 @@ void Server::parse_command(int fd, std::string buffer)
 		this->kick_command(parse, user);
 	else if ( command == "INVITE" )
 	 		this->invite_command(parse, user);
-	// 	else if ( command == "TOPIC" )
-	// 		this->topic_command(parse, user);
+	else if ( command == "TOPIC" )
+		this->topic_command(parse, user);
 	// 	else if ( command == "LIST" )
 	// 		this->list_command(parse, user);
 		else if ( command == "NAMES" )
