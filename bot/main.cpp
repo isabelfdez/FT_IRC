@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 			send(lol.getSocket(), data.c_str(), data.length(), 0);
 		}
 	}
-	lol.build_select_list();
+	/* lol.build_select_list();
 	lol.setNumReadSock();
 	if ( lol.getNumReadSock() > 0 )
 	{
@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 		buffer[1] = 'O';
 		std::string data = buffer;
 		send(lol.getSocket(), data.c_str(), data.length(), 0);
-	}
+	} */
 
 	for (;;)
 	{

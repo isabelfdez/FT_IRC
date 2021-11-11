@@ -6,11 +6,28 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 18:56:02 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 22:18:00 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bot.hpp"
+
+static void setnonblocking(int sock)
+{
+	int opts;
+
+	opts = fcntl(sock,F_GETFL);
+	if (opts < 0) {
+		perror("fcntl(F_GETFL)");
+		exit(EXIT_FAILURE);
+	}
+	opts = (opts | O_NONBLOCK);
+	if (fcntl(sock,F_SETFL,opts) < 0) {
+		perror("fcntl(F_SETFL)");
+		exit(EXIT_FAILURE);
+	}
+	return;
+}
 
 Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
 	: _nick(nick)
@@ -59,7 +76,7 @@ void Bot::build_select_list( void )
 }
 
 
-void Bot::read()
+void Bot::read_serve()
 {
 	char		buffer[513];
 	std::string	tmp;
@@ -69,19 +86,20 @@ void Bot::read()
 	size_t		pos;
 	
 
-	tmp = usr->getBufferCmd();
 
-	while ((byte = recv(this->getSocket(), buffer, 512,0)) > 0 )
-	{
+	byte = recv(this->getSocket(), buffer, 512, 0);
+	
 		buffer[byte] = '\0';
 		tmp += buffer;
-	}
+	
 
+	// tmp = usr->getBufferCmd();
 	// if ( tmp.length() == 0 )
 		// this->deleteUser( usr , "[Signed off]");
-
+	std::cout << tmp;
 	while ( tmp.length() )
 	{
+
 		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
 			tmp2 = tmp.substr(0, pos + 1);
@@ -93,12 +111,12 @@ void Bot::read()
 			{
 				this->parse( tmp2 );
 			}
-			usr->setBufferCmd("");
+			// usr->setBufferCmd("");
 		}
 		else
 		{
-			std::string buffer_cmd = usr->getBufferCmd() + tmp;
-			usr->setBufferCmd( buffer_cmd );
+			// std::string buffer_cmd = usr->getBufferCmd() + tmp;
+			// usr->setBufferCmd( buffer_cmd );
 			tmp.clear();
 		}
 	}
@@ -106,13 +124,51 @@ void Bot::read()
 
 void Bot::parse( std::string const & buffer )
 {
+	typedef std::map<std::string, User *>::iterator it_user;
 	
+	std::vector<std::string> token = split( buffer, ' ');
+	std::vector<std::string> token_game;
+
+	if (!token.size())
+		return ;
+	if( token[0] == "PING" )
+	{
+		std::string message = "PONG ";
+		message.append(token[1]);
+		std::cout << message;
+		send(this->_sock, message.c_str(), message.length(), 0 );
+		return ;
+	}
+
+	token_game = split(token[0], '!');
+	
+	// it_user start = this->_users.begin();
+	// it_user end = this->_users.end();
+	std::string nick = static_cast<std::string>(&token_game[0][1]);
+	if ( !this->_users.count(nick) )
+		this->_users[nick] = new User(nick);
+	else
+	{
+		std::string message = token[token.size() - 1 ];
+		this->ticTacToe(message, nick);
+	}
+	
+}
+
+void Bot::ticTacToe(std::string const & message, std::string const & nick)
+{
+	if ( !this->_users[nick]->getTabla().size() )
+	{
+		
+	}
 }
 
 void Bot::attendServer()
 {
 	if (FD_ISSET(this->_sock, &this->_reads) )
-	{	this->read();
+	{	
+		// std::cout << "attendServer\n";
+			this->read_serve();
 		// this->parse();
 	}
 	if (FD_ISSET(this->_sock, &this->_writes) )
