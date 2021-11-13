@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:15:34 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 21:53:19 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/12 17:33:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <fcntl.h>
 # include <map>
 # include <unistd.h>
+# include <deque>
 
 
 class Bot 
@@ -39,6 +40,8 @@ class Bot
 	int								_highsock;
 	fd_set							_writes;
 	fd_set							_reads;
+	std::deque<User *>				_send_message;
+
 	std::map<std::string, User*>	_users;
 
 
@@ -63,9 +66,18 @@ class Bot
 	void 				read_serve();
 	void 				parse( std::string const & buffer );
 	void				ticTacToe( std::string const & message, std::string const & nick );
+	void				sendRequest(User *usr);
+	void				deleteDequeUser ( User * usr );
+	bool				isAnswerUser( User *usr );
+	void				send_message(std::string _message, User * usr);
+
+
+
 
 
 	
 };
 
 #endif
+
+

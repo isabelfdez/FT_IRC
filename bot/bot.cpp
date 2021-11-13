@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 22:18:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/12 20:44:38 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,16 +150,46 @@ void Bot::parse( std::string const & buffer )
 	else
 	{
 		std::string message = token[token.size() - 1 ];
-		this->ticTacToe(message, nick);
+		if (token[1] == "PRIVMSG" )
+			this->ticTacToe(message, nick);
 	}
 	
 }
 
 void Bot::ticTacToe(std::string const & message, std::string const & nick)
 {
-	if ( !this->_users[nick]->getTabla().size() )
+	User *usr = this->_users[nick];
+	std::string messages;
+	typedef std::map<std::string, std::string>::iterator it_map;
+	
+	if ( usr )
 	{
+		int i = 0;
+		if ( !usr->setTabla(message) )
+		{
+			this->send_message("Invalid coordinate (x,y) (MIN x,y: 1)  (MAX x,y: 3) or coordinate is already used.", usr);
+			// return ;
+		}
+		else
+			usr->setTableBot();
+		std::map<std::string, std::string> map = usr->getTabla();
+		it_map start = map.begin();
+		it_map end = map.end();
 		
+		messages.append("\t");
+		for (; start != end ; ++start)
+		{
+			std::cout << start->second;
+			messages.append(start->second);
+			i++;
+			if (i == 3)
+			{
+				this->send_message(messages, usr);
+				messages.clear();
+				messages.append("\t");
+				i = 0;
+			}
+		}
 	}
 }
 
@@ -171,11 +201,105 @@ void Bot::attendServer()
 			this->read_serve();
 		// this->parse();
 	}
-	if (FD_ISSET(this->_sock, &this->_writes) )
+	// if (FD_ISSET(this->_sock, &this->_writes) )
+	// {
+		typedef std::deque<User *>::iterator it_user;
+	
+		it_user start = this->_send_message.begin();
+		it_user end = this->_send_message.end();
+	
+		for (; start != end; ++start )
+		{
+				this->sendRequest( *start );
+			
+			std::cout << "\nHERE \n";
+		}
+	// }
+
+}
+
+void	Bot::send_message(std::string _message, User * usr)
+{
+    std::string message;
+
+
+	message.append("PRIVMSG ");
+	message.append(usr->getNick());
+	message.append(" :");
+    message.append( _message );
+    message.append("\r\n");
+
+	usr->setAnswer( message );
+
+	if ( !this->isAnswerUser( usr ) )
+		this->_send_message.push_back( usr );
+}
+
+bool	Bot::isAnswerUser( User *usr )
+{
+	typedef std::deque<User *>::iterator it_deque;
+
+	it_deque start = this->_send_message.begin();
+	it_deque end = this->_send_message.end();
+
+	for (; start != end ; ++start)
 	{
-		
+		if ( (*start)->getNick()  == usr->getNick() )
+			return true;
 	}
 
+	return false;
+}
+
+void	Bot::sendRequest(User *usr)
+{
+	int			diff;
+	size_t		len;
+	std::string	messages;
+
+
+
+
+	diff = 0;
+	len = 0;
+
+	while ( ( messages = usr->getAnswer() ).size() != 0)
+	{
+		if ( messages.length() > 512 )
+		{
+			messages = messages.substr(0, 512);
+			messages[510] = '\r';
+			messages[511] = '\n';
+		}
+		len = send(this->_sock, messages.c_str(), messages.length(), 0);
+		diff = messages.length() - len;
+		if ( diff > 0 )
+		{
+			usr->setAnswer(messages.substr(diff, messages.length()) );
+			break ;
+		}
+	}
+
+	if ( diff == 0 )
+		this->deleteDequeUser( usr );
+}
+
+
+void Bot::deleteDequeUser ( User * usr )
+{
+	typedef std::deque<User *>::iterator it_user;
+
+	it_user	start = this->_send_message.begin();
+	it_user	end = this->_send_message.end();
+
+	for (; start != end; ++start )
+	{
+		if ((*start)->getNick() == usr->getNick() )
+		{
+			this->_send_message.erase( start );
+			break ;
+		}
+	}
 }
 
 int const & Bot::getSocket() const 
