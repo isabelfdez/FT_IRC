@@ -15,13 +15,14 @@ void	Server::topic_command(std::vector<std::string> const & parse, User * usr)
 	else if (parse[2].size() == 0)
 	{
 		chann->setTopic("");
-		chann->sendMsgChannel(usr->getMask() + "Channel " + parse[1] + " no topic\n", usr->getsockfd());
-		return (send_reply(RPL_NOTOPIC, " :TOPIC :No topic is set", usr));
+		chann->sendMsgChannel(usr->getMask() + " :TOPIC " + parse[1] + ":" + " no topic\n", usr->getsockfd());
+		return (send_message(" :TOPIC :" + parse[1] + ":", usr, usr));
 	}
 	else
 	{
 		chann->setTopic(parse[2]);
-		chann->sendMsgChannel(usr->getMask() + " Channel " + parse[1] + " topic is : " + parse[2] + "\n", usr->getsockfd());
-		return (send_reply(RPL_TOPIC, " TOPIC :" + parse[2], usr));
+		chann->sendMsgChannel(usr->getMask() + " :TOPIC " +  parse[1]+ ":" + " " + parse[2] + "\n", usr->getsockfd());
+		return (send_message(" :TOPIC " + parse[1] + ":" + " " + parse[2], usr, usr));
+
 	}
 }

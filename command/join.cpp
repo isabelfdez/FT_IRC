@@ -29,15 +29,15 @@ void    Server::join_channel(std::string str1, User *usr)
         // User join channel
         if (chann->isUser(usr->getNick()))
             return (send_error("", str1 + " :You are already on channel", usr));
-        s = "JOIN " + chann->getName();
+        s = "JOIN :" + chann->getName();
         send_message_channel(s, usr, chann);
         chann->addUser(usr);
         usr->addChannel(chann);
         //this->names_command(, usr);
         if (chann->getTopic().size() > 0)
-            send_reply(RPL_TOPIC, " JOIN :" + str1 + " " + chann->getTopic(), usr);
+            send_message("JOIN :" + str1 + " " + chann->getTopic(), usr, usr);
         else
-            send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
+            send_message("JOIN :" + str1, usr, usr);
     }
     else
     {
@@ -55,7 +55,8 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1] = new Channel(str1, usr);
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
-        send_reply(RPL_NOTOPIC, " JOIN :" + str1, usr);
+            send_message("JOIN :" + str1, usr, usr);
+
         //this->names_command(&this->_name_channel[str1]->getName()[0], fd);
     }
 }
