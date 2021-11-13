@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:00:50 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/13 03:33:36 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/13 18:39:26 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class User
 	std::string							_buffer_cmd;
 	std::deque<std::string>				_answer;
 	std::map<std::string, std::string> 	_table;
+	bool								_win;
+	bool								_lose;
 	public:
 
 	User( std::string const & _nick );
@@ -40,10 +42,12 @@ class User
 	void					setAnswer(std::string const & answer);
 	std::string 			getAnswer();
 	void					setTableBot();
-	bool					defendHorizontally();
-	bool					defendVertically();
-
-	
+	bool					defendHorizontally(std::string target);
+	bool					defendVertically(std::string target);
+	bool					defendDiagonal(std::string target);
+	bool					gameOver(std::string win);
+	bool					getWin();
+	bool					getLose();
 
 };
 

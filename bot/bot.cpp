@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/12 20:44:38 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/13 19:05:56 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,10 @@ void Bot::ticTacToe(std::string const & message, std::string const & nick)
 				i = 0;
 			}
 		}
+		if ( usr->getWin() )
+			this->send_message("You Win 🏆 ", usr);
+		if ( usr->getLose() )
+			this->send_message("You Lose 😭 ", usr);
 	}
 }
 
@@ -299,6 +303,11 @@ void Bot::deleteDequeUser ( User * usr )
 			this->_send_message.erase( start );
 			break ;
 		}
+	}
+	if ( usr->getWin() || usr->getLose() )
+	{
+		this->_users.erase(usr->getNick());
+		delete usr;
 	}
 }
 
