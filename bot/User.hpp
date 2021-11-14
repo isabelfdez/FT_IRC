@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:00:50 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/13 18:39:26 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/14 19:03:43 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class User
 	std::map<std::string, std::string> 	_table;
 	bool								_win;
 	bool								_lose;
+	bool								_tie;
 	public:
 
 	User( std::string const & _nick );
@@ -48,6 +49,9 @@ class User
 	bool					gameOver(std::string win);
 	bool					getWin();
 	bool					getLose();
+	bool 					tie();
+	bool					getTie();
+	bool					check();
 
 };
 

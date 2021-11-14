@@ -1,11 +1,18 @@
 #include "Bot.hpp"
+#include <stdio.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #define PORT 6667
+
+
 
 int main(int argc, char const *argv[])
 {
 	Bot lol("lol", "127.0.0.1", 6667);
-
 	lol.build_select_list();
 	lol.setNumReadSock();
 	if ( lol.getNumReadSock() > 0 )
@@ -16,18 +23,6 @@ int main(int argc, char const *argv[])
 			send(lol.getSocket(), data.c_str(), data.length(), 0);
 		}
 	}
-	/* lol.build_select_list();
-	lol.setNumReadSock();
-	if ( lol.getNumReadSock() > 0 )
-	{
-		int byte;
-		char buffer[513];
-		byte = recv(lol.getSocket(), buffer, 512,0);
-		buffer[byte]= '\0';
-		buffer[1] = 'O';
-		std::string data = buffer;
-		send(lol.getSocket(), data.c_str(), data.length(), 0);
-	} */
 
 	for (;;)
 	{

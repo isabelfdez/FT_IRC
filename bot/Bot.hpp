@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:15:34 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/12 17:33:31 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/14 18:00:00 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,7 @@ class Bot
 	void				deleteDequeUser ( User * usr );
 	bool				isAnswerUser( User *usr );
 	void				send_message(std::string _message, User * usr);
-
-
+	void				draw(User *usr);
 
 
 

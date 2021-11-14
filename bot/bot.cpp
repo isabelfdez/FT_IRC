@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/13 19:05:56 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/14 22:31:21 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,36 +89,23 @@ void Bot::read_serve()
 
 	byte = recv(this->getSocket(), buffer, 512, 0);
 	
-		buffer[byte] = '\0';
-		tmp += buffer;
+	buffer[byte] = '\0';
+	tmp += buffer;
 	
-
-	// tmp = usr->getBufferCmd();
-	// if ( tmp.length() == 0 )
-		// this->deleteUser( usr , "[Signed off]");
 	std::cout << tmp;
 	while ( tmp.length() )
 	{
-
 		if (( pos = tmp.find('\n') ) != std::string::npos )
 		{
 			tmp2 = tmp.substr(0, pos + 1);
 			tmp.erase(0, pos + 1);
-
 			if (tmp2.length() > 510 )
 				tmp2 = tmp2.substr(0, 510);
 			if ( tmp2[0] != '\r' && tmp2[0] != '\n')
-			{
 				this->parse( tmp2 );
-			}
-			// usr->setBufferCmd("");
 		}
 		else
-		{
-			// std::string buffer_cmd = usr->getBufferCmd() + tmp;
-			// usr->setBufferCmd( buffer_cmd );
 			tmp.clear();
-		}
 	}
 }
 
@@ -142,99 +129,107 @@ void Bot::parse( std::string const & buffer )
 
 	token_game = split(token[0], '!');
 	
-	// it_user start = this->_users.begin();
-	// it_user end = this->_users.end();
 	std::string nick = static_cast<std::string>(&token_game[0][1]);
-	if ( !this->_users.count(nick) )
+
+	if ( token[1] == "PRIVMSG" && token[2] == "DCC" )
+	{
+		
+	}
+	
+	if ( token[1] == "PRIVMSG" && !this->_users.count(nick) )
+	{
 		this->_users[nick] = new User(nick);
+		srand( time( NULL ) );
+
+		int start = rand() % 2;
+		if (  start )
+			this->_users[nick]->setTableBot();
+		this->draw( this->_users[nick] );
+	}
 	else
 	{
-		std::string message = token[token.size() - 1 ];
+		std::string message = token[ token.size() - 1 ];
 		if (token[1] == "PRIVMSG" )
 			this->ticTacToe(message, nick);
 	}
 	
 }
 
+void Bot::draw(User *usr)
+{
+	typedef std::map<std::string, std::string>::iterator it_map;
+	std::string messages;
+
+	std::map<std::string, std::string> map = usr->getTabla();
+	int i = 0;
+	it_map start = map.begin();
+	it_map end = map.end();
+	this->send_message("\tYou are: ❌", usr);
+	messages.append("\t");
+	for (int j = 1; start != end ; ++start, j++)
+	{
+		std::cout << start->second;
+		if ( !(j % 3) )
+			std::cout << std::endl;
+		messages.append(start->second);
+		i++;
+		if (i == 3)
+		{
+			this->send_message(messages, usr);
+			messages.clear();
+			messages.append("\t");
+			i = 0;
+		}
+	}
+}
+
 void Bot::ticTacToe(std::string const & message, std::string const & nick)
 {
 	User *usr = this->_users[nick];
-	std::string messages;
-	typedef std::map<std::string, std::string>::iterator it_map;
 	
 	if ( usr )
 	{
-		int i = 0;
 		if ( !usr->setTabla(message) )
-		{
 			this->send_message("Invalid coordinate (x,y) (MIN x,y: 1)  (MAX x,y: 3) or coordinate is already used.", usr);
-			// return ;
-		}
 		else
 			usr->setTableBot();
-		std::map<std::string, std::string> map = usr->getTabla();
-		it_map start = map.begin();
-		it_map end = map.end();
-		
-		messages.append("\t");
-		for (; start != end ; ++start)
-		{
-			std::cout << start->second;
-			messages.append(start->second);
-			i++;
-			if (i == 3)
-			{
-				this->send_message(messages, usr);
-				messages.clear();
-				messages.append("\t");
-				i = 0;
-			}
-		}
+		this->draw(usr);
 		if ( usr->getWin() )
 			this->send_message("You Win 🏆 ", usr);
 		if ( usr->getLose() )
 			this->send_message("You Lose 😭 ", usr);
+		if (usr->getTie())
+			this->send_message("We are in a Draw 😱", usr);
 	}
 }
 
 void Bot::attendServer()
 {
 	if (FD_ISSET(this->_sock, &this->_reads) )
-	{	
-		// std::cout << "attendServer\n";
 			this->read_serve();
-		// this->parse();
-	}
-	// if (FD_ISSET(this->_sock, &this->_writes) )
-	// {
+	if (FD_ISSET(this->_sock, &this->_writes) )
+	{
 		typedef std::deque<User *>::iterator it_user;
 	
 		it_user start = this->_send_message.begin();
 		it_user end = this->_send_message.end();
 	
 		for (; start != end; ++start )
-		{
-				this->sendRequest( *start );
-			
-			std::cout << "\nHERE \n";
-		}
-	// }
+			this->sendRequest( *start );
+	}
 
 }
 
 void	Bot::send_message(std::string _message, User * usr)
 {
-    std::string message;
-
+	std::string message;
 
 	message.append("PRIVMSG ");
 	message.append(usr->getNick());
 	message.append(" :");
-    message.append( _message );
-    message.append("\r\n");
-
+	message.append( _message );
+	message.append("\r\n");
 	usr->setAnswer( message );
-
 	if ( !this->isAnswerUser( usr ) )
 		this->_send_message.push_back( usr );
 }
@@ -261,12 +256,8 @@ void	Bot::sendRequest(User *usr)
 	size_t		len;
 	std::string	messages;
 
-
-
-
 	diff = 0;
 	len = 0;
-
 	while ( ( messages = usr->getAnswer() ).size() != 0)
 	{
 		if ( messages.length() > 512 )
@@ -283,7 +274,6 @@ void	Bot::sendRequest(User *usr)
 			break ;
 		}
 	}
-
 	if ( diff == 0 )
 		this->deleteDequeUser( usr );
 }
@@ -304,7 +294,7 @@ void Bot::deleteDequeUser ( User * usr )
 			break ;
 		}
 	}
-	if ( usr->getWin() || usr->getLose() )
+	if ( usr->getWin() || usr->getLose() || usr->getTie() )
 	{
 		this->_users.erase(usr->getNick());
 		delete usr;

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:10:18 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/13 21:38:42 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/14 20:12:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ User::User( std::string const & nick )
 
 	this->_win = false;
 	this->_lose = false;
+	this->_tie  =false;
 }
 
 User::~User()
@@ -147,16 +148,16 @@ bool	User::defendDiagonal(std::string target)
 		}
 	if( data == 15 )
 		return gameOver(target);
+
 	data = 0;
 
-	if ( this->_table[  lvl[1][2]  ] == target )
-		data += lvl3[1][2];
+	if ( this->_table[  lvl[0][2]  ] == target )
+		data += lvl3[0][2];
 	if ( this->_table[  lvl[1][1]  ] == target )
 		data += lvl3[1][1];
 	if ( this->_table[  lvl[2][0]  ] == target )
 		data += lvl3[2][0];
 	
-	std::cout <<" [[ " << data << " ]] "<< std::endl;
 	if ( data == 8 )
 		if (this->_table[lvl[2][0] ] != "❌" &&  this->_table[ lvl[2][0] ] != "⭕️" )
 		{
@@ -167,9 +168,9 @@ bool	User::defendDiagonal(std::string target)
 		}
 
 	if ( data == 12)
-		if (this->_table[ lvl[1][2] ] != "❌" &&  this->_table[ lvl[1][2] ] != "⭕️" )
+		if (this->_table[ lvl[0][2] ] != "❌" &&  this->_table[ lvl[0][2] ] != "⭕️" )
 		{
-			this->_table[  lvl[1] [2] ] =  "⭕️";
+			this->_table[  lvl[0] [2] ] =  "⭕️";
 			if (target == "⭕️" )
 				return gameOver(target);
 			return true;
@@ -184,6 +185,13 @@ bool	User::defendDiagonal(std::string target)
 		}
 	if( data == 15)
 		return gameOver(target);
+
+	if (data == 5 && this->_table[ lvl[1][1] ] == "❌" )
+		if (this->_table[lvl[0][2] ] != "❌" &&  this->_table[ lvl[0][2] ] != "⭕️" )
+			{
+				this->_table[  lvl[0] [2] ] =  "⭕️";
+				return true;
+			}
 	return false;
 }
 
@@ -206,6 +214,7 @@ bool User::defendHorizontally(std::string target)
 	
 	int data = 0;
 	int flag = 0;
+	int over = 0;
 
 	for( size_t i = 0; i < 3 ; i++)
 	{
@@ -227,7 +236,7 @@ bool User::defendHorizontally(std::string target)
 						return true;
 					}
 				}
-				else if ( ((data + lvl3[i][1]) == 6 && (data + lvl3[i][1]) == 15 && (data + lvl3[i][1]) == 24) && flag == 2 )
+				else if ( ((data + lvl3[i][1]) == 6 || (data + lvl3[i][1]) == 15 || (data + lvl3[i][1]) == 24) && flag == 2 )
 				{
 
 					if (this->_table[lvl[i][1]] !="❌" &&  this->_table[lvl[i][1] ] != "⭕️" )
@@ -238,7 +247,7 @@ bool User::defendHorizontally(std::string target)
 						return true;
 					}
 				}
-				else if ( ((data + lvl3[i][2]) == 6 && (data + lvl3[i][2]) == 15 && (data + lvl3[i][2]) == 24) && flag == 2)
+				else if ( ((data + lvl3[i][2]) == 6 || (data + lvl3[i][2]) == 15 ||  (data + lvl3[i][2]) == 24) && flag == 2)
 				{
 
 					if (this->_table[lvl[i][2] ] != "❌" &&  this->_table[lvl[i][2] ] != "⭕️" )
@@ -257,6 +266,46 @@ bool User::defendHorizontally(std::string target)
 		data =0;
 	}
 	return false ;
+}
+
+bool User::check()
+{
+	std::string lvl[3][3] = 
+	{ 
+		"1,1", "1,2", "1,3",
+		"2,1", "2,2", "2,3",
+		"3,1", "3,2", "3,3"
+	};
+	
+	int over = 0;
+
+	for( size_t i = 0; i < 3 ; i++)
+	{
+		for (size_t j = 0; j < 3 ; j ++ )
+		{
+			if (this->_table[  lvl[j][i]  ] == "❌")
+				over++;
+			if (over == 3)
+				return gameOver("❌");
+			
+		}
+		over = 0;
+	}
+	over = 0;
+	for( size_t i = 0; i < 3 ; i++)
+	{
+		for (size_t j = 0; j < 3 ; j ++ )
+		{
+			if (this->_table[  lvl[i][j]  ] == "❌")
+				over++;
+			if (over == 3)
+				return gameOver("❌");
+			
+		}
+		over = 0;
+	}
+	return false;
+	
 }
 
 bool User::defendVertically(std::string target)
@@ -283,6 +332,7 @@ bool User::defendVertically(std::string target)
 	{
 		for (size_t j = 0; j < 3 ; j ++ )
 		{
+
 			if ( this->_table[  lvl[j][i]  ] == target )
 			{
 				flag++;
@@ -337,7 +387,6 @@ bool User::gameOver( std::string target)
 	else
 		this->_win = true;
 
-	std::cout << "ganador \n";
 	return true;
 }
 
@@ -350,10 +399,29 @@ bool	User::getLose()
 	return this->_lose;
 }
 
+bool	User::tie()
+{
+	std::string lvl[3][3] = 
+	{ 
+		"1,1", "1,2", "1,3",
+		"2,1", "2,2", "2,3",
+		"3,1", "3,2", "3,3"
+	};
+
+	for (size_t i = 0; i < 3; i++)
+		for (size_t j = 0; j < 3; j++)
+			if (this->_table[lvl[i][j] ] != "❌" &&  this->_table[lvl[i][j] ] != "⭕️")
+				return false;
+	this->_tie = true;
+	return true;
+}
+
 void	User::setTableBot()
 {
 	size_t x,y;
 	std::string coo;
+	if (this->check())
+		return ;
 
 	if(this->defendDiagonal("⭕️"))
 		return ;
@@ -361,11 +429,13 @@ void	User::setTableBot()
 		return ;
 	else if(this->defendVertically("⭕️"))
 		return ;
+	else if(this->defendDiagonal("❌"))
+		return ;
 	else if(this->defendHorizontally("❌"))
 		return ;
 	else if(this->defendVertically("❌"))
 		return ;
-	else if(this->defendDiagonal("❌"))
+	else if (this->tie())
 		return ;
 	
 	srand( time( NULL ) );
@@ -384,10 +454,15 @@ void	User::setTableBot()
 		}
 		coo.clear();
 	}
-	std::cout <<  getPos(x) << " " << getPos(y)<< std::endl;
-
+	if (this->tie())
+		return ;
 }
 
+
+bool User::getTie()
+{
+	return this->_tie;
+}
 
 std::string User::getAnswer()
 {
