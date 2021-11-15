@@ -31,8 +31,8 @@ void	Server::invite_command(std::vector<std::string> const & parse, User *usr)
     	return (send_error(ERR_USERONCHANNEL, parse[1] + " " + parse[2] + " :is already on channel", usr));
 	else if (!chann->isInvite())
 	{
-		s = "You are invite to join " + parse[2];
-		send_message(s, usr_dest, usr);
+		send_message("INVITE " + parse[2] + " " + parse[1], usr_dest, usr);
+		send_message("INVITE " + parse[2] + " " + parse[1], usr, usr);
 		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], usr);
 		return ;
 	}
@@ -42,9 +42,9 @@ void	Server::invite_command(std::vector<std::string> const & parse, User *usr)
 	{
 		if (chann->isInvited(parse[1]))
 			return;
-		s = "You are invite to join " + parse[2];
-		send_message(s, usr_dest, usr);
-		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], usr);
+		send_message("INVITE " + parse[2] + " " + parse[1], usr_dest, usr);
+		send_message("INVITE " + parse[2] + " " + parse[1], usr, usr);
+		send_reply(RPL_INVITING, " INVITE :" + parse[1] + " " + parse[2], usr);
 		chann->pushInvite(getUserWithNick(parse[1]));
 	}
 }

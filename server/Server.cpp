@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/11 17:38:34 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 15:34:45 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ Server::Server(int port): _fd_users(), _name_channel()
 
 
 	this->_password_oper = "abracadabra";
+	this->_name_channel.clear();
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 

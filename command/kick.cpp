@@ -19,8 +19,10 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
 		return (send_error(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters", usr));
     std::vector<std::string> v_channels = split(parse[1], ',');
     std::vector<std::string> v_users = split(parse[2], ',');
+    std::string message = "";
 
-
+    if (parse.size() > 3)
+        message = ":" + parse[3];
     if (v_channels.size() > 1 && v_channels.size() != v_users.size())
 		return (send_error(ERR_SINTAX, "KICK :Bad sintax", usr));
     // CASO 1: Hay un solo canal (tenemos que expulsar a todos los usuarios de ese canal)
@@ -37,9 +39,9 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
         {
             if (chann->isUser(*start))
             {
-                if (chann->deleteUser(getUserWithNick(*start)))
-			            send_message_channel( "has left the channel " + chann->getName() , getUserWithNick(*start), chann);
-                send_reply("", " KICK: you have being kicked from channel " + v_channels[0], getUserWithNick(*start));
+			    send_message_channel("KICK: " + v_channels[0] + " " + *start + message, usr, chann);
+                chann->deleteUser(getUserWithNick(*start));
+                send_message(" KICK: " + v_channels[0] + " " + *start + message, usr, usr);
                 getUserWithNick(*start)->deleteChannel(chann);
                 if (chann->getUsers().size() < 1)
                     deleteChannel(v_channels.front());
@@ -63,14 +65,9 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
                 return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", usr));
             if (chann->isUser(*start_usrs))
             {
-                if (chann->deleteUser(getUserWithNick(*start_usrs)))
-                {
-                    std::string messages = "has left the channel " + chann->getName();
-			        send_message_channel( messages , getUserWithNick(*start_usrs), chann);
-                }
-
-                
-                send_reply("", " :You have being kicked from channel " + *start_channs, getUserWithNick(*start_usrs));
+			    send_message_channel("KICK: " + *start_channs + " " + *start_usrs + message, usr, chann);
+                chann->deleteUser(getUserWithNick(*start_usrs));
+                send_message(" KICK: " + *start_channs + " " + *start_usrs + message, usr, usr);
                 getUserWithNick(*start_usrs)->deleteChannel(chann);
                 if (this->_name_channel[(*start_channs)]->getUsers().size() < 1)
                     deleteChannel((*start_channs));

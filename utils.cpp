@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/08 15:36:03 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 16:50:18 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,15 +177,15 @@ void displayLog(std::string const & log, std::string const & cmd , User *usr )
 
 void displayTimestamp( void )
 {
-	// time_t now = time(0);
+	time_t now = time(0);
 
-	// tm ltm = *localtime(&now);
-	// std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
-	// 		  << std::setw(2) << ltm.tm_mon + 1
-	// 		  << std::setw(2) << ltm.tm_mday << "_"
-	// 		  << std::setw(2) << ltm.tm_hour
-	// 		  << std::setw(2) << ltm.tm_min
-	// 		  << std::setw(2) << ltm.tm_sec << "] "WHITE;
+	tm ltm = *localtime(&now);
+	std::cout << GREEN"" << std::setfill('0') << "[" << (ltm.tm_year + 1900)
+			  << std::setw(2) << ltm.tm_mon + 1
+			  << std::setw(2) << ltm.tm_mday << "_"
+			  << std::setw(2) << ltm.tm_hour
+			  << std::setw(2) << ltm.tm_min
+			  << std::setw(2) << ltm.tm_sec << "] "WHITE;
 }
 
 std::string		ft_toupper(std::string str)

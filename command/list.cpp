@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/30 18:28:55 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/15 15:25:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 17:03:40 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void Server::list_command( std::vector<std::string> const & parse, User *usr )
 {
-	Channel			*channel;
+	Channel			*channel = 0;
 	std::string		message;
 
 
@@ -31,16 +31,18 @@ void Server::list_command( std::vector<std::string> const & parse, User *usr )
 			message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :[+" + channel->showModes() + "] "+ channel->getTopic();
 			send_reply(RPL_LIST, message, usr);
 		}
+		return ;
 	}
 
 	for( size_t i = 0; i < token.size();  i++ )
 	{
-		
-		channel = this->_name_channel.at(token[i]);
+		if ( this->_name_channel.count(token[i]) > 0 )
+			channel = this->_name_channel[token[i]];
 		if (channel)
 		{
 			message = " " + channel->getName() + " " + std::to_string( channel->getNumUser() )	 + " :[+" + channel->showModes() + "] "+ channel->getTopic();
 			send_reply(RPL_LIST, message, usr);
+			channel = 0;
 		}
 	}
 	
