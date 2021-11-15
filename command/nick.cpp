@@ -20,7 +20,7 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
 
     if (!usr->getPassState())
         return send_error(ERR_NOPASSWD, "NICK :No password entered", usr);
-    if (parse.size() < 1)
+    if (parse.size() < 2)
         return (send_error(ERR_NONICKNAMEGIVEN, ":No nickname given", usr));
     else if (parse[1].size() > 9)
         return (send_error(ERR_ERRONEUSNICKNAME, parse[1] + " :Erroneous nickname", usr));
