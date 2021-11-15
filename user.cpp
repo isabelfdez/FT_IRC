@@ -220,6 +220,7 @@ void	User::deleteChannel(Channel * channel)
     {
 		if (*it == channel) // Esto no se si esta bien
 		{
+			this->_max_channels = false;
 			it = this->_channels.erase(it);
 			return ;
 		}

@@ -6,11 +6,13 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/14 22:31:21 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 01:27:52 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bot.hpp"
+#include <arpa/inet.h>
+
 
 static void setnonblocking(int sock)
 {
@@ -43,18 +45,53 @@ Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
 
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_port = htons(port);
+	std::cout << IP << std::endl;
 	
 	if (inet_pton(AF_INET, IP.c_str(), &this->_addr.sin_addr) <= 0)
 	{
 		perror("INET_PTON");
 		exit(EXIT_FAILURE);
 	}
-	if (connect(this->_sock, (struct sockaddr *) &this->_addr, sizeof(this->_addr)) < 0 )
+	std::cout << "hola\n";
+	setnonblocking(this->_sock);
+	if (connect(this->_sock, (struct sockaddr *) &this->_addr, sizeof(this->_addr)) < 0)
 	{
-		perror("Connect");
-		exit(EXIT_FAILURE);
+	//	perror("Connect");
+	//	exit(EXIT_FAILURE);
 	}
+	std::cout << "hola\n";
+
 }
+
+unsigned long  Bot::getIp(  ) 
+{
+	struct in_addr clientIP;
+	clientIP = this->_send.sin_addr;
+	char ipStr[INET_ADDRSTRLEN];
+	return  ntohl(inet_addr(inet_ntop(AF_INET, &clientIP, ipStr, INET_ADDRSTRLEN)));
+}
+
+
+void	Bot::sendFile( std::vector<std::string> token )
+{
+
+	memset( (char *) &this->_send, 0 , sizeof(this->_send) );
+
+	this->_send.sin_family = AF_INET;
+	this->_send.sin_port = htons(4242);
+	this->_send.sin_addr.s_addr = htonl(INADDR_ANY);
+	if ( bind( this->_sock, ( struct sockaddr * ) &this->_send, sizeof( this->_send ) )  == -1 )
+	{	close(this->_sock);
+		perror("Bind");
+	}
+	if ( listen (this->_sock , FD_SETSIZE) == -1)
+	{
+		perror("Listen");
+	}
+	
+}
+
+
 Bot::~Bot()
 {
 	
@@ -131,7 +168,7 @@ void Bot::parse( std::string const & buffer )
 	
 	std::string nick = static_cast<std::string>(&token_game[0][1]);
 
-	if ( token[1] == "PRIVMSG" && token[2] == "DCC" )
+	if ( token[1] == "PRIVMSG" && token[3] == "DCC" )
 	{
 		
 	}
@@ -209,6 +246,8 @@ void Bot::attendServer()
 			this->read_serve();
 	if (FD_ISSET(this->_sock, &this->_writes) )
 	{
+		
+		std::cout << "pedro\n";
 		typedef std::deque<User *>::iterator it_user;
 	
 		it_user start = this->_send_message.begin();

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/15 15:34:45 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 18:41:56 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,10 +217,9 @@ void Server::parse_command(int fd, std::string buffer)
 
 	std::vector<std::string> parse = parser( buffer );
 
-
+	if (!parse[0].size())
+		return;
 	command = ft_toupper(parse[0]);
-
-
 
 	displayLog("Attend client", " CMD: " + command, user);
 	
@@ -299,6 +298,7 @@ void Server::getCustomerRequest( int fd_client )
 		tmp += buffer;
 	}
 
+	std::cout << "[[[ " << tmp <<  "]]]" << std::endl;
 	if ( tmp.length() == 0 )
 		this->deleteUser( usr , "[Signed off]");
 

@@ -12,7 +12,29 @@
 
 int main(int argc, char const *argv[])
 {
-	Bot lol("lol", "127.0.0.1", 6667);
+	if (argc < 3)
+	{
+		std::cout << "Need more params\n";
+		exit (0);
+	}
+	struct hostent *hs;
+	struct in_addr	a;
+	std::string ip;
+	if (isalpha(argv[1][0]))
+	{
+        hs = gethostbyname(argv[1]); 
+		if (hs == NULL)
+		{
+			std::cout << "Invalid ip\n";
+			exit (0);
+		}
+		bcopy(*hs->h_addr_list, (char *) &a, sizeof(a));
+		ip = inet_ntoa(a);
+	}
+	else
+		ip = argv[1];
+	Bot lol("lol", ip, atoi(argv[2]));
+	
 	lol.build_select_list();
 	lol.setNumReadSock();
 	if ( lol.getNumReadSock() > 0 )

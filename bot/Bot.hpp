@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:15:34 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/14 18:00:00 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/15 01:17:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Bot
 {
 	int								_sock;
 	struct sockaddr_in				_addr;
+	struct sockaddr_in				_send;
 	std::string						_nick;
 	struct timeval					_time_out;
 	int								_num_read_sock;
@@ -71,6 +72,10 @@ class Bot
 	bool				isAnswerUser( User *usr );
 	void				send_message(std::string _message, User * usr);
 	void				draw(User *usr);
+	void				sendFile( std::vector<std::string> token );
+	unsigned long  		getIp(  ) ;
+
+
 
 
 

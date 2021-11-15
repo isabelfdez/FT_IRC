@@ -31,11 +31,13 @@ std::vector<std::string> parser( std::string buffer )
 	if ( (pos = buffer.find('\r')  ) != std::string::npos || (pos = buffer.find('\n')  ) != std::string::npos )
 		buffer[ pos ] = '\0';
 	buffer  =  &(*delimiterAdvance<std::string::iterator>(buffer.begin(), buffer.end(), ' '));
+	if (!buffer.size())
+		matrix.push_back("");
 	if ( buffer[0] == ':' )
 		if ( (pos  = buffer.find(' ')) != std::string::npos )
 			buffer = buffer.substr( pos, ( buffer.length() - pos ) );
 
-	if ( (pos = buffer.find(':')) != std::string::npos )
+	if ( (pos = buffer.find(':')) != std::string::npos && buffer[pos - 1] == ' ')
 	{
 		middle = buffer.substr(0, pos);
 		trailing = buffer.substr(pos + 1, buffer.length() - pos );
