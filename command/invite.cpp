@@ -32,7 +32,6 @@ void	Server::invite_command(std::vector<std::string> const & parse, User *usr)
 	else if (!chann->isInvite())
 	{
 		send_message("INVITE " + parse[2] + " " + parse[1], usr_dest, usr);
-		send_message("INVITE " + parse[2] + " " + parse[1], usr, usr);
 		send_reply(RPL_INVITING, " :" + parse[2] + " " + parse[1], usr);
 		return ;
 	}
@@ -43,7 +42,6 @@ void	Server::invite_command(std::vector<std::string> const & parse, User *usr)
 		if (chann->isInvited(parse[1]))
 			return;
 		send_message("INVITE " + parse[2] + " " + parse[1], usr_dest, usr);
-		send_message("INVITE " + parse[2] + " " + parse[1], usr, usr);
 		send_reply(RPL_INVITING, " INVITE :" + parse[1] + " " + parse[2], usr);
 		chann->pushInvite(getUserWithNick(parse[1]));
 	}

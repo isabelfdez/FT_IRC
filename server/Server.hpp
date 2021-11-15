@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 18:54:59 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 15:44:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@
 # define RPL_CREATE					"003"
 # define RPL_MYINFO					"004"
 # define RPL_UMODEIS				"221"
+# define RPL_ISON					"303"
 # define RPL_LIST					"322"
 # define RPL_LISTEND				"323"
 # define RPL_NOTOPIC				"331"
@@ -84,6 +85,8 @@
 # define RPL_ENDOFMOTD				"376"
 # define RPL_USERS					"393"
 # define RPL_YOUREOPER				"381"
+# define RPL_WHOREPLY				"352"
+# define RPL_ENDOFWHO				"315"
 
 typedef std::map<std::string ,Channel *>::iterator		map_channel_it;
 typedef std::list<std::string>::iterator				list_str_it;
@@ -153,7 +156,7 @@ class Server
 		bool			isChannel(std::string);
 
 		void			deleteChannel( std::string );
-		void			deleteUser( int const & fd );
+		void			deleteUser( User * usr, std::string const & messages);
 		void			deleteBan( User *);
 		void			deleteInvite( User *user);
 
@@ -181,6 +184,10 @@ class Server
 		void			topic_command   (std::vector<std::string> const& parse, User *usr);
 		void 			names_command   (std::vector<std::string> const& parse, User *usr);
 		void			pass_command    (std::vector<std::string> const& parse, User *usr);
+		void			ison_command    (std::vector<std::string> const& parse, User *usr);
+		void			who_command( std::vector<std::string> const & parse, User *usr );
+
+
 
 
 

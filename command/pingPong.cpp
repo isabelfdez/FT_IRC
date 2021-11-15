@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:50:59 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/09 18:58:01 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/10 17:51:52 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static std::string generatePing()
     for( size_t i = 0; i <= 11; i++ )
 	{
 		c = 33 + rand() % ( 126 - 33 );
-		if ( c == ':') 
+		if ( c == ':')
 			i--;
 		else
 			ping[ i ] = c;
@@ -36,22 +36,22 @@ void	Server::sendPing()
 	typedef std::map<int , User *>::iterator iterator;
 	User * usr;
 	std::string ping = "PING :";
-	
+
 	iterator start = this->_fd_users.begin();
 	iterator end = this->_fd_users.end();
 	for ( ;  start != end; ++start )
 	{
 		usr = this->_fd_users[ start->first ] ;
-		if ( ( getTime() - usr->getLastTime() ) > usr->getTimePing() ) 
+		if ( ( getTime() - usr->getLastTime() ) > usr->getTimePing() )
 		{
 			if ( ( usr->getPingStatus() || !usr->getRegistered() )
-				&& ( getTime() - usr->getLastTime() ) > ( usr->getTimePing() + 30000 ) ) // si a los 30 segundo ha devuelto el pong 
+				&& ( getTime() - usr->getLastTime() ) > ( usr->getTimePing() + 30000 ) ) // si a los 30 segundo ha devuelto el pong
 			{
 				if ( usr->getPingStatus() )
 					send_reply("ERROR :Closing link:", " [Ping timeout]", usr);
 				else
 					send_reply("ERROR :Closing link:", " [Registration timeout]", usr);
-				this->deleteUser( start->first );
+				this->deleteUser( usr , "Ping timeout: 120 seconds");
 				return ;
 			}
 			else if (!usr->getPingStatus()
@@ -68,6 +68,7 @@ void	Server::sendPing()
 				{
 					send_reply("396", " " +  usr->getIp() + " :is now your displayed host", usr);
 					send_reply("MODE", ((usr->getmode('i')) ? " :i" : ":") , usr);
+
 				}
 			}
 		}
@@ -89,6 +90,6 @@ void	Server::pong_command( std::vector<std::string> const & parse, User *usr )
 	else
 	{
 		send_reply("ERROR :Closing link:", " [Incorrect ping reply for registration]", usr);
-		this->deleteUser( usr->getsockfd() );
+		this->deleteUser( usr, "[Incorrect ping reply for registration]");
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 19:18:53 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 17:38:34 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ Server::Server(int port): _fd_users(), _name_channel()
 	this->_commands.push_back("NAMES");
 	this->_commands.push_back("PASS");
 	this->_commands.push_back("WHO");
+	this->_commands.push_back("ISON");
+
 
 	this->_password_oper = "abracadabra";
 	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
@@ -214,10 +216,9 @@ void Server::parse_command(int fd, std::string buffer)
 
 	std::vector<std::string> parse = parser( buffer );
 
-
+	if (!parse[0].size())
+		return;
 	command = ft_toupper(parse[0]);
-
-
 
 	displayLog("Attend client", " CMD: " + command, user);
 	
@@ -255,7 +256,7 @@ void Server::parse_command(int fd, std::string buffer)
 	else if ( command == "QUIT" )
 		this->quit_command(parse, user);
 		else if ( command == "PONG" )
-			this->pong_command(parse, user);
+		this->pong_command(parse, user);
 	else if ( command == "MODE" )
 		this->mode_command(parse, user);
 	else if ( command == "OPER" )
@@ -263,15 +264,17 @@ void Server::parse_command(int fd, std::string buffer)
 	else if ( command == "KICK" )
 		this->kick_command(parse, user);
 	else if ( command == "INVITE" )
-	 		this->invite_command(parse, user);
+	 	this->invite_command(parse, user);
 	else if ( command == "TOPIC" )
 		this->topic_command(parse, user);
-	// 	else if ( command == "LIST" )
-	// 		this->list_command(parse, user);
-		else if ( command == "NAMES" )
-	 		this->names_command(parse, user);
-	// 	else if ( command == "who" )
-	// 		this->names_command(parse, user);
+	else if ( command == "LIST" )
+		this->list_command(parse, user);
+	else if ( command == "NAMES" )
+		this->names_command(parse, user);
+	else if ( command == "WHO" )
+		this->who_command(parse, user);
+	else if ( command == "ISON" )
+		this->ison_command(parse, user);
 	}
 }
 
@@ -295,7 +298,7 @@ void Server::getCustomerRequest( int fd_client )
 	}
 
 	if ( tmp.length() == 0 )
-		this->deleteUser( fd_client );
+		this->deleteUser( usr , "[Signed off]");
 
 	while ( tmp.length() )
 	{
@@ -408,35 +411,34 @@ void			Server::deleteChannel( std::string channel )
 	}
 }
 
-void Server::deleteUser( int const & fd )
+void Server::deleteUser( User * usr, std::string const & _messages)
 {
 	typedef std::list<Channel *>::iterator iteratorChannel;
-	User *tmp_usr;
 
-	tmp_usr = this->_fd_users[ fd ];
-	iteratorChannel channel = tmp_usr->getChannels().begin();
-	iteratorChannel end = tmp_usr->getChannels().end();
+	iteratorChannel channel = usr->getChannels().begin();
+	iteratorChannel end = usr->getChannels().end();
 	
 	for (; channel != end; ++channel )
 	{
-		if ((*channel)->deleteUser( tmp_usr ))
+		// this->part_channel((*channel)->getName(), usr );
+		if ((*channel)->deleteUser( usr ))
 		{
-			std::string messages = "has left the channel " + (*channel)->getName();
-			send_message_channel( messages , tmp_usr, (*channel));
+			std::string messages = "PART " + (*channel)->getName() + " :"+_messages;
+			send_message_channel( messages , usr, (*channel));
 		}
 		if (!(*channel)->getUsers().size())
 			this->deleteChannel( (*channel)->getName() );
 	}
 
-	this->_connected_users.remove( tmp_usr );
-	this->close_fd( fd );
-	this->_fd_users.erase( fd );
-	displayLog("Quit success", tmp_usr->getNick(), tmp_usr);
-	this->_nicks.remove( tmp_usr->getNick() );
-	this->deleteBan(tmp_usr);
-	this->deleteInvite(tmp_usr);
-	this->deleteDequeUser(tmp_usr);
-	delete tmp_usr;
+	this->_connected_users.remove( usr );
+	this->close_fd( usr->getsockfd() );
+	this->_fd_users.erase( usr->getsockfd() );
+	displayLog("Quit success", usr->getNick(), usr);
+	this->_nicks.remove( usr->getNick() );
+	this->deleteBan( usr );
+	this->deleteInvite(usr);
+	this->deleteDequeUser(usr);
+	delete usr;
 }
 
 void	Server::deleteBan( User *  user)

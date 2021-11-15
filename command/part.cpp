@@ -9,7 +9,8 @@ void	Server::part_channel(std::string str1, std::string message, User * usr)
 		Channel *chann = this->_name_channel[str1];
 		if (chann->deleteUser(usr))
 		{
-			std::string messages = "has left the channel " + chann->getName();
+			std::string messages = "PART " + chann->getName() + " :has left the channel";
+
 			send_message_channel( messages , usr, chann);
 		}
 		usr->deleteChannel(chann);

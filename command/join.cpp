@@ -19,6 +19,8 @@ void    Server::join_channel(std::string str1, User *usr)
 	{
 		Channel *chann = this->_name_channel[str1];
 		std::vector<std::string> tmp_name;
+		tmp_name.push_back("NAMES");
+		tmp_name.push_back(str1);
 
         if (chann->getIsFull())
             return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", usr));
@@ -33,11 +35,14 @@ void    Server::join_channel(std::string str1, User *usr)
         send_message_channel(s, usr, chann);
         chann->addUser(usr);
         usr->addChannel(chann);
-        //this->names_command(, usr);
         if (chann->getTopic().size() > 0)
             send_message("JOIN :" + str1 + " " + chann->getTopic(), usr, usr);
         else
             send_message("JOIN :" + str1, usr, usr);
+		std::vector<std::string> tmp_name1;
+		tmp_name1.push_back("NAMES");
+		tmp_name1.push_back(str1);
+        this->names_command(tmp_name1, usr);
     }
     else
     {
@@ -55,22 +60,24 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1] = new Channel(str1, usr);
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
-            send_message("JOIN :" + str1, usr, usr);
-
-        //this->names_command(&this->_name_channel[str1]->getName()[0], fd);
+        send_message("JOIN :" + str1, usr, usr);
+		std::vector<std::string> tmp_name;
+		tmp_name.push_back("NAMES");
+		tmp_name.push_back(str1);
+        this->names_command(tmp_name, usr);
     }
 }
 
 void    Server::join_command(std::vector<std::string> parse, User *usr)
 {
 	std::vector<std::string> parse1;
-	
-	if (parse.size() < 1)
+
+	if (parse.size() < 2)
 		return (send_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters", usr));
 	parse1 = split(parse[1], ',');
 	vector_str_it   start = parse1.begin();
 	vector_str_it   end = parse1.end();
-	for (; start != end; start++)
+	for (; start != end; ++start)
 	{
 		Server::join_channel(*start, usr);
 		this->reStartSendMsg();

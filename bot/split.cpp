@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/22 16:35:07 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/11 20:03:37 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/11 13:33:05 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,11 @@ std::vector<std::string> parser( std::string buffer )
 	if ( (pos = buffer.find('\r')  ) != std::string::npos || (pos = buffer.find('\n')  ) != std::string::npos )
 		buffer[ pos ] = '\0';
 	buffer  =  &(*delimiterAdvance<std::string::iterator>(buffer.begin(), buffer.end(), ' '));
-	if (!buffer.size())
-		matrix.push_back("");
 	if ( buffer[0] == ':' )
 		if ( (pos  = buffer.find(' ')) != std::string::npos )
 			buffer = buffer.substr( pos, ( buffer.length() - pos ) );
 
-	if ( (pos = buffer.find(':')) != std::string::npos && buffer[pos - 1] == ' ')
+	if ( (pos = buffer.find(':')) != std::string::npos )
 	{
 		middle = buffer.substr(0, pos);
 		trailing = buffer.substr(pos + 1, buffer.length() - pos );

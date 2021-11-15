@@ -9,7 +9,7 @@ void    Server::send_message(std::string _message, User * dest, User * usr)
     message.append(usr->getMask());
     message.append(" ");
     message.append( _message );
-    message.append("\n");
+    message.append("\r\n");
 
 	dest->setAnswer( message );
 
@@ -28,17 +28,17 @@ void    Server::send_message_channel(std::string message, User * usr, Channel * 
     mask.append(usr->getMask());
     mask.append(" ");
     mask.append(message);
-    mask.append("\n");
+    mask.append("\r\n");
 
 
 	for ( ; start != end ; ++start)
 	{
-		if ( (*start)->getsockfd() != usr->getsockfd()  )
-		{
+		// if ( (*start)->getsockfd() != usr->getsockfd()  )
+		// {
 			(*start)->setAnswer( mask );
 			if ( !this->isAnswerUser( (*start) ) )
 				this->_send_message.push_back( (*start) );
-		}
+		// }
 	}
 }
 
@@ -76,7 +76,7 @@ void	Server::send_reply(std::string reply, std::string str, User * usr)
 	message.append(reply);
 	message.append(" " + usr->getNick());
 	message.append(str);
-	message.append("\n");
+	message.append("\r\n");
 
 	usr->setAnswer( message);
 
@@ -94,7 +94,7 @@ void	Server::send_error(std::string error, std::string str, User *dest)
 	message.append(error);
 	message.append(" * ");
 	message.append(str);
-	message.append("\n");
+	message.append("\r\n");
 
 	dest->setAnswer( message );
 
