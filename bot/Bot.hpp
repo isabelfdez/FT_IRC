@@ -59,6 +59,7 @@ class Bot
 	int const &			getNumReadSock( void ) const;
 	fd_set	const &		getWrites() const;
 	fd_set	const &		getReads() const ;
+	struct sockaddr_in const &getAddress();
 
 
 	void				setNumReadSock( void );

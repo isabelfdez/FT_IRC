@@ -39,9 +39,8 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
         {
             if (chann->isUser(*start))
             {
-			    send_message_channel("KICK: " + v_channels[0] + " " + *start + message, usr, chann);
+			    send_message_channel("KICK " + v_channels[0] + " " + *start + " " + message, usr, chann);
                 chann->deleteUser(getUserWithNick(*start));
-                send_message(" KICK: " + v_channels[0] + " " + *start + message, usr, usr);
                 getUserWithNick(*start)->deleteChannel(chann);
                 if (chann->getUsers().size() < 1)
                     deleteChannel(v_channels.front());
@@ -65,9 +64,8 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
                 return (send_error(ERR_CHANOPRIVSNEEDED, "KICK :You are not channel operator", usr));
             if (chann->isUser(*start_usrs))
             {
-			    send_message_channel("KICK: " + *start_channs + " " + *start_usrs + message, usr, chann);
+			    send_message_channel("KICK " + *start_channs + " " + *start_usrs + " " +message, usr, chann);
                 chann->deleteUser(getUserWithNick(*start_usrs));
-                send_message(" KICK: " + *start_channs + " " + *start_usrs + message, usr, usr);
                 getUserWithNick(*start_usrs)->deleteChannel(chann);
                 if (this->_name_channel[(*start_channs)]->getUsers().size() < 1)
                     deleteChannel((*start_channs));

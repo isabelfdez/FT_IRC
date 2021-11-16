@@ -86,20 +86,21 @@ void	Server::send_reply(std::string reply, std::string str, User * usr)
 
 }
 
-void	Server::send_error(std::string error, std::string str, User *dest)
+void	Server::send_error(std::string reply, std::string str, User *usr)
 {
-	// User		*dest  = this->_fd_users[ fd ];
 	std::string message;
+
+	// User		*dest  = this->_fd_users[ fd ];
 	message.assign(":ft_irc.com ");
-	message.append(error);
-	message.append(" * ");
-	message.append(str);
+	message.append(reply);
+	message.append(" " + usr->getNick());
+	message.append(" " + str);
 	message.append("\r\n");
 
-	dest->setAnswer( message );
+	usr->setAnswer( message);
 
-	if ( !this->isAnswerUser( dest ) )
-		this->_send_message.push_back( dest );
+	if ( !this->isAnswerUser( usr ) )
+		this->_send_message.push_back( usr );
 	//  send(fd, message.c_str(), message.length(), 0);
 }
 

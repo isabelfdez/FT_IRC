@@ -68,6 +68,7 @@
 
 // Definiciones de replies
 
+# define RPL_CHANNELMODEIS			"324"
 # define RPL_WELCOME				"001"
 # define RPL_YOURHOST				"002"
 # define RPL_CREATE					"003"
@@ -206,6 +207,7 @@ class Server
 		void			send_reply(std::string replay, std::string str, User * usr);
 		void			sendRequest(User *user);
 		void			deleteDequeUser ( User *user );
+		void			checkBans(Channel * chann);
 
 
 };

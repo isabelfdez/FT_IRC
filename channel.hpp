@@ -23,7 +23,8 @@
 class Channel;
 class User;
 
-typedef std::list<std::string>::iterator list_str_it;
+typedef std::list<std::string>::iterator	list_str_it;
+typedef std::list<User *>::iterator			list_user_it;
 
 class Channel
 {
@@ -62,7 +63,7 @@ class Channel
 
 
 		// Setters
-		void				banOff(std::string mask);
+		bool				banOff(std::string mask);
 		void				inviteOff(User * user);
 		void				ban(std::string mask);
 		void				setName(std::string const & name);
@@ -76,6 +77,7 @@ class Channel
 		// Overload
 
 		// Other functions
+		void				checkBans(User * usr);
 		std::string			showModes();
 		bool				deleteUser(User * user);
 		void				addUser(User * user);

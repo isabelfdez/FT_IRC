@@ -473,6 +473,25 @@ void		Server::reStartSendMsg()
 	}
 }
 
+void	Server::checkBans(Channel * chann)
+{
+	std::list<User *> usrs = chann->getUsers();
+	list_user_it start = usrs.begin();
+	list_user_it end = usrs.end();
+	while (start != end)
+	{
+
+		if (chann->isBanned( (*start)->getMask() ) )
+		{
+			User *tmp = *start;
+			start++;
+			
+			chann->deleteUser(tmp);
+		}
+		else
+			start++;
+	}
+}
 
 
 void Server::welcome( int const & fd )
