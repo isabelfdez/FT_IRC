@@ -52,14 +52,11 @@ Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
 		perror("INET_PTON");
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "hola\n";
-	setnonblocking(this->_sock);
 	if (connect(this->_sock, (struct sockaddr *) &this->_addr, sizeof(this->_addr)) < 0)
 	{
-	//	perror("Connect");
-	//	exit(EXIT_FAILURE);
+		perror("Connect");
+		exit(EXIT_FAILURE);
 	}
-	std::cout << "hola\n";
 
 }
 
@@ -109,7 +106,6 @@ void Bot::build_select_list( void )
 	FD_ZERO( &this->_reads );
 	FD_ZERO( &this->_writes );
 	FD_SET(this->_sock, &this->_reads);
-	FD_SET(this->_sock, &this->_writes);
 }
 
 
@@ -246,8 +242,7 @@ void Bot::attendServer()
 			this->read_serve();
 	if (FD_ISSET(this->_sock, &this->_writes) )
 	{
-		
-		std::cout << "pedro\n";
+		std::cout << "Pedro again" << std::endl;
 		typedef std::deque<User *>::iterator it_user;
 	
 		it_user start = this->_send_message.begin();
@@ -262,6 +257,8 @@ void Bot::attendServer()
 void	Bot::send_message(std::string _message, User * usr)
 {
 	std::string message;
+
+	FD_SET(this->_sock, &this->_writes);
 
 	message.append("PRIVMSG ");
 	message.append(usr->getNick());
@@ -357,5 +354,10 @@ fd_set	const & Bot::getWrites() const
 fd_set	const & Bot::getReads() const 
 {
 	return this->_reads;
+}
+
+struct sockaddr_in	const &Bot::getAddress()
+{
+	return this->_addr;
 }
 

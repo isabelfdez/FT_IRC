@@ -67,6 +67,7 @@
 
 // Definiciones de replies
 
+# define RPL_CHANNELMODEIS			"324"
 # define RPL_WELCOME				"001"
 # define RPL_YOURHOST				"002"
 # define RPL_CREATE					"003"

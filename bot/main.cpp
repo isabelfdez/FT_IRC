@@ -34,17 +34,26 @@ int main(int argc, char const *argv[])
 	else
 		ip = argv[1];
 	Bot lol("lol", ip, atoi(argv[2]));
-	
-	lol.build_select_list();
-	lol.setNumReadSock();
-	if ( lol.getNumReadSock() > 0 )
-	{
-		if(FD_ISSET(lol.getSocket(), &lol.getWrites()))
-		{
+	// FD_SET(this->_sock, &lol.getWrites());
+	// lol.build_select_list();
+	// lol.setNumReadSock();
+
+	// if ( lol.getNumReadSock() > 0 )
+	// {
+		std::cout << "adios3\n";
+
+		// if(FD_ISSET(lol.getSocket(), &lol.getWrites()))
+		// {
+			// if (connect(lol.getSocket(), ( struct sockaddr * ) &lol.getAddress(), sizeof(lol.getAddress())) < 0)
+			// {
+			// //	perror("Connect");
+			// //	exit(EXIT_FAILURE);
+			// }
 			std::string data = "User lol42 * * :lol42\r\nnick lol42\r\n";
 			send(lol.getSocket(), data.c_str(), data.length(), 0);
-		}
-	}
+		// }
+	// }
+
 
 	for (;;)
 	{
