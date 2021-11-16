@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/11 15:44:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 18:15:16 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,10 @@
 # define ERR_NOPASSWD				"002"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_CHANNELISFULL			"471"
-# define ERR_TOOMANYCHANNELS		"405"
-# define ERR_NOSUCHCHANNEL			"403"
 # define ERR_NOSUCHNICK				"401"
+# define ERR_NOSUCHCHANNEL			"403"
+# define ERR_CANNOTSENDTOCHAN 		"404"
+# define ERR_TOOMANYCHANNELS		"405"
 # define ERR_TOOMANYTARGETS			"407"
 # define ERR_NORECIPIENT			"411"
 # define ERR_NOTEXTTOSEND			"412"
