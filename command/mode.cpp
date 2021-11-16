@@ -90,18 +90,13 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
         }
         else if (parse[2][1] == 'b')
         {
-            User * usr_dest = getUserWithNick(parse[3]);
             if (parse.size() < 4)
                 return (send_reply(ERR_NEEDMOREPARAMS, " MODE :Not enough parameters", usr));
             else
             {
-                chann->ban(usr_dest->getMask());
-                if (chann->isBanned(usr_dest->getMask()))
-                {
-                    chann->deleteUser(usr_dest);
-                    send_message_channel( "has left the channel " + chann->getName() , usr, chann);
-                }
-                return (send_message("You have being banned from " + parse[1], usr_dest, usr));
+                chann->ban(parse[3]);
+                send_message_channel("MODE " + chann->getName() + " +b " + parse[3], usr, chann);
+                this->checkBans(chann);
             }
         }
         else if (parse[2][1] == 'i')
@@ -140,9 +135,9 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
                 return (send_reply(ERR_NEEDMOREPARAMS, " MODE :Not enough parameters", usr));
             else
             {
-                chann->banOff(getUserWithNick(parse[3])->getMask());
-                send_message("You have being unbanned from " + parse[1], getUserWithNick(parse[3]), usr);
-                return (send_reply("", " :" + getUserWithNick(parse[3])->getMask() + " unbanned", usr));
+                if (chann->banOff(parse[3]))
+                    return (send_message_channel("MODE " + chann->getName() + " +b " + parse[3], usr, chann));
+                return ;
             }
         }
         else if (parse[2][1] == 'i')

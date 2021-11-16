@@ -206,6 +206,7 @@ class Server
 		void			send_reply(std::string replay, std::string str, User * usr);
 		void			sendRequest(User *user);
 		void			deleteDequeUser ( User *user );
+		void			checkBans(Channel * chann);
 
 
 };

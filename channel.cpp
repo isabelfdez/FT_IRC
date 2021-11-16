@@ -68,11 +68,15 @@ bool	Channel::isOp(User * user)
 
 bool	Channel::isBanned(std::string mask)
 {
+	std::string check = "*";
+	size_t pos;
+	pos = mask.find('!');
+	check += mask.substr(pos, mask.length() - pos);
 	list_str_it start = _banned.begin();
 	list_str_it end = _banned.end();
 	for (; start != end; start++)
 	{
-		if (*start == mask)
+		if (*start == check)
 			return (true);
 	}
 	return (false);
@@ -139,7 +143,7 @@ void	Channel::ban(std::string mask)
 	this->_banned.push_back(mask);
 }
 
-void	Channel::banOff(std::string mask)
+bool	Channel::banOff(std::string mask)
 {
 	list_str_it start = _banned.begin();
 	list_str_it end = _banned.end();
@@ -148,9 +152,10 @@ void	Channel::banOff(std::string mask)
 		if (*start == mask)
 		{
 			_banned.erase(start);
-			return;
+			return true;
 		}
 	}
+	return false;
 }
 
 void	Channel::inviteOff(User * user)
@@ -242,6 +247,9 @@ void	Channel::addUser(User * user)
 	if (_users.size() >= this->_maxusers)
 		this->_isfull = true;
 }
+
+
+
 
 // krios-fu
 void	Channel::sendMsgChannelBlock( std::string msg , int fd)
