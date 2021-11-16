@@ -17,9 +17,9 @@ void	Server::part_channel(std::string str1, std::string message, User * usr)
 		if (!chann->getUsers().size())
 			deleteChannel(str1);
 		if (message.size())
-        	send_message("PART :" + str1 + " :" + message, usr, usr);
+        	send_message("PART " + str1 + " :" + message, usr, usr);
 		else
-        	send_message("PART :" + str1, usr, usr);
+        	send_message("PART " + str1 + " :has left the channel", usr, usr);
 
 
 	}
