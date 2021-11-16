@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/15 18:41:56 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 19:43:11 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,7 +298,7 @@ void Server::getCustomerRequest( int fd_client )
 		tmp += buffer;
 	}
 
-	std::cout << "[[[ " << tmp <<  "]]]" << std::endl;
+	std::cout << "\n[[[ " << tmp <<  "]]]" << std::endl;
 	if ( tmp.length() == 0 )
 		this->deleteUser( usr , "[Signed off]");
 

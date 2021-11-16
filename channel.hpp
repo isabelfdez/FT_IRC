@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:42:54 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 23:16:57 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 19:28:06 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ class Channel
 		bool						isInvite();
 		User    					*getUser(std::string user);
 		size_t 						getNumUser() const ;
+			std::string				userList2(std::string nick);
+
 		
 
 		std::string			userList();

@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 18:43:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 19:43:40 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 18:50:31 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
         it_channel end = usr->getChannels().end();
         std::string s;
         for (; start != end ; ++start)
-            send_message_channel_block("NICK :" + parse[1], usr, *start);
+            send_message_channel("NICK :" + parse[1], usr, *start);
 
         // PASO 4: Cambiar el nick del usuario
         usr->setNick(parse[1]);

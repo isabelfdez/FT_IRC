@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/10 20:35:36 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 19:28:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,29 @@ bool    Channel::isUser(std::string user)
 
 
 
+std::string	Channel::userList2(std::string nick)
+{
+	typedef std::list<User*>::iterator  it_user;
+	std::string	s = "";
+
+	it_user start = this->_users.begin();
+	it_user end = this->_users.end();
+
+	for (; start != end ; ++start )
+	{
+		if (nick != (*start)->getNick())
+		{
+			if (isOp(*start))
+				s.append("@");
+			s.append((*start)->getNick());
+			s.append(" ");
+		}
+	}
+	
+	s[s.length() -1 ] = '\0';
+	return (s);
+}
+
 std::string	Channel::userList()
 {
 	typedef std::list<User*>::iterator  it_user;
@@ -118,8 +141,6 @@ std::string	Channel::userList()
 
 		if (isOp(*start))
 			s.append("@");
-		else
-			s.append("+");
 		s.append((*start)->getNick());
 		s.append(" ");
 	}
