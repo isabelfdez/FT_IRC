@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 17:16:44 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 20:27:19 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/16 19:02:42 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
             {
                 chann->ban(parse[3]);
                 send_message_channel("MODE " + chann->getName() + " +b " + parse[3], usr, chann);
+                // this->checkBans(chann);
             }
         }
         else if (parse[2][1] == 'i')

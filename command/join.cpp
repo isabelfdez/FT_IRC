@@ -18,9 +18,6 @@ void    Server::join_channel(std::string str1, User *usr)
 	else if (this->_name_channel.count(str1))
 	{
 		Channel *chann = this->_name_channel[str1];
-		std::vector<std::string> tmp_name;
-		tmp_name.push_back("NAMES");
-		tmp_name.push_back(str1);
 
         if (chann->getIsFull())
             return (send_error(ERR_CHANNELISFULL, str1 + " :Cannot join channel (+l)", usr));
@@ -32,15 +29,15 @@ void    Server::join_channel(std::string str1, User *usr)
         if (chann->isUser(usr->getNick()))
             return (send_error("", str1 + " :You are already on channel", usr));
         s = "JOIN :" + chann->getName();
-        send_message_channel(s, usr, chann);
         chann->addUser(usr);
         usr->addChannel(chann);
+        send_message_channel(s, usr, chann);
         if (chann->getTopic().size() > 0)
             send_message("JOIN :" + str1 + " " + chann->getTopic(), usr, usr);
-        // else
-            // send_message("JOIN :" + str1, usr, usr);
 
-         this->names_command(tmp_name, usr);
+		std::string message = " = " + chann->getName() + " :" + chann->userList2(usr->getNick());
+		send_reply(RPL_NAMREPLY, message, usr);
+		send_reply(RPL_ENDOFNAMES," " + chann->getName() + " :End of /NAMES list.", usr);
     }
     else
     {
@@ -59,10 +56,12 @@ void    Server::join_channel(std::string str1, User *usr)
         this->_name_channel[str1]->addUser(usr);
         usr->addChannel(this->_name_channel[str1]);
         send_message("JOIN :" + str1, usr, usr);
-		std::vector<std::string> tmp_name;
-		tmp_name.push_back("NAMES");
-		tmp_name.push_back(str1);
-         this->names_command(tmp_name, usr);
+        send_message_channel( "MODE " + str1 + " +o " + usr->getNick(), usr, this->_name_channel[str1]);
+
+		std::string message = " = " + this->_name_channel[str1]->getName() + " :" + this->_name_channel[str1]->userList2(usr->getNick());
+        send_reply(RPL_NAMREPLY, message, usr);
+		send_reply(RPL_ENDOFNAMES," " + this->_name_channel[str1]->getName() + " :End of /NAMES list.", usr);
+
     }
 }
 
