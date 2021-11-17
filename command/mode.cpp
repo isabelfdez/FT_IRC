@@ -96,7 +96,6 @@ void    Server::mode_chann(std::vector<std::string> parse, User * usr)
             {
                 chann->ban(parse[3]);
                 send_message_channel("MODE " + chann->getName() + " +b " + parse[3], usr, chann);
-                this->checkBans(chann);
             }
         }
         else if (parse[2][1] == 'i')

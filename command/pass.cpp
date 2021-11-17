@@ -17,7 +17,7 @@ void	Server::pass_command(std::vector<std::string> const & parse, User *usr)
 {
 	if ( usr->getPassState() )
 		return (send_error(ERR_ALREADYREGISTRED, " :Unauthorized command (already registered)", usr));
-	if ( parse.size() < 1 )
+	if ( parse.size() < 2 )
 		return (send_error(ERR_NEEDMOREPARAMS, " PASS :Not enough parameters", usr));
 	if ( parse[1] != this->getPassword() )
 	{
