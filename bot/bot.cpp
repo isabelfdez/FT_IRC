@@ -6,7 +6,7 @@
 /*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/18 18:41:27 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:56:19 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ void	Bot::sendFile( std::string nick )
 	
 	socklen_t len_client = sizeof(client);
 
-	this->setNumReadSock();
+	//this->setNumReadSock();
 
 	if ( _num_read_sock_c > 0 )
 	{
