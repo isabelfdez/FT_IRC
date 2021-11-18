@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/16 19:43:11 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:43:58 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ Server::Server(int port): _fd_users(), _name_channel()
 
 	this->_password_oper = "abracadabra";
 	this->_name_channel.clear();
-	//this->_channel.push_back( new Channel("42") );     No entiendo esta linea
 }
 
 
@@ -227,8 +226,6 @@ void Server::parse_command(int fd, std::string buffer)
 		return send_error(ERR_UNKNOWNCOMMAND, command + " :Unknowm command", user);
 	if (!user->getRegistered())
 	{
-		// Si el usuario no está registrado, solo se puede llamar a los comandos
-		// PASS, USER o NICK, y no puede llamar a USER ni a PASS varias veces seguidas
 		if ( command != "USER" && command != "NICK" && command != "PASS" )
 			send_error(ERR_NOTREGISTERED, ":You have not registered", user);
 		else if ( (command == "USER") && user->getUserName().size() > 0)
@@ -237,8 +234,8 @@ void Server::parse_command(int fd, std::string buffer)
 			this->user_command(parse, user);
 		else if (command == "NICK" )
 		 	this->nick_command(parse, user);
-		// else if (command == "PASS" )
-		// 	this->pass_command(parse, user);
+		 else if (command == "PASS" )
+		 	this->pass_command(parse, user);
 	}
 	else if ( user->getRegistered() )
 	{
@@ -298,7 +295,6 @@ void Server::getCustomerRequest( int fd_client )
 		tmp += buffer;
 	}
 
-	std::cout << "\n[[[ " << tmp <<  "]]]" << std::endl;
 	if ( tmp.length() == 0 )
 		this->deleteUser( usr , "[Signed off]");
 
@@ -395,9 +391,12 @@ void Server::close_all_fd()
 		std::cout << "\r";
 		displayLog("Connection closed", "", this->_fd_users[start->first ] );
 		std::cout << std::endl;
+		delete start->second;
+		send(start->first, "\r\n", 0, 0);
 		close( start->first );
 		FD_CLR( start->first, &this->_reads );
 	}
+	this->_fd_users.clear();
 
 }
 
@@ -422,7 +421,6 @@ void Server::deleteUser( User * usr, std::string const & _messages)
 	
 	for (; channel != end; ++channel )
 	{
-		// this->part_channel((*channel)->getName(), usr );
 		if ((*channel)->deleteUser( usr ))
 		{
 			std::string messages = "PART " + (*channel)->getName() + " :"+_messages;

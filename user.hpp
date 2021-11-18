@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 19:43:31 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/09 19:23:44 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:41:02 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,31 +22,6 @@
 
 # define MAX_CHANNELS 10
 
-//Command: MODE
-//   Parameters: <nickname>
-//               *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )
-//
-//   The user MODE's are typically changes which affect either how the
-//   client is seen by others or what 'extra' messages the client is sent.
-//
-//   A user MODE command MUST only be accepted if both the sender of the
-//   message and the nickname given as a parameter are both the same.  If
-//   no other parameter is given, then the server will return the current
-//   settings for the nick.
-//
-//      The available modes are as follows:
-//
-//           a - user is flagged as away;
-//           i - marks a users as invisible;
-//           w - user receives wallops;
-//           r - restricted user connection;
-//           o - operator flag;
-//           O - local operator flag;
-//           s - marks a user for receipt of server notices.
-
-// ESTOS SON LOS UNICOS MODOS QUE SALEN EN EL ULTIMO RFC Y POR TANTO NO HAY QUE
-// IMPLEMENTAR MAS
-
 class User;
 class Channel;
 
@@ -60,28 +35,6 @@ typedef struct	user_modes
 	bool	big_o;
 	bool	s;
 }				user_modes;
-
-//class IUser
-//{
-//	public:
-//		// Virtual destructor
-//		virtual ~IUser() = 0;
-//	
-//		// Getters
-//		virtual std::string			getUserName() const = 0;
-//		virtual std::string			getNick() const = 0;
-//		virtual bool				getmode(char mode) const = 0;		// Pasamos el caracter del que queremos obtener el mode
-//		virtual int					getsockfd()	const = 0;
-//		virtual struct sockaddr_in	getstruct()	const = 0;
-//
-//		// Setters
-//		virtual void				setUserName(std::string name) = 0;
-//		virtual void				setNick(std::string nick) = 0;
-//		virtual void				setmode(char mode, bool state) = 0;		// Pasamos el caracter de mode que quieremos cambiar y el estado al que lo queremos cambiar
-//		
-//		// Other functions
-//		virtual void				init_modes();	
-//};
 
 class User
 {
@@ -115,7 +68,7 @@ class User
 		// Getters
 		std::string					getUserName() const;
 		std::string	const &			getNick() const;
-		bool						getmode(char mode) const;		// Pasamos el caracter del que queremos obtener el mode
+		bool						getmode(char mode) const;
 		int							getsockfd()	const;
 		bool						getRegistered() const;
 		bool						getMaxChannels() const;
@@ -140,7 +93,7 @@ class User
 		void						setmode(char mode, bool state);
 		void						setRegistered(bool status);
 		void                        setRealName(std::string const & realName);
-		void 						setPing( std::string const & ping ); //
+		void 						setPing( std::string const & ping );
 		void						setLastTime( uint64_t const & time );
 		void						setPingStatus( bool const &  status );
 		void						setTimePing( uint64_t const & time );

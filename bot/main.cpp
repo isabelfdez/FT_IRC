@@ -8,7 +8,16 @@
 
 #define PORT 6667
 
-
+Bot *bot;
+void signal_kill ( int number )
+{
+	if ( number == SIGINT)
+	{
+		std::cout << "\n[[[ forced closure ]]] \n";
+		bot->~Bot();
+		exit(EXIT_FAILURE);
+	}
+}
 
 int main(int argc, char const *argv[])
 {
@@ -34,31 +43,23 @@ int main(int argc, char const *argv[])
 	else
 		ip = argv[1];
 	Bot lol("lol", ip, atoi(argv[2]));
-	// FD_SET(this->_sock, &lol.getWrites());
-	// lol.build_select_list();
-	// lol.setNumReadSock();
+	bot = &lol;
 
-	// if ( lol.getNumReadSock() > 0 )
-	// {
-		std::cout << "adios3\n";
+	std::string data = "";
+	if (argc > 3)
+	{
+		data = "Pass " + static_cast<std::string>(argv[3]) + "\r\n";
+	}
+	data += "User lol42 * * :lol42\r\nnick lol42\r\n";
+	send(lol.getSocket(), data.c_str(), data.length(), 0);
 
-		// if(FD_ISSET(lol.getSocket(), &lol.getWrites()))
-		// {
-			// if (connect(lol.getSocket(), ( struct sockaddr * ) &lol.getAddress(), sizeof(lol.getAddress())) < 0)
-			// {
-			// //	perror("Connect");
-			// //	exit(EXIT_FAILURE);
-			// }
-			std::string data = "User lol42 * * :lol42\r\nnick lol42\r\n";
-			send(lol.getSocket(), data.c_str(), data.length(), 0);
-		// }
-	// }
 
 
 	for (;;)
 	{
 		lol.build_select_list();
 		lol.setNumReadSock();
+		signal( SIGINT, signal_kill );
 		if ( lol.getNumReadSock() < 0 )
 		{
 			exit(EXIT_FAILURE);

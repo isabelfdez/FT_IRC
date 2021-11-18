@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:22:07 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/15 16:50:18 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:41:11 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool	find_command(std::string command, std::list<std::string> commands)
 	it_list end = commands.end();
 
 	for (; start != end ; ++start)
-		if (*start == command) // Esto no se si esta bien
+		if (*start == command)
 			return (true);
 	return (false);
 }

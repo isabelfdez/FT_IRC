@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:33:40 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/04 23:24:30 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:42:33 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
         message = ":" + parse[3];
     if (v_channels.size() > 1 && v_channels.size() != v_users.size())
 		return (send_error(ERR_SINTAX, "KICK :Bad sintax", usr));
-    // CASO 1: Hay un solo canal (tenemos que expulsar a todos los usuarios de ese canal)
     if (v_channels.size() == 1)
     {
         if (!isChannel(v_channels[0]))
@@ -49,7 +48,6 @@ void	Server::kick_command(std::vector<std::string> const & parse, User * usr)
                 return (send_error(ERR_NOTONCHANNEL, (*start) + " :Is not on that Channel", usr));
         }
     }
-    // CASO 2: Hay varios canales (tenemos que echar al i-ésimo usuario del i-ésimo canal)
     else if (v_channels.size() > 1)
     {
         vector_str_it start_usrs = v_users.begin();

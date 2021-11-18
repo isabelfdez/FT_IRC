@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 20:24:26 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/16 18:15:16 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:44:23 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@
 # define PORT 49141
 
 
-// Definiciones de errores
 
 # define ERR_SINTAX                 "001"
 # define ERR_NOPASSWD				"002"
@@ -66,7 +65,6 @@
 # define ERR_UMODEUNKNOWNFLAG		"501"
 # define ERR_USERSDONTMATCH			"502"
 
-// Definiciones de replies
 
 # define RPL_CHANNELMODEIS			"324"
 # define RPL_WELCOME				"001"
@@ -100,7 +98,6 @@ typedef std::list<Channel *>::iterator					list_chnl_it;
 class Server
 {
 	private:
-		// std::map< size_t , int >	_list_connected_users;
 		std::string						_password;
 		int								_list_connected_user[FD_SETSIZE];
 		struct sockaddr_in 				_addr_server;
@@ -146,10 +143,10 @@ class Server
 		int		const & getNumReadSock( void )	const ;
 		int		const & getListenSockServer()	const;
 		int		const & getHigthSock ()			const;
-		fd_set	const & getSocks()				const;//krios-fu
-		size_t			getNumChannel( void ) 	const;//krios-fu
+		fd_set	const & getSocks()				const;
+		size_t			getNumChannel( void ) 	const;
 		size_t			getNumConnections ()	const;
-		size_t			getNumUser( void )		const;//krios-fu
+		size_t			getNumUser( void )		const;
 		std::string		getPassword(void)		const;
 		User			*getUserWithNick(std::string);
 	
@@ -165,7 +162,6 @@ class Server
 		void			close_fd( int fd );
 		void			close_all_fd();
 
-		// Comandos
 		void			nick_command    (std::vector<std::string> const& parse, User *usr);
 		void			privmsg_command (std::vector<std::string> const& parse, User *usr);
 		void			notice_command  (std::vector<std::string> const& parse, User *usr);

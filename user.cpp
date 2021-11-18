@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 20:39:45 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/10 15:51:51 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:40:56 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ bool	User::getPassState() const { return (this->_passState); }
 std::string const & User::getMask() const { return this->_mask; }
 
 
-//std::string const & User::getMask() const { return this->_mask; }
 
 
 
@@ -218,7 +217,7 @@ void	User::deleteChannel(Channel * channel)
 {
 	for (std::list<Channel *>::iterator it = this->_channels.begin(); it != this->_channels.end(); ++it)
     {
-		if (*it == channel) // Esto no se si esta bien
+		if (*it == channel)
 		{
 			this->_max_channels = false;
 			it = this->_channels.erase(it);

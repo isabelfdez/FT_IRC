@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 15:49:25 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/16 19:28:39 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:42:45 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,8 +210,6 @@ void    Channel::setOpOff(std::string nick)
 			if (!this->_operators.size())
 			{
 				this->_operators.push_back(*(this->_users.begin()));
-				// (*this->_users.begin())->setAnswer(" :You are now Channel Operator");
-				// send_reply("", " :You are now Channel Operator", usr);
 			}
 			return;
 		}
@@ -272,7 +270,6 @@ void	Channel::addUser(User * user)
 
 
 
-// krios-fu
 void	Channel::sendMsgChannelBlock( std::string msg , int fd)
 {
 	for (std::list<User*>::iterator it = this->_users.begin(); it != this->_users.end(); it++)

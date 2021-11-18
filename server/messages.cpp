@@ -33,12 +33,9 @@ void    Server::send_message_channel(std::string message, User * usr, Channel * 
 
 	for ( ; start != end ; ++start)
 	{
-		// if ( (*start)->getsockfd() != usr->getsockfd()  )
-		// {
-			(*start)->setAnswer( mask );
-			if ( !this->isAnswerUser( (*start) ) )
-				this->_send_message.push_back( (*start) );
-		// }
+		(*start)->setAnswer( mask );
+		if ( !this->isAnswerUser( (*start) ) )
+			this->_send_message.push_back( (*start) );
 	}
 }
 
@@ -82,7 +79,6 @@ void	Server::send_reply(std::string reply, std::string str, User * usr)
 
 	if ( !this->isAnswerUser( usr ) )
 		this->_send_message.push_back( usr );
-	// send(usr->getsockfd(), message.c_str(), message.length(), 0);
 
 }
 
@@ -90,7 +86,6 @@ void	Server::send_error(std::string reply, std::string str, User *usr)
 {
 	std::string message;
 
-	// User		*dest  = this->_fd_users[ fd ];
 	message.assign(":ft_irc.com ");
 	message.append(reply);
 	message.append(" " + usr->getNick());
@@ -101,7 +96,6 @@ void	Server::send_error(std::string reply, std::string str, User *usr)
 
 	if ( !this->isAnswerUser( usr ) )
 		this->_send_message.push_back( usr );
-	//  send(fd, message.c_str(), message.length(), 0);
 }
 
 
