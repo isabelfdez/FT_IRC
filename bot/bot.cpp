@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/18 18:56:19 by isfernan         ###   ########.fr       */
+/*   Updated: 2021/11/18 19:57:39 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,14 +196,14 @@ void	Bot::sendFile( std::string nick )
 	if (listen(this->_sock_c, FD_SETSIZE) < 0 )
 	{
 		perror ("LISTEN ");
-		
+		return ;
 	}
 	struct   sockaddr_in client;
 	memset((char *) &client, 0, sizeof(client));
 	
 	socklen_t len_client = sizeof(client);
 
-	//this->setNumReadSock();
+	this->setNumReadSockC();
 
 	if ( _num_read_sock_c > 0 )
 	{
