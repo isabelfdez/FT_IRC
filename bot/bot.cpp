@@ -39,7 +39,6 @@ Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
 		perror("Connect");
 		exit(EXIT_FAILURE);
 	}
-
 }
 
 char const  *  Bot::getIp(  unsigned long ip ) 
@@ -65,80 +64,6 @@ unsigned long  Bot::getIpLong()
 }
 
 
-
-
-void	Bot::recv_file( std::vector<std::string> token )
-{
-	if ((this->_sock_c = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-	{
-		perror("Socket");
-		exit(EXIT_FAILURE);
-	}
-	memset(&this->_addr, 0, sizeof(this->_addr));
-
-	this->_addr_c.sin_family = AF_INET;
-	this->_addr_c.sin_port = htons( atoi(token[7].c_str()) );
-	
-	if (inet_pton(AF_INET, this->getIp(atol(token[6].c_str())), &this->_addr_c.sin_addr) < 0)
-	{
-		perror("INET_PTON");
-		exit(EXIT_FAILURE);
-	}
-	if (connect(this->_sock_c, (struct sockaddr *) &this->_addr_c, sizeof(this->_addr_c)) < 0)
-	{
-		perror("Connect");
-		exit(EXIT_FAILURE);
-	}
-
-	std::ofstream output;
-	std::string line;
-	int byte;
-	char buffer[513];
-	std::string tmp;
-	int count_byte = 0;
-
-	output.open(token[5] , std::ios::trunc);
-	while ( (byte = read(this->_sock_c, buffer, 512)) > 0) 
-	{
-		count_byte += byte;
-		buffer[byte] = 0;
-		tmp.append(buffer);
-	}
-
-		output << tmp;
-		std::cout << " byte " << byte << std::endl;
-
-	output.close();
-	
-	close (this->_sock_c);
-	
-}
-
-
-off_t getSizeFile(std::string nameFile)
-{
-	struct stat buffer;
-	std::stringstream str;
-	int fd;
-
-	fd = open (nameFile.c_str(), O_RDONLY);
-	if (!fd)
-	{
-		perror("File ");
-	}
-
-	if (fstat(fd, &buffer))
-	{
-		perror("Fstat");
-	}
-	close (fd);
-	
-	str << buffer.st_size;
-	std::cout << nameFile << " " << str <<" **** \n"  ;
-	
-	return buffer.st_size;
-}
-
 template <typename T>
 std::string toString( T data )
 {
@@ -147,7 +72,6 @@ std::string toString( T data )
 	conver << data;
 	return conver.str();
 }
-
 
 void Bot::setNumReadSockC( void )
 {
@@ -174,6 +98,7 @@ void	Bot::sendFile( std::string nick )
 	if ((this->_sock_c = socket(AF_INET, SOCK_STREAM, 0))  < 0 )
 	{
 		perror("SOCKET " );
+		return ;
 	}
 	setsockopt(this->_sock_c, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 	
@@ -196,14 +121,14 @@ void	Bot::sendFile( std::string nick )
 	if (listen(this->_sock_c, FD_SETSIZE) < 0 )
 	{
 		perror ("LISTEN ");
-		
+		return;
 	}
 	struct   sockaddr_in client;
 	memset((char *) &client, 0, sizeof(client));
 	
 	socklen_t len_client = sizeof(client);
 
-	//this->setNumReadSock();
+	this->setNumReadSockC();
 
 	if ( _num_read_sock_c > 0 )
 	{
@@ -224,11 +149,11 @@ void	Bot::sendFile( std::string nick )
 				break ;
 		}
 		
-		close(fd_client);
 		close(fd_file);
+		close(fd_client);
 			
-		close(this->_sock_c);
 	}
+	close(this->_sock_c);
 	
 }
 

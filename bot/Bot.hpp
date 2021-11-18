@@ -91,7 +91,6 @@ class Bot
 	void				send_message(std::string _message, User * usr);
 	void				draw(User *usr);
 	void				sendFile( std::string nick  );
-	void				recv_file( std::vector<std::string> token );
 
 	char const  *		getIp( unsigned long ip ) ;
 	unsigned long 		getIpLong();
