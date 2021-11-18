@@ -13,6 +13,8 @@ CXXFLAGS	= -Wall -Werror -Wextra -g3 -fsanitize=address
 
 NAME		= ircserv
 
+BOT			= bot
+
 all:		$(NAME)
 
 $(NAME):	$(OBJS)
@@ -20,10 +22,18 @@ $(NAME):	$(OBJS)
 
 clean:
 			-@rm -f $(OBJS)
+			-@$(MAKE) -C bot clean
+
 
 fclean: 	clean
 			-@rm -f $(NAME)
+			-@$(MAKE) -C bot fclean
+
 
 re:			fclean all
+
+bonus:		$(OBJS)
+			$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+			$(MAKE) -C bot
 
 .PHONY: all clea fclean re test

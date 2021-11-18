@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isfernan <isfernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/11 00:33:37 by krios-fu          #+#    #+#             */
-/*   Updated: 2021/11/15 01:27:52 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 17:06:20 by isfernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 #include <arpa/inet.h>
 
 
-static void setnonblocking(int sock)
-{
-	int opts;
-
-	opts = fcntl(sock,F_GETFL);
-	if (opts < 0) {
-		perror("fcntl(F_GETFL)");
-		exit(EXIT_FAILURE);
-	}
-	opts = (opts | O_NONBLOCK);
-	if (fcntl(sock,F_SETFL,opts) < 0) {
-		perror("fcntl(F_SETFL)");
-		exit(EXIT_FAILURE);
-	}
-	return;
-}
+//static void setnonblocking(int sock)
+//{
+//	int opts;
+//
+//	opts = fcntl(sock,F_GETFL);
+//	if (opts < 0) {
+//		perror("fcntl(F_GETFL)");
+//		exit(EXIT_FAILURE);
+//	}
+//	opts = (opts | O_NONBLOCK);
+//	if (fcntl(sock,F_SETFL,opts) < 0) {
+//		perror("fcntl(F_SETFL)");
+//		exit(EXIT_FAILURE);
+//	}
+//	return;
+//}
 
 Bot::Bot(std::string const & nick, std::string const & IP,int const & port )
 	: _nick(nick)
@@ -71,7 +71,7 @@ unsigned long  Bot::getIp(  )
 
 void	Bot::sendFile( std::vector<std::string> token )
 {
-
+	(void) token;
 	memset( (char *) &this->_send, 0 , sizeof(this->_send) );
 
 	this->_send.sin_family = AF_INET;
@@ -119,7 +119,7 @@ void Bot::read_serve()
 	size_t		pos;
 	
 
-
+	(void) usr;
 	byte = recv(this->getSocket(), buffer, 512, 0);
 	
 	buffer[byte] = '\0';
@@ -144,7 +144,7 @@ void Bot::read_serve()
 
 void Bot::parse( std::string const & buffer )
 {
-	typedef std::map<std::string, User *>::iterator it_user;
+	//typedef std::map<std::string, User *>::iterator it_user;
 	
 	std::vector<std::string> token = split( buffer, ' ');
 	std::vector<std::string> token_game;
