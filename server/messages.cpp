@@ -136,6 +136,7 @@ void	Server::sendRequest(User *usr)
 			messages[510] = '\r';
 			messages[511] = '\n';
 		}
+		displayLog("", (" " + messages).c_str(), usr);
 		len = send(usr->getsockfd(), messages.c_str(), messages.length(), 0);
 		diff = messages.length() - len;
 		if ( diff > 0 )

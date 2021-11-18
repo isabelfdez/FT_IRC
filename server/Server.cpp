@@ -80,6 +80,7 @@ Server::Server(int port): _fd_users(), _name_channel()
 	this->_commands.push_back("PASS");
 	this->_commands.push_back("WHO");
 	this->_commands.push_back("ISON");
+	this->_commands.push_back("EXIT");
 
 
 	this->_password_oper = "abracadabra";
@@ -91,13 +92,13 @@ Server::Server(int port): _fd_users(), _name_channel()
 
 Server::~Server()
 {
-	std::cout << "Destructor Server\n";
 	close( this->_listen_server_sock );
 	close_all_fd();
 	close( this->_listen_server_sock );
 	FD_ZERO( &this->_reads );
 	memset( this->_list_connected_user, 0 , sizeof( this->_list_connected_user ) );
 	memset( (char *) &this->_addr_server, 0 , sizeof( this->_addr_server ) );
+	std::cout << "Destructor Server\n";
 }
 
 void Server::build_select_list( void )
@@ -273,6 +274,8 @@ void Server::parse_command(int fd, std::string buffer)
 		this->who_command(parse, user);
 	else if ( command == "ISON" )
 		this->ison_command(parse, user);
+	else if ( command == "EXIT" )
+		this->exit_command(parse, user);
 	}
 }
 

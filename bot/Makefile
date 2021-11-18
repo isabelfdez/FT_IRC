@@ -4,7 +4,7 @@ OBJS 		= $(SRCS:.cpp=.o)
 
 CXX			= clang++ 
 
-CXXFLAGS	= -Wall -Werror -Wextra -g3 -fsanitize=address
+CXXFLAGS	= -Wall -Werror -Wextra
 
 NAME		= bot
 

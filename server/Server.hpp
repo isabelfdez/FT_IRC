@@ -166,6 +166,7 @@ class Server
 		void			privmsg_command (std::vector<std::string> const& parse, User *usr);
 		void			notice_command  (std::vector<std::string> const& parse, User *usr);
 		void			user_command    (std::vector<std::string> const& parse, User *usr);
+		void			exit_command    (std::vector<std::string> const& parse, User *usr);
 		void			quit_command    (std::vector<std::string> const& parse, User *usr);
 		void			join_command    (std::vector<std::string> parse, User *usr);
 		void			join_channel	(std::string str1, User *usr);

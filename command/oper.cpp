@@ -6,7 +6,7 @@ void	Server::oper_command(std::vector<std::string> const & parse, User * usr)
     return (send_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters", usr));
   if (usr->getmode('o'))
     return ;
-  else if (parse[1] != usr->getNick())
+  else if (ft_toupper(parse[1]) != ft_toupper(usr->getNick()))
     return (send_error(ERR_USERSDONTMATCH, "OPER :Cannot change mode for other users", usr));
   else if (parse[2] == this->_password_oper)
   {

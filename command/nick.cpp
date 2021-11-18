@@ -63,7 +63,6 @@ void    Server::nick_command(std::vector<std::string> const& parse, User *usr)
     }
     else if (!nick.size())
     {
-        std::cout << "nick : " << parse[1] << std::endl;
         this->_nicks.push_back(parse[1]);
         usr->setNick(parse[1]);
     }
