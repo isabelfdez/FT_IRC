@@ -6,7 +6,7 @@
 /*   By: krios-fu <krios-fu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/14 16:29:16 by isfernan          #+#    #+#             */
-/*   Updated: 2021/11/16 19:43:11 by krios-fu         ###   ########.fr       */
+/*   Updated: 2021/11/18 17:57:43 by krios-fu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,7 +298,6 @@ void Server::getCustomerRequest( int fd_client )
 		tmp += buffer;
 	}
 
-	std::cout << "\n[[[ " << tmp <<  "]]]" << std::endl;
 	if ( tmp.length() == 0 )
 		this->deleteUser( usr , "[Signed off]");
 
@@ -395,9 +394,12 @@ void Server::close_all_fd()
 		std::cout << "\r";
 		displayLog("Connection closed", "", this->_fd_users[start->first ] );
 		std::cout << std::endl;
+		delete start->second;
+		send(start->first, "\r\n", 0, 0);
 		close( start->first );
 		FD_CLR( start->first, &this->_reads );
 	}
+	this->_fd_users.clear();
 
 }
 

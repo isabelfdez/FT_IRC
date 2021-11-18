@@ -11,7 +11,7 @@ void	Server::oper_command(std::vector<std::string> const & parse, User * usr)
     return (send_error(ERR_USERSDONTMATCH, "OPER :Cannot change mode for other users", usr));
   else if (parse[2] == this->_password_oper)
   {
-    this->deleteBan(usr);
+    // this->deleteBan(usr);
     usr->setmode('o', true);
     return (send_reply(RPL_YOUREOPER, " :You are now an IRC operator", usr));
   }

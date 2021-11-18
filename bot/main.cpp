@@ -8,7 +8,16 @@
 
 #define PORT 6667
 
-
+Bot *bot;
+void signal_kill ( int number )
+{
+	if ( number == SIGINT)
+	{
+		std::cout << "\n[[[ forced closure ]]] \n";
+		bot->~Bot();
+		exit(EXIT_FAILURE);
+	}
+}
 
 int main(int argc, char const *argv[])
 {
@@ -34,6 +43,7 @@ int main(int argc, char const *argv[])
 	else
 		ip = argv[1];
 	Bot lol("lol", ip, atoi(argv[2]));
+	bot = &lol;
 	// FD_SET(this->_sock, &lol.getWrites());
 	// lol.build_select_list();
 	// lol.setNumReadSock();
@@ -59,6 +69,7 @@ int main(int argc, char const *argv[])
 	{
 		lol.build_select_list();
 		lol.setNumReadSock();
+		signal( SIGINT, signal_kill );
 		if ( lol.getNumReadSock() < 0 )
 		{
 			exit(EXIT_FAILURE);
