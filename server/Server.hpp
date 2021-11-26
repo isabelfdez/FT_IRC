@@ -107,9 +107,7 @@ class Server
 		int								_num_read_sock;
 		int								_listen_server_sock;
 		int								_highsock;
-
 		std::deque<User *>				_send_message;
-		
 		std::map<int, User*>			_fd_users;
 		std::map<std::string, Channel*>	_name_channel;
 		std::list<std::string>			_commands;
